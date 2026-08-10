@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "Live Sauna Tallinn"
+  },
+  "nav": {
+    "map": "Kaart",
+    "explore": "Sirvi",
+    "activity": "Tegevus",
+    "profile": "Profiil"
+  },
+  "auth": {
+    "login": "Logi sisse",
+    "logout": "Logi välja",
+    "continueWithGoogle": "Jätka Google'iga",
+    "sendMagicLink": "Saada sisselogimislink"
+  }
+}

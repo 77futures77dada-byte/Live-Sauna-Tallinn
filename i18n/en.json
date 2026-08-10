@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "Live Sauna Tallinn"
+  },
+  "nav": {
+    "map": "Map",
+    "explore": "Explore",
+    "activity": "Activity",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "continueWithGoogle": "Continue with Google",
+    "sendMagicLink": "Send magic link"
+  }
+}
