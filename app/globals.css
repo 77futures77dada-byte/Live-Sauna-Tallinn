@@ -24,3 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
+   styling reach, so it gets a couple of plain CSS rules instead of
+   Tailwind classes. */
+.sauna-live-marker__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  font-size: 16px;
+}
