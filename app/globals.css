@@ -25,6 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Leaflet's default tile-load background is light gray, which flashes
+   before CartoDB Dark Matter's tiles arrive and around any ungeocoded
+   edge — swap it for the same dark navy as the rest of the palette. */
+.leaflet-container {
+  background: #0e2233;
+}
+
 /* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
    styling reach, so it gets a couple of plain CSS rules instead of
    Tailwind classes. */
@@ -35,7 +42,10 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 9999px;
-  border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  border: 2.5px solid #eaf3f5;
+  /* CartoDB Dark Matter's roads/water are near-black, so a plain black
+     shadow disappears into the tile — a larger, darker shadow keeps the
+     marker's edge legible against any tile color underneath. */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   font-size: 16px;
 }
