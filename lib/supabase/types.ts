@@ -42,6 +42,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Relationships: [];
       };
       locations: {
         Row: {
@@ -73,6 +74,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["locations"]["Insert"]>;
+        Relationships: [];
       };
       occupancy_reports: {
         Row: {
@@ -92,6 +94,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["occupancy_reports"]["Insert"]
         >;
+        Relationships: [];
       };
       water_reports: {
         Row: {
@@ -113,6 +116,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["water_reports"]["Insert"]
         >;
+        Relationships: [];
       };
       ice_reports: {
         Row: {
@@ -132,6 +136,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["ice_reports"]["Insert"]
         >;
+        Relationships: [];
       };
       visits: {
         Row: {
@@ -153,6 +158,7 @@ export interface Database {
           crowd_level?: CrowdLevel | null;
         };
         Update: Partial<Database["public"]["Tables"]["visits"]["Insert"]>;
+        Relationships: [];
       };
       photos: {
         Row: {
@@ -176,6 +182,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["photos"]["Insert"]>;
+        Relationships: [];
       };
       bookings: {
         Row: {
@@ -199,6 +206,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["bookings"]["Insert"]>;
+        Relationships: [];
       };
       ratings: {
         Row: {
@@ -216,7 +224,16 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["ratings"]["Insert"]>;
+        Relationships: [];
       };
     };
+    // Empty but present: @supabase/postgrest-js's generic client constrains
+    // Database[schema] to GenericSchema, which requires these keys to
+    // exist (even empty) or every table's Row/Insert/Update type collapses
+    // to `never`.
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
