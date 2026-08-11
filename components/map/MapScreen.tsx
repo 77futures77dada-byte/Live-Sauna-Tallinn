@@ -7,6 +7,7 @@ import { LocationCard } from "@/components/location/LocationCard";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
+import type { OpenVisit } from "@/lib/visits";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -33,18 +34,25 @@ export function MapScreen({
   initialWater,
   initialIce,
   userId,
+  initialOpenVisit,
 }: {
   locations: Location[];
   initialOccupancy: [string, LatestOccupancy][];
   initialWater: [string, LatestWater][];
   initialIce: [string, LatestIce][];
   userId: string | null;
+  initialOpenVisit: OpenVisit | null;
 }) {
   const [selected, setSelected] = useState<Location | null>(null);
   const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
+  const [openVisit, setOpenVisit] = useState(initialOpenVisit);
   const [, setTick] = useState(0);
+
+  const openVisitLocationName = openVisit
+    ? (locations.find((l) => l.id === openVisit.locationId)?.name ?? null)
+    : null;
 
   useEffect(() => {
     const supabase = createClient();
@@ -134,6 +142,10 @@ export function MapScreen({
           occupancy={occupancy.get(selected.id)}
           water={water.get(selected.id)}
           ice={ice.get(selected.id)}
+          openVisit={openVisit}
+          openVisitLocationName={openVisitLocationName}
+          onVisitStarted={setOpenVisit}
+          onVisitFinished={() => setOpenVisit(null)}
           onClose={() => setSelected(null)}
         />
       )}

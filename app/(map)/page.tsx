@@ -7,6 +7,7 @@ import {
   getLatestOccupancyByLocation,
   getLatestWaterByLocation,
 } from "@/lib/reports";
+import { getOpenVisit } from "@/lib/visits";
 
 export default async function MapPage() {
   const supabase = await createClient();
@@ -20,6 +21,8 @@ export default async function MapPage() {
       getLatestIceByLocation(supabase),
     ]);
 
+  const openVisit = user ? await getOpenVisit(supabase, user.id) : null;
+
   const dict = getDictionary(defaultLocale);
 
   return (
@@ -27,7 +30,9 @@ export default async function MapPage() {
       <header className="z-10 flex items-center justify-between border-b border-zinc-100 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
         <h1 className="text-base font-semibold">{dict.app.name}</h1>
         {user ? (
-          <span className="text-sm text-zinc-500">{user.email}</span>
+          <Link href="/profile" className="text-sm text-zinc-500 hover:underline">
+            {user.email}
+          </Link>
         ) : (
           <Link href="/login" className="text-sm font-medium underline">
             {dict.auth.login}
@@ -40,6 +45,7 @@ export default async function MapPage() {
         initialWater={[...water.entries()]}
         initialIce={[...ice.entries()]}
         userId={user?.id ?? null}
+        initialOpenVisit={openVisit}
       />
     </div>
   );

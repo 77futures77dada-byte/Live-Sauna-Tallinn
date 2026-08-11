@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CheckInButton } from "@/components/visit/CheckInButton";
+import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
 import { locationTypeIcon, locationTypeLabel } from "@/lib/location-types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
+import type { OpenVisit } from "@/lib/visits";
 import type { StationObservation } from "@/lib/weather";
 import { IceStatus } from "./IceStatus";
 import { OccupancyBadge } from "./OccupancyBadge";
@@ -28,6 +31,10 @@ export function LocationCard({
   occupancy,
   water,
   ice,
+  openVisit,
+  openVisitLocationName,
+  onVisitStarted,
+  onVisitFinished,
   onClose,
 }: {
   location: Location;
@@ -35,9 +42,14 @@ export function LocationCard({
   occupancy?: LatestOccupancy;
   water?: LatestWater;
   ice?: LatestIce;
+  openVisit: OpenVisit | null;
+  openVisitLocationName: string | null;
+  onVisitStarted: (visit: OpenVisit) => void;
+  onVisitFinished: () => void;
   onClose: () => void;
 }) {
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
+  const [showFinishForm, setShowFinishForm] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -150,7 +162,47 @@ export function LocationCard({
         </div>
 
         {userId ? (
-          <ReportButtons locationId={location.id} />
+          <>
+            {openVisit?.locationId === location.id ? (
+              <div className="mt-4 space-y-1.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+                <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                  You are here 🔥 — started{" "}
+                  {new Date(openVisit.startedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+                {showFinishForm ? (
+                  <VisitSummaryForm
+                    visitId={openVisit.id}
+                    onFinished={() => {
+                      setShowFinishForm(false);
+                      onVisitFinished();
+                    }}
+                    onCancel={() => setShowFinishForm(false)}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowFinishForm(true)}
+                    className="w-full rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+                  >
+                    Finish visit
+                  </button>
+                )}
+              </div>
+            ) : openVisit ? (
+              <p className="mt-4 border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800">
+                You have an active visit at{" "}
+                <strong>{openVisitLocationName ?? "another location"}</strong> — finish it
+                before checking in here.
+              </p>
+            ) : (
+              <CheckInButton locationId={location.id} onStarted={onVisitStarted} />
+            )}
+
+            <ReportButtons locationId={location.id} />
+          </>
         ) : (
           <p className="mt-4 border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800">
             <Link href="/login" className="underline">
