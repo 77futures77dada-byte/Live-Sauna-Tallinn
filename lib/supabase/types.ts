@@ -28,6 +28,7 @@ export interface Database {
           confirmed_reports: number;
           rejected_reports: number;
           is_admin: boolean;
+          is_banned: boolean;
           created_at: string;
         };
         Insert: {
@@ -39,6 +40,7 @@ export interface Database {
           confirmed_reports?: number;
           rejected_reports?: number;
           is_admin?: boolean;
+          is_banned?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;

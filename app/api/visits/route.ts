@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isUserBanned } from "@/lib/moderation";
 import { getOpenVisit } from "@/lib/visits";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,6 +14,9 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+  if (await isUserBanned(supabase, user.id)) {
+    return NextResponse.json({ error: "Your account is banned from checking in" }, { status: 403 });
   }
 
   const body = await request.json().catch(() => null);

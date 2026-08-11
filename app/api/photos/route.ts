@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isUserBanned } from "@/lib/moderation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -27,6 +28,9 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+  if (await isUserBanned(supabase, user.id)) {
+    return NextResponse.json({ error: "Your account is banned from uploading photos" }, { status: 403 });
   }
 
   const form = await request.formData().catch(() => null);
