@@ -1,10 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { locationTypeIcon, locationTypeLabel } from "@/lib/location-types";
 import type { Database } from "@/lib/supabase/types";
+import type { StationObservation } from "@/lib/weather";
 import { OccupancyBadge } from "./OccupancyBadge";
+import { WeatherStrip } from "./WeatherStrip";
+import { WaterTempStat } from "./WaterTempStat";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
+
+type WeatherState =
+  | { status: "loading" }
+  | { status: "ready"; observation: StationObservation }
+  | { status: "error" };
 
 const weekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
@@ -15,6 +24,25 @@ export function LocationCard({
   location: Location;
   onClose: () => void;
 }) {
+  const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(`/api/weather?slug=${location.slug}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((observation: StationObservation) => {
+        if (!cancelled) setWeather({ status: "ready", observation });
+      })
+      .catch(() => {
+        if (!cancelled) setWeather({ status: "error" });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.slug]);
+
   const openingHours = location.opening_hours;
 
   return (
@@ -81,6 +109,21 @@ export function LocationCard({
             </ul>
           </div>
         )}
+
+        <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+          {weather.status === "loading" && (
+            <p className="text-sm text-zinc-400">Loading weather…</p>
+          )}
+          {weather.status === "error" && (
+            <p className="text-sm text-zinc-400">Weather data unavailable.</p>
+          )}
+          {weather.status === "ready" && (
+            <>
+              <WeatherStrip observation={weather.observation} />
+              <WaterTempStat observation={weather.observation} />
+            </>
+          )}
+        </div>
       </div>
     </>
   );
