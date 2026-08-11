@@ -1,8 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { LocationCard } from "@/components/location/LocationCard";
+import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 
@@ -20,6 +22,11 @@ const MapView = dynamic(() => import("./MapView"), {
   ),
 });
 
+// How often to force a re-render so freshness (high/medium/low/unknown)
+// keeps decaying on screen even when no new report arrives — see
+// lib/freshness.ts.
+const FRESHNESS_TICK_MS = 60_000;
+
 export function MapScreen({
   locations,
   initialOccupancy,
@@ -34,9 +41,87 @@ export function MapScreen({
   userId: string | null;
 }) {
   const [selected, setSelected] = useState<Location | null>(null);
-  const [occupancy] = useState(() => new Map(initialOccupancy));
-  const [water] = useState(() => new Map(initialWater));
-  const [ice] = useState(() => new Map(initialIce));
+  const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
+  const [water, setWater] = useState(() => new Map(initialWater));
+  const [ice, setIce] = useState(() => new Map(initialIce));
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const channel = supabase
+      .channel("live-reports")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "occupancy_reports" },
+        (payload: RealtimePostgresInsertPayload<{
+          location_id: string;
+          people_count: number;
+          created_at: string;
+        }>) => {
+          const row = payload.new;
+          setOccupancy((prev) => {
+            const next = new Map(prev);
+            next.set(row.location_id, {
+              locationId: row.location_id,
+              peopleCount: row.people_count,
+              createdAt: row.created_at,
+            });
+            return next;
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "water_reports" },
+        (payload: RealtimePostgresInsertPayload<{
+          location_id: string;
+          temperature: number;
+          created_at: string;
+        }>) => {
+          const row = payload.new;
+          setWater((prev) => {
+            const next = new Map(prev);
+            next.set(row.location_id, {
+              locationId: row.location_id,
+              temperature: row.temperature,
+              createdAt: row.created_at,
+            });
+            return next;
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "ice_reports" },
+        (payload: RealtimePostgresInsertPayload<{
+          location_id: string;
+          condition: LatestIce["condition"];
+          created_at: string;
+        }>) => {
+          const row = payload.new;
+          setIce((prev) => {
+            const next = new Map(prev);
+            next.set(row.location_id, {
+              locationId: row.location_id,
+              condition: row.condition,
+              createdAt: row.created_at,
+            });
+            return next;
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((n) => n + 1), FRESHNESS_TICK_MS);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="relative min-h-0 w-full flex-1">
