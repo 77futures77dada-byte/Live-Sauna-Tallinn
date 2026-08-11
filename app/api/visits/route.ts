@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { findFulfillableBooking, fulfillBooking } from "@/lib/bookings";
 import { isUserBanned } from "@/lib/moderation";
 import { getOpenVisit } from "@/lib/visits";
 import { createClient } from "@/lib/supabase/server";
@@ -47,5 +48,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to start visit" }, { status: 500 });
   }
 
-  return NextResponse.json(data, { status: 201 });
+  // This check-in is the "QR confirmation" a booking needs to actually
+  // hold a place — see docs/ARCHITECTURE.md section 9.5. Best-effort: a
+  // failure here shouldn't fail the check-in itself, since the visit
+  // already exists.
+  let fulfilledBookingId: string | null = null;
+  try {
+    const booking = await findFulfillableBooking(supabase, user.id, locationId);
+    if (booking) {
+      await fulfillBooking(supabase, booking.id, data.id);
+      fulfilledBookingId = booking.id;
+    }
+  } catch (bookingError) {
+    console.error("POST /api/visits: booking fulfillment failed", bookingError);
+  }
+
+  return NextResponse.json({ ...data, fulfilled_booking_id: fulfilledBookingId }, { status: 201 });
 }

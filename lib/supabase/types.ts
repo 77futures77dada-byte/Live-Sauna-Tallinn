@@ -11,8 +11,13 @@ export type LocationType =
 
 export type IceCondition = "none" | "partial" | "frozen";
 export type CrowdLevel = "low" | "medium" | "high";
-export type BookingStatus = "confirmed" | "cancelled" | "completed";
-export type PhotoType = "before" | "after";
+export type BookingStatus =
+  | "confirmed"
+  | "cancelled"
+  | "completed"
+  | "fulfilled"
+  | "no_show";
+export type PhotoType = "before" | "after" | "booking_verification";
 export type ReportSource = "user" | "sensor";
 
 export interface Database {
@@ -168,6 +173,7 @@ export interface Database {
           user_id: string;
           location_id: string;
           visit_id: string | null;
+          booking_id: string | null;
           type: PhotoType;
           storage_url: string;
           moderated: boolean;
@@ -178,6 +184,7 @@ export interface Database {
           user_id: string;
           location_id: string;
           visit_id?: string | null;
+          booking_id?: string | null;
           type: PhotoType;
           storage_url: string;
           moderated?: boolean;
@@ -195,6 +202,7 @@ export interface Database {
           end_time: string;
           people_count: number;
           status: BookingStatus;
+          visit_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -205,6 +213,7 @@ export interface Database {
           end_time: string;
           people_count: number;
           status?: BookingStatus;
+          visit_id?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["bookings"]["Insert"]>;

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { BookingPanel } from "@/components/booking/BookingPanel";
 import { BeforeAfterPhoto } from "@/components/visit/BeforeAfterPhoto";
 import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
@@ -164,6 +165,14 @@ export function LocationCard({
 
         {userId ? (
           <>
+            {location.booking_enabled && (
+              <BookingPanel
+                locationId={location.id}
+                capacity={location.capacity}
+                refreshToken={openVisit?.locationId === location.id ? openVisit.id : null}
+              />
+            )}
+
             {openVisit?.locationId === location.id ? (
               <div className="mt-4 space-y-1.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
                 <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
