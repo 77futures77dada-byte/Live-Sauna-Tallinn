@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# local Claude Code harness settings — not project source
+/.claude/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
