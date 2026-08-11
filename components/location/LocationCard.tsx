@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { BeforeAfterPhoto } from "@/components/visit/BeforeAfterPhoto";
 import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
@@ -172,15 +173,19 @@ export function LocationCard({
                     minute: "2-digit",
                   })}
                 </p>
+                <BeforeAfterPhoto visitId={openVisit.id} type="before" />
                 {showFinishForm ? (
-                  <VisitSummaryForm
-                    visitId={openVisit.id}
-                    onFinished={() => {
-                      setShowFinishForm(false);
-                      onVisitFinished();
-                    }}
-                    onCancel={() => setShowFinishForm(false)}
-                  />
+                  <>
+                    <BeforeAfterPhoto visitId={openVisit.id} type="after" />
+                    <VisitSummaryForm
+                      visitId={openVisit.id}
+                      onFinished={() => {
+                        setShowFinishForm(false);
+                        onVisitFinished();
+                      }}
+                      onCancel={() => setShowFinishForm(false)}
+                    />
+                  </>
                 ) : (
                   <button
                     type="button"
