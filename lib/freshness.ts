@@ -18,6 +18,16 @@ export const freshnessLabel: Record<FreshnessLevel, string> = {
   unknown: "No live data",
 };
 
+// The map marker's type glyph sits on top of freshnessColor — a single
+// stroke color doesn't read on both the bright green/gold fills and the
+// pale gray ones, so pick light-on-dark or dark-on-light per level.
+export const freshnessIconColor: Record<FreshnessLevel, string> = {
+  high: "#EAF3F5",
+  medium: "#0E2233",
+  low: "#0E2233",
+  unknown: "#0E2233",
+};
+
 // 0-15min = high, 15-30 = medium, 30-60 = low, 60+ = unknown. A null
 // timestamp (no report yet) is unknown. Negative ages (clock skew) are
 // clamped to "just happened" rather than treated as unknown.

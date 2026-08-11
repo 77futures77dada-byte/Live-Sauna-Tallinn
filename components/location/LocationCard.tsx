@@ -7,7 +7,7 @@ import { BeforeAfterPhoto } from "@/components/visit/BeforeAfterPhoto";
 import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
-import { locationTypeIcon, locationTypeLabel } from "@/lib/location-types";
+import { locationTypeIconComponent, locationTypeLabel } from "@/lib/location-types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import type { OpenVisit } from "@/lib/visits";
@@ -72,6 +72,7 @@ export function LocationCard({
 
   const openingHours = location.opening_hours;
   const occupancyLevel = getFreshness(occupancy?.createdAt ?? null);
+  const TypeIcon = locationTypeIconComponent[location.type];
 
   return (
     <>
@@ -96,8 +97,9 @@ export function LocationCard({
         <div className="flex items-start justify-between gap-2">
           <div>
             <h2 className="text-lg font-semibold">{location.name}</h2>
-            <p className="text-sm text-zinc-500">
-              {locationTypeIcon[location.type]} {locationTypeLabel[location.type]}
+            <p className="flex items-center gap-1.5 text-sm text-zinc-500">
+              <TypeIcon className="h-4 w-4 shrink-0" aria-hidden />
+              {locationTypeLabel[location.type]}
               {location.is_free ? " · Free" : " · Paid"}
             </p>
           </div>
