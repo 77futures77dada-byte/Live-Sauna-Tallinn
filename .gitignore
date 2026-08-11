@@ -40,6 +40,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated QR codes (scripts/generate-qr.ts) — regenerate, don't commit
+/qr-codes/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
