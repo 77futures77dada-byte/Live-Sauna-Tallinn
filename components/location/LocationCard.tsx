@@ -61,14 +61,22 @@ export function LocationCard({
 
   return (
     <>
+      {/*
+        Leaflet's own panes/controls (.leaflet-pane, .leaflet-top) carry
+        z-index up to 1000, and .leaflet-container never establishes its
+        own stacking context (position: relative with no z-index), so
+        those values compare directly against ours at the document root.
+        z-40/z-50 lost that comparison and rendered invisibly underneath
+        the map — see the 2026-08-11 bug report. Needs to clear 1000.
+      */}
       <button
         type="button"
         aria-label="Close"
         onClick={onClose}
-        className="fixed inset-0 z-40 bg-black/30 sm:bg-transparent"
+        className="fixed inset-0 z-[1200] bg-black/30 sm:bg-transparent"
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-50 max-h-[75vh] overflow-y-auto rounded-t-2xl bg-white p-5 shadow-2xl dark:bg-zinc-900
+        className="fixed inset-x-0 bottom-0 z-[1201] max-h-[75vh] overflow-y-auto rounded-t-2xl bg-white p-5 shadow-2xl dark:bg-zinc-900
                    sm:inset-x-auto sm:right-4 sm:top-20 sm:bottom-auto sm:w-96 sm:rounded-2xl"
       >
         <div className="flex items-start justify-between gap-2">
