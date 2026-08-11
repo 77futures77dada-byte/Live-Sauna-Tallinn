@@ -1,14 +1,23 @@
-import type { StationObservation } from "@/lib/weather";
+import { formatAge, freshnessColor, getFreshness } from "@/lib/freshness";
+import type { LatestWater } from "@/lib/reports";
 
-// Renders nothing when the mapped station doesn't report water
-// temperature (e.g. an inland/airport station) — no placeholder value,
-// per docs/ARCHITECTURE.md section 9.3.
-export function WaterTempStat({ observation }: { observation: StationObservation }) {
-  if (observation.waterTemperature === null) return null;
+// Crowdsourced water_reports — distinct from the official station reading
+// shown by WeatherStrip. No placeholder value when there's no recent
+// report; per docs/ARCHITECTURE.md section 5, "unknown" shows no number.
+export function WaterTempStat({ report }: { report?: LatestWater }) {
+  const level = getFreshness(report?.createdAt ?? null);
+
+  if (!report || level === "unknown") {
+    return <p className="text-sm text-zinc-400">No recent water temperature reports.</p>;
+  }
 
   return (
-    <div className="rounded-xl bg-sky-50 px-3 py-2 text-sm text-sky-900 dark:bg-sky-950 dark:text-sky-100">
-      🌊 Water temperature: <strong>{observation.waterTemperature.toFixed(1)}°C</strong>
-    </div>
+    <p className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-300">
+      <span
+        className="h-2 w-2 rounded-full"
+        style={{ backgroundColor: freshnessColor[level] }}
+      />
+      🌊 {report.temperature.toFixed(1)}°C reported · {formatAge(report.createdAt)}
+    </p>
   );
 }

@@ -2,16 +2,23 @@ import Link from "next/link";
 import { MapScreen } from "@/components/map/MapScreen";
 import { createClient } from "@/lib/supabase/server";
 import { defaultLocale, getDictionary } from "@/lib/i18n";
+import {
+  getLatestIceByLocation,
+  getLatestOccupancyByLocation,
+  getLatestWaterByLocation,
+} from "@/lib/reports";
 
 export default async function MapPage() {
   const supabase = await createClient();
 
-  const [{ data: locations }, {
-    data: { user },
-  }] = await Promise.all([
-    supabase.from("locations").select("*").order("name"),
-    supabase.auth.getUser(),
-  ]);
+  const [{ data: locations }, { data: { user } }, occupancy, water, ice] =
+    await Promise.all([
+      supabase.from("locations").select("*").order("name"),
+      supabase.auth.getUser(),
+      getLatestOccupancyByLocation(supabase),
+      getLatestWaterByLocation(supabase),
+      getLatestIceByLocation(supabase),
+    ]);
 
   const dict = getDictionary(defaultLocale);
 
@@ -27,7 +34,13 @@ export default async function MapPage() {
           </Link>
         )}
       </header>
-      <MapScreen locations={locations ?? []} />
+      <MapScreen
+        locations={locations ?? []}
+        initialOccupancy={[...occupancy.entries()]}
+        initialWater={[...water.entries()]}
+        initialIce={[...ice.entries()]}
+        userId={user?.id ?? null}
+      />
     </div>
   );
 }

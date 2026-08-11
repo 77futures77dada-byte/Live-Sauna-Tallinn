@@ -2,16 +2,16 @@
 
 import L from "leaflet";
 import { Marker } from "react-leaflet";
-import { freshnessColor } from "@/lib/freshness";
+import { freshnessColor, getFreshness } from "@/lib/freshness";
 import { locationTypeIcon } from "@/lib/location-types";
+import type { LatestOccupancy } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-function buildIcon(location: Location) {
-  // Every marker is "unknown" freshness until Phase 2 wires up live
-  // occupancy reports — see lib/freshness.ts.
-  const color = freshnessColor.unknown;
+function buildIcon(location: Location, occupancy: LatestOccupancy | undefined) {
+  const level = getFreshness(occupancy?.createdAt ?? null);
+  const color = freshnessColor[level];
   const glyph = locationTypeIcon[location.type];
 
   return L.divIcon({
@@ -24,15 +24,17 @@ function buildIcon(location: Location) {
 
 export function LocationMarker({
   location,
+  occupancy,
   onSelect,
 }: {
   location: Location;
+  occupancy: LatestOccupancy | undefined;
   onSelect: (location: Location) => void;
 }) {
   return (
     <Marker
       position={[location.latitude, location.longitude]}
-      icon={buildIcon(location)}
+      icon={buildIcon(location, occupancy)}
       eventHandlers={{ click: () => onSelect(location) }}
     />
   );

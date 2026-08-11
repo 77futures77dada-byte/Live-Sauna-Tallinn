@@ -1,12 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { formatAge, getFreshness } from "@/lib/freshness";
 import { locationTypeIcon, locationTypeLabel } from "@/lib/location-types";
+import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import type { StationObservation } from "@/lib/weather";
+import { IceStatus } from "./IceStatus";
 import { OccupancyBadge } from "./OccupancyBadge";
-import { WeatherStrip } from "./WeatherStrip";
+import { ReportButtons } from "./ReportButtons";
 import { WaterTempStat } from "./WaterTempStat";
+import { WeatherStrip } from "./WeatherStrip";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -19,9 +24,17 @@ const weekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
 export function LocationCard({
   location,
+  userId,
+  occupancy,
+  water,
+  ice,
   onClose,
 }: {
   location: Location;
+  userId: string | null;
+  occupancy?: LatestOccupancy;
+  water?: LatestWater;
+  ice?: LatestIce;
   onClose: () => void;
 }) {
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
@@ -44,6 +57,7 @@ export function LocationCard({
   }, [location.slug]);
 
   const openingHours = location.opening_hours;
+  const occupancyLevel = getFreshness(occupancy?.createdAt ?? null);
 
   return (
     <>
@@ -87,10 +101,12 @@ export function LocationCard({
               👥 Capacity: {location.capacity}
             </span>
           )}
-          <OccupancyBadge level="unknown" />
+          <OccupancyBadge level={occupancyLevel} count={occupancy?.peopleCount} />
         </div>
         <p className="mt-1 text-xs text-zinc-400">
-          No live occupancy reports yet for this location.
+          {occupancy && occupancyLevel !== "unknown"
+            ? `Updated ${formatAge(occupancy.createdAt)}`
+            : "No live occupancy reports yet for this location."}
         </p>
 
         {openingHours && (
@@ -110,6 +126,11 @@ export function LocationCard({
           </div>
         )}
 
+        <div className="mt-4 space-y-1.5">
+          <WaterTempStat report={water} />
+          <IceStatus report={ice} />
+        </div>
+
         <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
           {weather.status === "loading" && (
             <p className="text-sm text-zinc-400">Loading weather…</p>
@@ -117,13 +138,19 @@ export function LocationCard({
           {weather.status === "error" && (
             <p className="text-sm text-zinc-400">Weather data unavailable.</p>
           )}
-          {weather.status === "ready" && (
-            <>
-              <WeatherStrip observation={weather.observation} />
-              <WaterTempStat observation={weather.observation} />
-            </>
-          )}
+          {weather.status === "ready" && <WeatherStrip observation={weather.observation} />}
         </div>
+
+        {userId ? (
+          <ReportButtons locationId={location.id} />
+        ) : (
+          <p className="mt-4 border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800">
+            <Link href="/login" className="underline">
+              Log in
+            </Link>{" "}
+            to report status.
+          </p>
+        )}
       </div>
     </>
   );
