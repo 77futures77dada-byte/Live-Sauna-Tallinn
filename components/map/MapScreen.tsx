@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
+import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
@@ -50,6 +51,10 @@ export function MapScreen({
     : null;
 
   const [selected, setSelected] = useState<Location | null>(focusLocation);
+  // QR deep links (focusLocationId set) skip the hero — someone who
+  // scanned the on-site code wants the check-in flow, not a landing
+  // screen.
+  const [showHero, setShowHero] = useState(!focusLocationId);
   const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
@@ -136,6 +141,14 @@ export function MapScreen({
     const id = setInterval(() => setTick((n) => n + 1), FRESHNESS_TICK_MS);
     return () => clearInterval(id);
   }, []);
+
+  if (showHero) {
+    return (
+      <div className="relative min-h-0 w-full flex-1">
+        <HeroLanding onEnter={() => setShowHero(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-0 w-full flex-1">
