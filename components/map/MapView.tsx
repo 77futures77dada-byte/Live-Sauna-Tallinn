@@ -16,15 +16,19 @@ export default function MapView({
   locations,
   occupancy,
   onSelect,
+  center,
+  zoom,
 }: {
   locations: Location[];
   occupancy: Map<string, LatestOccupancy>;
   onSelect: (location: Location) => void;
+  center?: [number, number];
+  zoom?: number;
 }) {
   return (
     <MapContainer
-      center={TALLINN_CENTER}
-      zoom={11}
+      center={center ?? TALLINN_CENTER}
+      zoom={zoom ?? 11}
       scrollWheelZoom
       className="h-full w-full"
     >

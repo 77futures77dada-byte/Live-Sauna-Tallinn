@@ -35,6 +35,7 @@ export function MapScreen({
   initialIce,
   userId,
   initialOpenVisit,
+  focusLocationId,
 }: {
   locations: Location[];
   initialOccupancy: [string, LatestOccupancy][];
@@ -42,8 +43,13 @@ export function MapScreen({
   initialIce: [string, LatestIce][];
   userId: string | null;
   initialOpenVisit: OpenVisit | null;
+  focusLocationId?: string;
 }) {
-  const [selected, setSelected] = useState<Location | null>(null);
+  const focusLocation = focusLocationId
+    ? (locations.find((l) => l.id === focusLocationId) ?? null)
+    : null;
+
+  const [selected, setSelected] = useState<Location | null>(focusLocation);
   const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
@@ -133,7 +139,13 @@ export function MapScreen({
 
   return (
     <div className="relative min-h-0 w-full flex-1">
-      <MapView locations={locations} occupancy={occupancy} onSelect={setSelected} />
+      <MapView
+        locations={locations}
+        occupancy={occupancy}
+        onSelect={setSelected}
+        center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
+        zoom={focusLocation ? 15 : undefined}
+      />
       {selected && (
         <LocationCard
           key={selected.id}
