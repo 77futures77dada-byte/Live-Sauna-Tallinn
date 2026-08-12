@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatAge } from "@/lib/freshness";
+import { getDictionary, type Locale } from "@/lib/i18n";
 import type { StationObservation } from "@/lib/weather";
 
 // Pirita has both an air and a water sensor (lib/weather-stations.ts), so
@@ -21,7 +22,14 @@ type WeatherState =
 // first thing anyone sees, logged in or not. Deliberately one live
 // element (the conditions strip) rather than decorative motion —
 // docs request for this screen was "don't overload it".
-export function HeroLanding({ onEnter }: { onEnter: () => void }) {
+export function HeroLanding({
+  locale,
+  onEnter,
+}: {
+  locale: Locale;
+  onEnter: () => void;
+}) {
+  const dict = getDictionary(locale);
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
 
   useEffect(() => {
@@ -51,18 +59,15 @@ export function HeroLanding({ onEnter }: { onEnter: () => void }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto bg-[#0E2233] px-6 py-12 text-center text-[#EAF3F5]">
       <p className="text-xs font-medium tracking-[0.2em] text-[#7C93A0] uppercase">
-        Tallinn, live
+        {dict.hero.eyebrow}
       </p>
       <h1
         className="mt-3 max-w-md text-4xl leading-tight font-medium sm:text-5xl"
         style={{ fontFamily: "var(--font-fraunces)" }}
       >
-        Sauna, ice, and the sea — right now.
+        {dict.hero.headline}
       </h1>
-      <p className="mt-4 max-w-sm text-sm text-[#7C93A0]">
-        Real-time occupancy, water temperature, and booking for Tallinn&apos;s saunas and winter
-        swimming spots.
-      </p>
+      <p className="mt-4 max-w-sm text-sm text-[#7C93A0]">{dict.hero.subtitle}</p>
 
       <div
         className="mt-8 flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 px-5 py-4"
@@ -80,7 +85,7 @@ export function HeroLanding({ onEnter }: { onEnter: () => void }) {
                 <span className="text-2xl font-semibold text-[#E8632C]">
                   {weather.observation.airTemperature.toFixed(1)}°
                 </span>
-                <span className="mt-1 text-[10px] text-[#7C93A0]">air</span>
+                <span className="mt-1 text-[10px] text-[#7C93A0]">{dict.hero.air}</span>
               </span>
             )}
             {weather.observation.waterTemperature !== null && (
@@ -88,7 +93,7 @@ export function HeroLanding({ onEnter }: { onEnter: () => void }) {
                 <span className="text-2xl font-semibold text-[#3FA9D6]">
                   {weather.observation.waterTemperature.toFixed(1)}°
                 </span>
-                <span className="mt-1 text-[10px] text-[#7C93A0]">water</span>
+                <span className="mt-1 text-[10px] text-[#7C93A0]">{dict.hero.water}</span>
               </span>
             )}
             <span className="text-[10px] text-[#7C93A0]">
@@ -97,10 +102,10 @@ export function HeroLanding({ onEnter }: { onEnter: () => void }) {
           </>
         )}
         {weather.status === "loading" && (
-          <span className="text-xs text-[#7C93A0]">Loading conditions…</span>
+          <span className="text-xs text-[#7C93A0]">{dict.hero.conditionsLoading}</span>
         )}
         {weather.status === "error" && (
-          <span className="text-xs text-[#7C93A0]">Conditions unavailable right now.</span>
+          <span className="text-xs text-[#7C93A0]">{dict.hero.conditionsError}</span>
         )}
       </div>
 
@@ -110,13 +115,13 @@ export function HeroLanding({ onEnter }: { onEnter: () => void }) {
           onClick={onEnter}
           className="rounded-full bg-[#E8632C] px-6 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
         >
-          View live map
+          {dict.hero.viewMap}
         </button>
         <Link
           href="/login"
           className="rounded-full border border-[#3FA9D6]/40 px-6 py-2.5 text-sm font-medium text-[#EAF3F5] transition hover:bg-white/5"
         >
-          Log in
+          {dict.hero.login}
         </Link>
       </div>
     </div>

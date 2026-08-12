@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
+import type { Locale } from "@/lib/i18n";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -37,6 +38,7 @@ export function MapScreen({
   userId,
   initialOpenVisit,
   focusLocationId,
+  locale,
 }: {
   locations: Location[];
   initialOccupancy: [string, LatestOccupancy][];
@@ -45,6 +47,7 @@ export function MapScreen({
   userId: string | null;
   initialOpenVisit: OpenVisit | null;
   focusLocationId?: string;
+  locale: Locale;
 }) {
   const focusLocation = focusLocationId
     ? (locations.find((l) => l.id === focusLocationId) ?? null)
@@ -145,7 +148,7 @@ export function MapScreen({
   if (showHero) {
     return (
       <div className="relative min-h-0 w-full flex-1">
-        <HeroLanding onEnter={() => setShowHero(false)} />
+        <HeroLanding locale={locale} onEnter={() => setShowHero(false)} />
       </div>
     );
   }
@@ -164,6 +167,7 @@ export function MapScreen({
           key={selected.id}
           location={selected}
           userId={userId}
+          locale={locale}
           occupancy={occupancy.get(selected.id)}
           water={water.get(selected.id)}
           ice={ice.get(selected.id)}

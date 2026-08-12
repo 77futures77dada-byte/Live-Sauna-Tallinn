@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
-function useReportSubmit(endpoint: string) {
+function useReportSubmit(endpoint: string, dict: ReturnType<typeof getDictionary>["report"]) {
   const [state, setState] = useState<SubmitState>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
@@ -20,14 +21,14 @@ function useReportSubmit(endpoint: string) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setState("error");
-        setMessage(typeof data.error === "string" ? data.error : "Something went wrong");
+        setMessage(typeof data.error === "string" ? data.error : dict.genericError);
         return;
       }
       setState("success");
-      setMessage("Thanks — reported!");
+      setMessage(dict.thanks);
     } catch {
       setState("error");
-      setMessage("Network error");
+      setMessage(dict.networkError);
     }
   }
 
@@ -39,10 +40,11 @@ const inputClass =
 const buttonClass =
   "rounded-lg bg-zinc-900 px-3 py-1 text-sm text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900";
 
-export function ReportButtons({ locationId }: { locationId: string }) {
-  const occupancyReport = useReportSubmit("/api/occupancy");
-  const waterReport = useReportSubmit("/api/water");
-  const iceReport = useReportSubmit("/api/ice");
+export function ReportButtons({ locationId, locale }: { locationId: string; locale: Locale }) {
+  const dict = getDictionary(locale).report;
+  const occupancyReport = useReportSubmit("/api/occupancy", dict);
+  const waterReport = useReportSubmit("/api/water", dict);
+  const iceReport = useReportSubmit("/api/ice", dict);
 
   const [peopleCount, setPeopleCount] = useState("");
   const [temperature, setTemperature] = useState("");
@@ -69,15 +71,13 @@ export function ReportButtons({ locationId }: { locationId: string }) {
 
   return (
     <div className="mt-4 space-y-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
-        Report status
-      </h3>
+      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">{dict.title}</h3>
 
       <form onSubmit={handleOccupancy} className="flex items-center gap-2">
         <input
           type="number"
           min={0}
-          placeholder="People count"
+          placeholder={dict.peopleCountPlaceholder}
           value={peopleCount}
           onChange={(event) => setPeopleCount(event.target.value)}
           className={inputClass}
@@ -87,7 +87,7 @@ export function ReportButtons({ locationId }: { locationId: string }) {
           disabled={occupancyReport.state === "submitting"}
           className={buttonClass}
         >
-          Report occupancy
+          {dict.reportOccupancy}
         </button>
       </form>
       {occupancyReport.message && (
@@ -102,7 +102,7 @@ export function ReportButtons({ locationId }: { locationId: string }) {
         <input
           type="number"
           step="0.1"
-          placeholder="Water °C"
+          placeholder={dict.waterPlaceholder}
           value={temperature}
           onChange={(event) => setTemperature(event.target.value)}
           className={inputClass}
@@ -112,7 +112,7 @@ export function ReportButtons({ locationId }: { locationId: string }) {
           disabled={waterReport.state === "submitting"}
           className={buttonClass}
         >
-          Report water temp
+          {dict.reportWater}
         </button>
       </form>
       {waterReport.message && (
@@ -129,16 +129,16 @@ export function ReportButtons({ locationId }: { locationId: string }) {
           onChange={(event) => setCondition(event.target.value as typeof condition)}
           className={inputClass}
         >
-          <option value="none">No ice</option>
-          <option value="partial">Partial ice</option>
-          <option value="frozen">Frozen</option>
+          <option value="none">{dict.noIce}</option>
+          <option value="partial">{dict.partialIce}</option>
+          <option value="frozen">{dict.frozen}</option>
         </select>
         <button
           type="submit"
           disabled={iceReport.state === "submitting"}
           className={buttonClass}
         >
-          Report ice
+          {dict.reportIce}
         </button>
       </form>
       {iceReport.message && (

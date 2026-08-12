@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { nextHourSlots } from "@/lib/bookings";
 import type { Booking } from "@/lib/bookings";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 const SLOT_COUNT = 12;
 
@@ -20,14 +21,17 @@ function formatSlot(date: Date): string {
 export function BookingForm({
   locationId,
   capacity,
+  locale,
   onCreated,
   onCancel,
 }: {
   locationId: string;
   capacity: number | null;
+  locale: Locale;
   onCreated: (booking: Booking) => void;
   onCancel: () => void;
 }) {
+  const dict = getDictionary(locale).booking;
   const [slots] = useState(() => nextHourSlots(SLOT_COUNT));
   const [startTime, setStartTime] = useState(slots[0].toISOString());
   const [peopleCount, setPeopleCount] = useState("1");
@@ -43,7 +47,7 @@ export function BookingForm({
     event.preventDefault();
     if (!file) {
       setStatus("error");
-      setMessage("A verification photo is required to confirm a booking.");
+      setMessage(dict.photoRequiredError);
       return;
     }
 
@@ -62,14 +66,14 @@ export function BookingForm({
 
       if (!res.ok) {
         setStatus("error");
-        setMessage(typeof data.error === "string" ? data.error : "Failed to create booking");
+        setMessage(typeof data.error === "string" ? data.error : dict.createFailed);
         return;
       }
 
       onCreated(data as Booking);
     } catch {
       setStatus("error");
-      setMessage("Network error");
+      setMessage(dict.networkError);
     }
   }
 
@@ -80,7 +84,7 @@ export function BookingForm({
     >
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
-          Time slot
+          {dict.timeSlot}
         </label>
         <select
           value={startTime}
@@ -97,7 +101,7 @@ export function BookingForm({
 
       <div>
         <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
-          People {capacity !== null ? `(max ${capacity})` : ""}
+          {dict.people} {capacity !== null ? `(${dict.maxSuffix} ${capacity})` : ""}
         </label>
         <input
           type="number"
@@ -111,7 +115,7 @@ export function BookingForm({
 
       <div>
         <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
-          📷 {file ? "Photo selected ✓" : "Take verification photo"}
+          📷 {file ? dict.photoSelected : dict.takePhoto}
           <input
             type="file"
             accept="image/*"
@@ -121,16 +125,10 @@ export function BookingForm({
             required
           />
         </label>
-        <p className="mt-1 text-xs text-zinc-400">
-          Required to confirm the booking — this is not the check-in photo, just proof you
-          submitted the booking yourself.
-        </p>
+        <p className="mt-1 text-xs text-zinc-400">{dict.photoRequiredHint}</p>
       </div>
 
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-        Booking a slot doesn&apos;t hold your place by itself — confirm you&apos;re here by
-        scanning the QR code on site when you arrive.
-      </p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400">{dict.confirmNote}</p>
 
       <div className="flex gap-2">
         <button
@@ -138,14 +136,14 @@ export function BookingForm({
           disabled={status === "submitting"}
           className="flex-1 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
         >
-          {status === "submitting" ? "Confirming…" : "Confirm booking"}
+          {status === "submitting" ? dict.confirming : dict.confirmBooking}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="rounded-lg px-3 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
-          Cancel
+          {dict.cancel}
         </button>
       </div>
       {message && <p className="text-xs text-red-600">{message}</p>}

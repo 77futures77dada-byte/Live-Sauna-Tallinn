@@ -4,7 +4,7 @@ import ru from "@/i18n/ru.json";
 
 export const locales = ["et", "ru", "en"] as const;
 export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "et";
 export const localeCookieName = "NEXT_LOCALE";
 
 const dictionaries: Record<Locale, typeof en> = { en, et, ru };

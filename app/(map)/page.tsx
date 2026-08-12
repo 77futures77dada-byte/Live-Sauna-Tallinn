@@ -3,6 +3,7 @@ import { MapScreen } from "@/components/map/MapScreen";
 import { createClient } from "@/lib/supabase/server";
 import { getMapPageData } from "@/lib/map-data";
 import { isAdmin } from "@/lib/admin";
+import { getLocale } from "@/lib/get-locale";
 
 export default async function MapPage() {
   const supabase = await createClient();
@@ -10,14 +11,15 @@ export default async function MapPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ locations, occupancy, water, ice, openVisit }, admin] = await Promise.all([
+  const [{ locations, occupancy, water, ice, openVisit }, admin, locale] = await Promise.all([
     getMapPageData(supabase, user),
     user ? isAdmin(supabase, user.id) : Promise.resolve(false),
+    getLocale(),
   ]);
 
   return (
     <div className="flex h-screen flex-col">
-      <AppHeader userEmail={user?.email ?? null} isAdmin={admin} />
+      <AppHeader userEmail={user?.email ?? null} isAdmin={admin} locale={locale} />
       <MapScreen
         locations={locations}
         initialOccupancy={[...occupancy.entries()]}
@@ -25,6 +27,7 @@ export default async function MapPage() {
         initialIce={[...ice.entries()]}
         userId={user?.id ?? null}
         initialOpenVisit={openVisit}
+        locale={locale}
       />
     </div>
   );

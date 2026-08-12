@@ -7,6 +7,7 @@ import { BeforeAfterPhoto } from "@/components/visit/BeforeAfterPhoto";
 import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
+import { getDictionary, type Locale } from "@/lib/i18n";
 import { locationTypeIconComponent, locationTypeLabel } from "@/lib/location-types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
@@ -30,6 +31,7 @@ const weekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 export function LocationCard({
   location,
   userId,
+  locale,
   occupancy,
   water,
   ice,
@@ -41,6 +43,7 @@ export function LocationCard({
 }: {
   location: Location;
   userId: string | null;
+  locale: Locale;
   occupancy?: LatestOccupancy;
   water?: LatestWater;
   ice?: LatestIce;
@@ -50,6 +53,7 @@ export function LocationCard({
   onVisitFinished: () => void;
   onClose: () => void;
 }) {
+  const dict = getDictionary(locale);
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
   const [showFinishForm, setShowFinishForm] = useState(false);
 
@@ -86,7 +90,7 @@ export function LocationCard({
       */}
       <button
         type="button"
-        aria-label="Close"
+        aria-label={dict.location.close}
         onClick={onClose}
         className="fixed inset-0 z-[1200] bg-black/30 sm:bg-transparent"
       />
@@ -100,14 +104,14 @@ export function LocationCard({
             <p className="flex items-center gap-1.5 text-sm text-zinc-500">
               <TypeIcon className="h-4 w-4 shrink-0" aria-hidden />
               {locationTypeLabel[location.type]}
-              {location.is_free ? " · Free" : " · Paid"}
+              {location.is_free ? ` · ${dict.location.free}` : ` · ${dict.location.paid}`}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
-            aria-label="Close"
+            aria-label={dict.location.close}
           >
             ✕
           </button>
@@ -122,28 +126,28 @@ export function LocationCard({
         <div className="mt-4 flex flex-wrap items-center gap-3">
           {location.capacity !== null && (
             <span className="text-sm text-zinc-500">
-              👥 Capacity: {location.capacity}
+              👥 {dict.location.capacity}: {location.capacity}
             </span>
           )}
           <OccupancyBadge level={occupancyLevel} count={occupancy?.peopleCount} />
         </div>
         <p className="mt-1 text-xs text-zinc-400">
           {occupancy && occupancyLevel !== "unknown"
-            ? `Updated ${formatAge(occupancy.createdAt)}`
-            : "No live occupancy reports yet for this location."}
+            ? `${dict.location.updatedPrefix} ${formatAge(occupancy.createdAt)}`
+            : dict.location.noOccupancy}
         </p>
 
         {openingHours && (
           <div className="mt-4 text-sm">
             <h3 className="font-medium text-zinc-700 dark:text-zinc-200">
-              Opening hours
+              {dict.location.openingHours}
             </h3>
             <ul className="mt-1 space-y-0.5 text-zinc-500">
               {weekdays
                 .filter((day) => day in openingHours)
                 .map((day) => (
                   <li key={day}>
-                    {day}: {openingHours[day]}
+                    {dict.location.weekdays[day]}: {openingHours[day]}
                   </li>
                 ))}
             </ul>
@@ -157,10 +161,10 @@ export function LocationCard({
 
         <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
           {weather.status === "loading" && (
-            <p className="text-sm text-zinc-400">Loading weather…</p>
+            <p className="text-sm text-zinc-400">{dict.location.loadingWeather}</p>
           )}
           {weather.status === "error" && (
-            <p className="text-sm text-zinc-400">Weather data unavailable.</p>
+            <p className="text-sm text-zinc-400">{dict.location.weatherUnavailable}</p>
           )}
           {weather.status === "ready" && <WeatherStrip observation={weather.observation} />}
         </div>
@@ -171,6 +175,7 @@ export function LocationCard({
               <BookingPanel
                 locationId={location.id}
                 capacity={location.capacity}
+                locale={locale}
                 refreshToken={openVisit?.locationId === location.id ? openVisit.id : null}
               />
             )}
@@ -178,7 +183,7 @@ export function LocationCard({
             {openVisit?.locationId === location.id ? (
               <div className="mt-4 space-y-1.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
                 <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
-                  You are here 🔥 — started{" "}
+                  {dict.location.youAreHere} 🔥 — {dict.location.startedAt}{" "}
                   {new Date(openVisit.startedAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -203,28 +208,28 @@ export function LocationCard({
                     onClick={() => setShowFinishForm(true)}
                     className="w-full rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
                   >
-                    Finish visit
+                    {dict.location.finishVisit}
                   </button>
                 )}
               </div>
             ) : openVisit ? (
               <p className="mt-4 border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800">
-                You have an active visit at{" "}
-                <strong>{openVisitLocationName ?? "another location"}</strong> — finish it
-                before checking in here.
+                {dict.location.activeElsewhere}{" "}
+                <strong>{openVisitLocationName ?? dict.location.otherLocation}</strong> —{" "}
+                {dict.location.activeElsewhereSuffix}
               </p>
             ) : (
               <CheckInButton locationId={location.id} onStarted={onVisitStarted} />
             )}
 
-            <ReportButtons locationId={location.id} />
+            <ReportButtons locationId={location.id} locale={locale} />
           </>
         ) : (
           <p className="mt-4 border-t border-zinc-100 pt-4 text-sm text-zinc-500 dark:border-zinc-800">
             <Link href="/login" className="underline">
-              Log in
+              {dict.auth.login}
             </Link>{" "}
-            to report status.
+            {dict.location.loginToReport}
           </p>
         )}
       </div>

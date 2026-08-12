@@ -2,16 +2,9 @@
 
 import { useEffect, useState } from "react";
 import type { Booking } from "@/lib/bookings";
+import { getDictionary, type Locale } from "@/lib/i18n";
 import type { BookingStatus } from "@/lib/supabase/types";
 import { BookingForm } from "./BookingForm";
-
-const statusLabel: Record<BookingStatus, string> = {
-  confirmed: "Confirmed — awaiting check-in",
-  fulfilled: "Checked in ✓",
-  no_show: "Missed (no check-in)",
-  cancelled: "Cancelled",
-  completed: "Completed",
-};
 
 const statusColor: Record<BookingStatus, string> = {
   confirmed: "text-amber-600 dark:text-amber-400",
@@ -33,15 +26,25 @@ function formatRange(booking: Booking): string {
 export function BookingPanel({
   locationId,
   capacity,
+  locale,
   refreshToken,
 }: {
   locationId: string;
   capacity: number | null;
+  locale: Locale;
   // Bumped by LocationCard when this location's open visit changes, so a
   // QR check-in that fulfills a booking is reflected without a manual
   // refresh.
   refreshToken: string | null;
 }) {
+  const dict = getDictionary(locale).booking;
+  const statusLabel: Record<BookingStatus, string> = {
+    confirmed: dict.statusConfirmed,
+    fulfilled: dict.statusFulfilled,
+    no_show: dict.statusNoShow,
+    cancelled: dict.statusCancelled,
+    completed: dict.statusCompleted,
+  };
   const [bookings, setBookings] = useState<Booking[] | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -66,11 +69,10 @@ export function BookingPanel({
 
   return (
     <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Book a slot</h3>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-        Booking reserves a time, not a physical place — confirm you&apos;re here by scanning the
-        QR code on site. Slots not checked into by the end of the hour are marked as missed.
-      </p>
+      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+        {dict.bookSlotTitle}
+      </h3>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400">{dict.bookSlotHint}</p>
 
       {bookings && bookings.length > 0 && (
         <ul className="space-y-1">
@@ -80,7 +82,7 @@ export function BookingPanel({
               className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300"
             >
               <span>
-                {formatRange(booking)} · {booking.people_count} people
+                {formatRange(booking)} · {booking.people_count} {dict.people}
               </span>
               <span className={statusColor[booking.status]}>{statusLabel[booking.status]}</span>
             </li>
@@ -92,6 +94,7 @@ export function BookingPanel({
         <BookingForm
           locationId={locationId}
           capacity={capacity}
+          locale={locale}
           onCreated={(booking) => {
             setBookings((prev) => [booking, ...(prev ?? [])]);
             setShowForm(false);
@@ -105,7 +108,7 @@ export function BookingPanel({
             onClick={() => setShowForm(true)}
             className="w-full rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
-            Book a slot
+            {dict.bookSlotButton}
           </button>
         )
       )}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
+import { getLocale } from "@/lib/get-locale";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,10 +32,12 @@ export const metadata: Metadata = {
   description: "Live occupancy, water temperature, and booking for Tallinn's saunas and winter swimming spots.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${ibmPlexSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
