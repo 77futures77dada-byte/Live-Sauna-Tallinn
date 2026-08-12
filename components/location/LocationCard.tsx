@@ -7,7 +7,7 @@ import { BeforeAfterPhoto } from "@/components/visit/BeforeAfterPhoto";
 import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import { locationTypeIconComponent } from "@/lib/location-types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
@@ -186,7 +186,7 @@ export function LocationCard({
               <div className="mt-4 space-y-1.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
                 <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
                   {dict.location.youAreHere} 🔥 — {dict.location.startedAt}{" "}
-                  {new Date(openVisit.startedAt).toLocaleTimeString([], {
+                  {new Date(openVisit.startedAt).toLocaleTimeString(bcp47Locale[locale], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}

@@ -3,12 +3,12 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { nextHourSlots } from "@/lib/bookings";
 import type { Booking } from "@/lib/bookings";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 
 const SLOT_COUNT = 12;
 
-function formatSlot(date: Date): string {
-  return date.toLocaleString([], {
+function formatSlot(date: Date, locale: Locale): string {
+  return date.toLocaleString(bcp47Locale[locale], {
     weekday: "short",
     hour: "2-digit",
     minute: "2-digit",
@@ -93,7 +93,7 @@ export function BookingForm({
         >
           {slots.map((slot) => (
             <option key={slot.toISOString()} value={slot.toISOString()}>
-              {formatSlot(slot)}
+              {formatSlot(slot, locale)}
             </option>
           ))}
         </select>

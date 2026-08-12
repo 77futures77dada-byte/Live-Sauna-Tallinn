@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocale } from "@/lib/get-locale";
-import { getDictionary } from "@/lib/i18n";
+import { bcp47Locale, getDictionary } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getReputationSummary } from "@/lib/reputation";
@@ -109,7 +109,7 @@ export default async function ProfilePage() {
                       {location?.name ?? dict.profile.unknownLocation}
                     </p>
                     <p className="text-xs text-zinc-500">
-                      {new Date(visit.started_at).toLocaleString([], {
+                      {new Date(visit.started_at).toLocaleString(bcp47Locale[locale], {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}

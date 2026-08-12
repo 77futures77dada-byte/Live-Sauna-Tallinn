@@ -16,3 +16,13 @@ export function isLocale(value: string | undefined | null): value is Locale {
 export function getDictionary(locale: Locale) {
   return dictionaries[locale];
 }
+
+// BCP-47 tags for Date#toLocaleString/toLocaleTimeString — passing the
+// selected locale explicitly instead of `[]` (browser default) so a
+// Russian-language visitor on an English-language browser still sees
+// Russian-formatted dates, not a mix of the two.
+export const bcp47Locale: Record<Locale, string> = {
+  et: "et-EE",
+  ru: "ru-RU",
+  en: "en-GB",
+};

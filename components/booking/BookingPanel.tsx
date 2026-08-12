@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Booking } from "@/lib/bookings";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import type { BookingStatus } from "@/lib/supabase/types";
 import { BookingForm } from "./BookingForm";
 
@@ -14,10 +14,11 @@ const statusColor: Record<BookingStatus, string> = {
   completed: "text-zinc-400",
 };
 
-function formatRange(booking: Booking): string {
+function formatRange(booking: Booking, locale: Locale): string {
   const start = new Date(booking.start_time);
   const end = new Date(booking.end_time);
-  return `${start.toLocaleString([], { weekday: "short", hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  const tag = bcp47Locale[locale];
+  return `${start.toLocaleString(tag, { weekday: "short", hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString(tag, { hour: "2-digit", minute: "2-digit" })}`;
 }
 
 // Bookings here don't guarantee a physical hold by themselves — see the
@@ -82,7 +83,7 @@ export function BookingPanel({
               className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300"
             >
               <span>
-                {formatRange(booking)} · {booking.people_count} {dict.people}
+                {formatRange(booking, locale)} · {booking.people_count} {dict.people}
               </span>
               <span className={statusColor[booking.status]}>{statusLabel[booking.status]}</span>
             </li>
