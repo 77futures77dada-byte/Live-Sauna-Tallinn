@@ -10,6 +10,7 @@
     "generate-qr": "tsx scripts/generate-qr.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.16.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.2",
     "fast-xml-parser": "^5.10.1",

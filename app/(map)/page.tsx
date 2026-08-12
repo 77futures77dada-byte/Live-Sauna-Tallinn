@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMapPageData } from "@/lib/map-data";
 import { isAdmin } from "@/lib/admin";
 import { getLocale } from "@/lib/get-locale";
+import { isGeminiConfigured } from "@/lib/gemini";
 
 export default async function MapPage() {
   const supabase = await createClient();
@@ -19,7 +20,12 @@ export default async function MapPage() {
 
   return (
     <div className="flex h-screen flex-col">
-      <AppHeader userEmail={user?.email ?? null} isAdmin={admin} locale={locale} />
+      <AppHeader
+        userEmail={user?.email ?? null}
+        isAdmin={admin}
+        locale={locale}
+        assistantEnabled={isGeminiConfigured()}
+      />
       <MapScreen
         locations={locations}
         initialOccupancy={[...occupancy.entries()]}

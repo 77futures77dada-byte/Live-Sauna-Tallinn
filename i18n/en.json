@@ -166,5 +166,25 @@
     "thanks": "Thanks — reported!",
     "genericError": "Something went wrong",
     "networkError": "Network error"
+  },
+  "assistant": {
+    "title": "Ask the assistant",
+    "openLabel": "AI assistant",
+    "unavailable": "The AI assistant isn't available right now.",
+    "placeholder": "Ask about occupancy, water temperature, ice…",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "greeting": "Ask me things like:",
+    "examplesLeastCrowded": "Where's least crowded right now?",
+    "examplesColdestWater": "Where's the coldest water?",
+    "examplesNearestSauna": "Which sauna is closest to me?",
+    "showOnMap": "View on map",
+    "needsLocation": "I need your location for that — please allow location access and try again.",
+    "notConfigured": "The AI assistant isn't configured yet.",
+    "rateLimited": "Too many questions — try again in a bit.",
+    "genericError": "Something went wrong. Try again.",
+    "networkError": "Network error.",
+    "close": "Close",
+    "invalidQuery": "Type a question first."
   }
 }

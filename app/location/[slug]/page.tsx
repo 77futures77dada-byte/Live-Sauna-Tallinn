@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMapPageData } from "@/lib/map-data";
 import { isAdmin } from "@/lib/admin";
 import { getLocale } from "@/lib/get-locale";
+import { isGeminiConfigured } from "@/lib/gemini";
 
 // Deep-link target for QR codes (scripts/generate-qr.ts) — same map/card
 // UI as the main screen, just centered on and pre-opened to one location.
@@ -35,7 +36,12 @@ export default async function LocationPage({
 
   return (
     <div className="flex h-screen flex-col">
-      <AppHeader userEmail={user?.email ?? null} isAdmin={admin} locale={locale} />
+      <AppHeader
+        userEmail={user?.email ?? null}
+        isAdmin={admin}
+        locale={locale}
+        assistantEnabled={isGeminiConfigured()}
+      />
       <MapScreen
         locations={locations}
         initialOccupancy={[...occupancy.entries()]}

@@ -166,5 +166,25 @@
     "thanks": "Aitäh — teatatud!",
     "genericError": "Midagi läks valesti",
     "networkError": "Võrgu viga"
+  },
+  "assistant": {
+    "title": "Küsi assistendilt",
+    "openLabel": "AI assistent",
+    "unavailable": "AI assistent pole hetkel saadaval.",
+    "placeholder": "Küsi hõivatuse, vee temperatuuri või jää kohta…",
+    "send": "Saada",
+    "thinking": "Mõtlen…",
+    "greeting": "Proovi näiteks:",
+    "examplesLeastCrowded": "Kus on praegu kõige vähem rahvast?",
+    "examplesColdestWater": "Kus on kõige külmem vesi?",
+    "examplesNearestSauna": "Milline saun on mulle kõige lähemal?",
+    "showOnMap": "Vaata kaardil",
+    "needsLocation": "Selleks on vaja sinu asukohta — luba asukoht ja proovi uuesti.",
+    "notConfigured": "AI assistent pole veel seadistatud.",
+    "rateLimited": "Liiga palju küsimusi — proovi natukese aja pärast uuesti.",
+    "genericError": "Midagi läks valesti. Proovi uuesti.",
+    "networkError": "Võrgu viga.",
+    "close": "Sulge",
+    "invalidQuery": "Kirjuta enne küsimus."
   }
 }
