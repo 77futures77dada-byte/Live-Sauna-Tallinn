@@ -26,10 +26,10 @@ body {
 }
 
 /* Leaflet's default tile-load background is light gray, which flashes
-   before CartoDB Dark Matter's tiles arrive and around any ungeocoded
-   edge — swap it for the same dark navy as the rest of the palette. */
+   before CartoDB Voyager's tiles arrive and around any ungeocoded edge —
+   match Voyager's own light neutral base so the flash is unnoticeable. */
 .leaflet-container {
-  background: #0e2233;
+  background: #f2efe9;
 }
 
 /* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
@@ -42,10 +42,10 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 9999px;
-  border: 2.5px solid #eaf3f5;
-  /* CartoDB Dark Matter's roads/water are near-black, so a plain black
-     shadow disappears into the tile — a larger, darker shadow keeps the
-     marker's edge legible against any tile color underneath. */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  /* A dark ring (rather than a light one) keeps every freshness fill —
+     including the pale gray "unknown" dot — legible against Voyager's
+     light basemap. */
+  border: 2.5px solid #0e2233;
+  box-shadow: 0 2px 6px rgba(14, 34, 51, 0.35);
   font-size: 16px;
 }
