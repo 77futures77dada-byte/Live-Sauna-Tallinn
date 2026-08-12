@@ -12,7 +12,74 @@
     "login": "Log in",
     "logout": "Log out",
     "continueWithGoogle": "Continue with Google",
-    "sendMagicLink": "Send magic link"
+    "sendMagicLink": "Send magic link",
+    "or": "or",
+    "emailPlaceholder": "you@example.com",
+    "sending": "Sending…",
+    "checkInbox": "Check your inbox for the login link.",
+    "loginError": "Something went wrong. Try again."
+  },
+  "locationType": {
+    "sauna": "Sauna",
+    "sauna_swimming": "Sauna & swimming",
+    "winter_swimming": "Winter swimming",
+    "beach": "Beach",
+    "ice_swimming": "Ice swimming"
+  },
+  "freshness": {
+    "high": "Live",
+    "medium": "Recent",
+    "low": "Stale",
+    "unknown": "No live data"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{n} min ago",
+    "hoursAgo": "{n} hr ago",
+    "hoursMinutesAgo": "{h} hr {m} min ago"
+  },
+  "map": {
+    "loading": "Loading map…"
+  },
+  "visit": {
+    "checkIn": "I'm here 🔥",
+    "checkingIn": "Checking in…",
+    "genericError": "Something went wrong",
+    "networkError": "Network error",
+    "rating": "Rating",
+    "starLabel": {
+      "1": "1 star",
+      "2": "2 stars",
+      "3": "3 stars",
+      "4": "4 stars",
+      "5": "5 stars"
+    },
+    "howBusy": "How busy was it?",
+    "crowdLow": "Quiet",
+    "crowdMedium": "Moderate",
+    "crowdHigh": "Busy",
+    "finishing": "Finishing…",
+    "finishVisit": "Finish visit",
+    "cancel": "Cancel",
+    "uploadFailed": "Upload failed",
+    "takeBeforePhoto": "Take before photo",
+    "takeAfterPhoto": "Take after photo",
+    "photoSaved": "Photo saved ✓",
+    "uploading": "Uploading…"
+  },
+  "profile": {
+    "backToMap": "← Map",
+    "title": "Profile",
+    "reputation": "Reputation",
+    "reports": "Reports",
+    "visits": "Visits",
+    "photos": "Photos",
+    "myVisits": "My visits",
+    "noVisits": "No visits yet — check in on the map.",
+    "unknownLocation": "Unknown location",
+    "inProgress": "In progress",
+    "beforePhotoAlt": "before photo",
+    "afterPhotoAlt": "after photo"
   },
   "switcher": {
     "et": "Eesti",
@@ -47,6 +114,12 @@
     "loadingWeather": "Loading weather…",
     "weatherUnavailable": "Weather data unavailable.",
     "close": "Close",
+    "weatherAir": "air",
+    "weatherStationWater": "water (station)",
+    "waterReported": "reported",
+    "peopleUnit": "people",
+    "noWaterReports": "No recent water temperature reports.",
+    "noIceReports": "No recent ice reports.",
     "weekdays": {
       "mon": "Mon",
       "tue": "Tue",

@@ -11,13 +11,6 @@ export const freshnessColor: Record<FreshnessLevel, string> = {
   unknown: "#d4d4d8",
 };
 
-export const freshnessLabel: Record<FreshnessLevel, string> = {
-  high: "Live",
-  medium: "Recent",
-  low: "Stale",
-  unknown: "No live data",
-};
-
 // The map marker's type glyph sits on top of freshnessColor — a single
 // stroke color doesn't read on both the bright green/gold fills and the
 // pale gray ones, so pick light-on-dark or dark-on-light per level.
@@ -41,15 +34,24 @@ export function getFreshness(timestamp: string | null): FreshnessLevel {
   return "unknown";
 }
 
-export function formatAge(timestamp: string): string {
+export type TimeDictionary = {
+  justNow: string;
+  minutesAgo: string;
+  hoursAgo: string;
+  hoursMinutesAgo: string;
+};
+
+export function formatAge(timestamp: string, dict: TimeDictionary): string {
   const minutes = Math.max(
     0,
     Math.round((Date.now() - new Date(timestamp).getTime()) / 60_000),
   );
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 1) return dict.justNow;
+  if (minutes < 60) return dict.minutesAgo.replace("{n}", String(minutes));
 
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;
-  return remainder === 0 ? `${hours} hr ago` : `${hours} hr ${remainder} min ago`;
+  return remainder === 0
+    ? dict.hoursAgo.replace("{n}", String(hours))
+    : dict.hoursMinutesAgo.replace("{h}", String(hours)).replace("{m}", String(remainder));
 }

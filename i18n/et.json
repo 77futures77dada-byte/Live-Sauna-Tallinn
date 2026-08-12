@@ -12,7 +12,74 @@
     "login": "Logi sisse",
     "logout": "Logi välja",
     "continueWithGoogle": "Jätka Google'iga",
-    "sendMagicLink": "Saada sisselogimislink"
+    "sendMagicLink": "Saada sisselogimislink",
+    "or": "või",
+    "emailPlaceholder": "sina@example.com",
+    "sending": "Saatmine…",
+    "checkInbox": "Kontrolli oma postkasti sisselogimislingi jaoks.",
+    "loginError": "Midagi läks valesti. Proovi uuesti."
+  },
+  "locationType": {
+    "sauna": "Saun",
+    "sauna_swimming": "Saun ja ujumine",
+    "winter_swimming": "Talisuplus",
+    "beach": "Rand",
+    "ice_swimming": "Jääujumine"
+  },
+  "freshness": {
+    "high": "Reaalajas",
+    "medium": "Hiljutine",
+    "low": "Vananenud",
+    "unknown": "Reaalajas andmed puuduvad"
+  },
+  "time": {
+    "justNow": "just praegu",
+    "minutesAgo": "{n} min tagasi",
+    "hoursAgo": "{n} t tagasi",
+    "hoursMinutesAgo": "{h} t {m} min tagasi"
+  },
+  "map": {
+    "loading": "Kaardi laadimine…"
+  },
+  "visit": {
+    "checkIn": "Ma olen siin 🔥",
+    "checkingIn": "Sisseregistreerimine…",
+    "genericError": "Midagi läks valesti",
+    "networkError": "Võrgu viga",
+    "rating": "Hinnang",
+    "starLabel": {
+      "1": "1 täht",
+      "2": "2 tähte",
+      "3": "3 tähte",
+      "4": "4 tähte",
+      "5": "5 tähte"
+    },
+    "howBusy": "Kui rahvarohke oli?",
+    "crowdLow": "Vaikne",
+    "crowdMedium": "Mõõdukas",
+    "crowdHigh": "Rahvarohke",
+    "finishing": "Lõpetamine…",
+    "finishVisit": "Lõpeta külastus",
+    "cancel": "Tühista",
+    "uploadFailed": "Üleslaadimine ebaõnnestus",
+    "takeBeforePhoto": "Tee foto enne",
+    "takeAfterPhoto": "Tee foto pärast",
+    "photoSaved": "Foto salvestatud ✓",
+    "uploading": "Üleslaadimine…"
+  },
+  "profile": {
+    "backToMap": "← Kaart",
+    "title": "Profiil",
+    "reputation": "Maine",
+    "reports": "Teated",
+    "visits": "Külastused",
+    "photos": "Fotod",
+    "myVisits": "Minu külastused",
+    "noVisits": "Külastusi pole veel — registreeri end kaardil sisse.",
+    "unknownLocation": "Tundmatu asukoht",
+    "inProgress": "Käimasolev",
+    "beforePhotoAlt": "foto enne",
+    "afterPhotoAlt": "foto pärast"
   },
   "switcher": {
     "et": "Eesti",
@@ -47,6 +114,12 @@
     "loadingWeather": "Ilma laadimine…",
     "weatherUnavailable": "Ilmaandmed pole saadaval.",
     "close": "Sulge",
+    "weatherAir": "õhk",
+    "weatherStationWater": "vesi (jaam)",
+    "waterReported": "teatatud",
+    "peopleUnit": "inimest",
+    "noWaterReports": "Hiljutisi vee temperatuuri teateid pole.",
+    "noIceReports": "Hiljutisi jääteateid pole.",
     "weekdays": {
       "mon": "E",
       "tue": "T",

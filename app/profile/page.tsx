@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getLocale } from "@/lib/get-locale";
+import { getDictionary } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getReputationSummary } from "@/lib/reputation";
 
-const crowdLevelLabel: Record<string, string> = {
-  low: "Quiet",
-  medium: "Moderate",
-  high: "Busy",
-};
-
 export default async function ProfilePage() {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const crowdLevelLabel: Record<string, string> = {
+    low: dict.visit.crowdLow,
+    medium: dict.visit.crowdMedium,
+    high: dict.visit.crowdHigh,
+  };
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -58,36 +62,36 @@ export default async function ProfilePage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <Link href="/" className="text-sm text-zinc-500 hover:underline">
-        ← Map
+        {dict.profile.backToMap}
       </Link>
 
-      <h1 className="mt-2 text-2xl font-semibold">Profile</h1>
+      <h1 className="mt-2 text-2xl font-semibold">{dict.profile.title}</h1>
       <p className="text-sm text-zinc-500">{user.email}</p>
 
       <div className="mt-6 rounded-xl border border-zinc-100 p-5 dark:border-zinc-800">
         <p className="text-3xl font-semibold">{summary.reputation}</p>
-        <p className="text-sm text-zinc-500">Reputation</p>
+        <p className="text-sm text-zinc-500">{dict.profile.reputation}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-lg font-semibold">{summary.reportsCount}</p>
-            <p className="text-xs text-zinc-500">Reports</p>
+            <p className="text-xs text-zinc-500">{dict.profile.reports}</p>
           </div>
           <div>
             <p className="text-lg font-semibold">{summary.completedVisits}</p>
-            <p className="text-xs text-zinc-500">Visits</p>
+            <p className="text-xs text-zinc-500">{dict.profile.visits}</p>
           </div>
           <div>
             <p className="text-lg font-semibold">{summary.photosCount}</p>
-            <p className="text-xs text-zinc-500">Photos</p>
+            <p className="text-xs text-zinc-500">{dict.profile.photos}</p>
           </div>
         </div>
       </div>
 
-      <h2 className="mt-8 text-lg font-semibold">My visits</h2>
+      <h2 className="mt-8 text-lg font-semibold">{dict.profile.myVisits}</h2>
 
       {!visits || visits.length === 0 ? (
-        <p className="mt-2 text-sm text-zinc-500">No visits yet — check in on the map.</p>
+        <p className="mt-2 text-sm text-zinc-500">{dict.profile.noVisits}</p>
       ) : (
         <ul className="mt-3 space-y-3">
           {visits.map((visit) => {
@@ -101,7 +105,9 @@ export default async function ProfilePage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-medium">{location?.name ?? "Unknown location"}</p>
+                    <p className="font-medium">
+                      {location?.name ?? dict.profile.unknownLocation}
+                    </p>
                     <p className="text-xs text-zinc-500">
                       {new Date(visit.started_at).toLocaleString([], {
                         dateStyle: "medium",
@@ -111,7 +117,7 @@ export default async function ProfilePage() {
                   </div>
                   {visit.finished_at === null ? (
                     <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
-                      In progress
+                      {dict.profile.inProgress}
                     </span>
                   ) : (
                     visit.rating !== null && (
@@ -139,7 +145,11 @@ export default async function ProfilePage() {
                         <img
                           key={photo.id}
                           src={url}
-                          alt={`${photo.type} photo`}
+                          alt={
+                            photo.type === "before"
+                              ? dict.profile.beforePhotoAlt
+                              : dict.profile.afterPhotoAlt
+                          }
                           className="h-20 w-20 rounded-lg object-cover"
                         />
                       );

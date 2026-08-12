@@ -8,7 +8,7 @@ import { CheckInButton } from "@/components/visit/CheckInButton";
 import { VisitSummaryForm } from "@/components/visit/VisitSummaryForm";
 import { formatAge, getFreshness } from "@/lib/freshness";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { locationTypeIconComponent, locationTypeLabel } from "@/lib/location-types";
+import { locationTypeIconComponent } from "@/lib/location-types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import type { OpenVisit } from "@/lib/visits";
@@ -103,7 +103,7 @@ export function LocationCard({
             <h2 className="text-lg font-semibold">{location.name}</h2>
             <p className="flex items-center gap-1.5 text-sm text-zinc-500">
               <TypeIcon className="h-4 w-4 shrink-0" aria-hidden />
-              {locationTypeLabel[location.type]}
+              {dict.locationType[location.type]}
               {location.is_free ? ` · ${dict.location.free}` : ` · ${dict.location.paid}`}
             </p>
           </div>
@@ -129,11 +129,11 @@ export function LocationCard({
               👥 {dict.location.capacity}: {location.capacity}
             </span>
           )}
-          <OccupancyBadge level={occupancyLevel} count={occupancy?.peopleCount} />
+          <OccupancyBadge level={occupancyLevel} count={occupancy?.peopleCount} locale={locale} />
         </div>
         <p className="mt-1 text-xs text-zinc-400">
           {occupancy && occupancyLevel !== "unknown"
-            ? `${dict.location.updatedPrefix} ${formatAge(occupancy.createdAt)}`
+            ? `${dict.location.updatedPrefix} ${formatAge(occupancy.createdAt, dict.time)}`
             : dict.location.noOccupancy}
         </p>
 
@@ -155,8 +155,8 @@ export function LocationCard({
         )}
 
         <div className="mt-4 space-y-1.5">
-          <WaterTempStat report={water} />
-          <IceStatus report={ice} />
+          <WaterTempStat report={water} locale={locale} />
+          <IceStatus report={ice} locale={locale} />
         </div>
 
         <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
@@ -166,7 +166,9 @@ export function LocationCard({
           {weather.status === "error" && (
             <p className="text-sm text-zinc-400">{dict.location.weatherUnavailable}</p>
           )}
-          {weather.status === "ready" && <WeatherStrip observation={weather.observation} />}
+          {weather.status === "ready" && (
+            <WeatherStrip observation={weather.observation} locale={locale} />
+          )}
         </div>
 
         {userId ? (
@@ -189,12 +191,13 @@ export function LocationCard({
                     minute: "2-digit",
                   })}
                 </p>
-                <BeforeAfterPhoto visitId={openVisit.id} type="before" />
+                <BeforeAfterPhoto visitId={openVisit.id} type="before" locale={locale} />
                 {showFinishForm ? (
                   <>
-                    <BeforeAfterPhoto visitId={openVisit.id} type="after" />
+                    <BeforeAfterPhoto visitId={openVisit.id} type="after" locale={locale} />
                     <VisitSummaryForm
                       visitId={openVisit.id}
+                      locale={locale}
                       onFinished={() => {
                         setShowFinishForm(false);
                         onVisitFinished();
@@ -219,7 +222,7 @@ export function LocationCard({
                 {dict.location.activeElsewhereSuffix}
               </p>
             ) : (
-              <CheckInButton locationId={location.id} onStarted={onVisitStarted} />
+              <CheckInButton locationId={location.id} locale={locale} onStarted={onVisitStarted} />
             )}
 
             <ReportButtons locationId={location.id} locale={locale} />

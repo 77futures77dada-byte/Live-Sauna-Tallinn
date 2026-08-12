@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
@@ -9,21 +9,17 @@ import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
-import type { Locale } from "@/lib/i18n";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
 // react-leaflet touches `window`/`document` at module-eval time, so it
 // can't be server-rendered — see docs/app/guides/lazy-loading in the
 // bundled Next.js docs ("ssr: false is not allowed in Server Components").
-const MapView = dynamic(() => import("./MapView"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center text-sm text-zinc-400">
-      Loading map…
-    </div>
-  ),
-});
+// next/dynamic is a composite of React.lazy() + Suspense (same doc) — the
+// loading fallback is a plain <Suspense> below instead of the `loading`
+// option here, since that option can't see the current locale prop.
+const MapView = dynamic(() => import("./MapView"), { ssr: false });
 
 // How often to force a re-render so freshness (high/medium/low/unknown)
 // keeps decaying on screen even when no new report arrives — see
@@ -153,15 +149,25 @@ export function MapScreen({
     );
   }
 
+  const dict = getDictionary(locale);
+
   return (
     <div className="relative min-h-0 w-full flex-1">
-      <MapView
-        locations={locations}
-        occupancy={occupancy}
-        onSelect={setSelected}
-        center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
-        zoom={focusLocation ? 15 : undefined}
-      />
+      <Suspense
+        fallback={
+          <div className="flex h-full w-full items-center justify-center text-sm text-zinc-400">
+            {dict.map.loading}
+          </div>
+        }
+      >
+        <MapView
+          locations={locations}
+          occupancy={occupancy}
+          onSelect={setSelected}
+          center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
+          zoom={focusLocation ? 15 : undefined}
+        />
+      </Suspense>
       {selected && (
         <LocationCard
           key={selected.id}

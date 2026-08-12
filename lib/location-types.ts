@@ -12,11 +12,3 @@ export const locationTypeIconComponent: Record<LocationType, LucideIcon> = {
   beach: Umbrella,
   ice_swimming: Snowflake,
 };
-
-export const locationTypeLabel: Record<LocationType, string> = {
-  sauna: "Sauna",
-  sauna_swimming: "Sauna & swimming",
-  winter_swimming: "Winter swimming",
-  beach: "Beach",
-  ice_swimming: "Ice swimming",
-};

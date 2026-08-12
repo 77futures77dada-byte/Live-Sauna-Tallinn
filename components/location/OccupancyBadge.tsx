@@ -1,4 +1,5 @@
-import { freshnessColor, freshnessLabel, type FreshnessLevel } from "@/lib/freshness";
+import { freshnessColor, type FreshnessLevel } from "@/lib/freshness";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 // The count is only shown for high/medium/low freshness — per
 // docs/ARCHITECTURE.md section 5, "unknown" never shows a number, only
@@ -6,14 +7,17 @@ import { freshnessColor, freshnessLabel, type FreshnessLevel } from "@/lib/fresh
 export function OccupancyBadge({
   level,
   count,
+  locale,
 }: {
   level: FreshnessLevel;
   count?: number;
+  locale: Locale;
 }) {
+  const dict = getDictionary(locale);
   const label =
     level !== "unknown" && count !== undefined
-      ? `${count} people · ${freshnessLabel[level]}`
-      : freshnessLabel[level];
+      ? `${count} ${dict.location.peopleUnit} · ${dict.freshness[level]}`
+      : dict.freshness[level];
 
   return (
     <span

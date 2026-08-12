@@ -12,7 +12,74 @@
     "login": "Войти",
     "logout": "Выйти",
     "continueWithGoogle": "Войти через Google",
-    "sendMagicLink": "Отправить ссылку для входа"
+    "sendMagicLink": "Отправить ссылку для входа",
+    "or": "или",
+    "emailPlaceholder": "you@example.com",
+    "sending": "Отправка…",
+    "checkInbox": "Проверьте почту — там ссылка для входа.",
+    "loginError": "Что-то пошло не так. Попробуйте снова."
+  },
+  "locationType": {
+    "sauna": "Сауна",
+    "sauna_swimming": "Сауна и плавание",
+    "winter_swimming": "Зимнее плавание",
+    "beach": "Пляж",
+    "ice_swimming": "Купание в проруби"
+  },
+  "freshness": {
+    "high": "Сейчас",
+    "medium": "Недавно",
+    "low": "Устарело",
+    "unknown": "Нет данных в реальном времени"
+  },
+  "time": {
+    "justNow": "только что",
+    "minutesAgo": "{n} мин назад",
+    "hoursAgo": "{n} ч назад",
+    "hoursMinutesAgo": "{h} ч {m} мин назад"
+  },
+  "map": {
+    "loading": "Загрузка карты…"
+  },
+  "visit": {
+    "checkIn": "Я здесь 🔥",
+    "checkingIn": "Регистрация…",
+    "genericError": "Что-то пошло не так",
+    "networkError": "Ошибка сети",
+    "rating": "Оценка",
+    "starLabel": {
+      "1": "1 звезда",
+      "2": "2 звезды",
+      "3": "3 звезды",
+      "4": "4 звезды",
+      "5": "5 звёзд"
+    },
+    "howBusy": "Насколько людно было?",
+    "crowdLow": "Тихо",
+    "crowdMedium": "Умеренно",
+    "crowdHigh": "Людно",
+    "finishing": "Завершение…",
+    "finishVisit": "Завершить визит",
+    "cancel": "Отмена",
+    "uploadFailed": "Не удалось загрузить",
+    "takeBeforePhoto": "Сфотографировать до",
+    "takeAfterPhoto": "Сфотографировать после",
+    "photoSaved": "Фото сохранено ✓",
+    "uploading": "Загрузка…"
+  },
+  "profile": {
+    "backToMap": "← Карта",
+    "title": "Профиль",
+    "reputation": "Репутация",
+    "reports": "Отчёты",
+    "visits": "Визиты",
+    "photos": "Фото",
+    "myVisits": "Мои визиты",
+    "noVisits": "Пока нет визитов — зарегистрируйтесь на карте.",
+    "unknownLocation": "Неизвестное место",
+    "inProgress": "В процессе",
+    "beforePhotoAlt": "фото до",
+    "afterPhotoAlt": "фото после"
   },
   "switcher": {
     "et": "Eesti",
@@ -47,6 +114,12 @@
     "loadingWeather": "Загрузка погоды…",
     "weatherUnavailable": "Данные о погоде недоступны.",
     "close": "Закрыть",
+    "weatherAir": "воздух",
+    "weatherStationWater": "вода (станция)",
+    "waterReported": "сообщено",
+    "peopleUnit": "человек",
+    "noWaterReports": "Нет недавних сообщений о температуре воды.",
+    "noIceReports": "Нет недавних сообщений о льде.",
     "weekdays": {
       "mon": "Пн",
       "tue": "Вт",

@@ -1,17 +1,19 @@
 import { formatAge, freshnessColor, getFreshness } from "@/lib/freshness";
+import { getDictionary, type Locale } from "@/lib/i18n";
 import type { LatestIce } from "@/lib/reports";
 
-const conditionLabel: Record<LatestIce["condition"], string> = {
-  none: "No ice",
-  partial: "Partial ice",
-  frozen: "Frozen",
-};
-
-export function IceStatus({ report }: { report?: LatestIce }) {
+export function IceStatus({ report, locale }: { report?: LatestIce; locale: Locale }) {
+  const dict = getDictionary(locale);
   const level = getFreshness(report?.createdAt ?? null);
 
+  const conditionLabel: Record<LatestIce["condition"], string> = {
+    none: dict.report.noIce,
+    partial: dict.report.partialIce,
+    frozen: dict.report.frozen,
+  };
+
   if (!report || level === "unknown") {
-    return <p className="text-sm text-zinc-400">No recent ice reports.</p>;
+    return <p className="text-sm text-zinc-400">{dict.location.noIceReports}</p>;
   }
 
   return (
@@ -20,7 +22,7 @@ export function IceStatus({ report }: { report?: LatestIce }) {
         className="h-2 w-2 rounded-full"
         style={{ backgroundColor: freshnessColor[level] }}
       />
-      🧊 {conditionLabel[report.condition]} · {formatAge(report.createdAt)}
+      🧊 {conditionLabel[report.condition]} · {formatAge(report.createdAt, dict.time)}
     </p>
   );
 }

@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import en from "@/i18n/en.json";
 import { formatAge } from "@/lib/freshness";
+
+// Admin panel is an internal English-only tool (not run through the
+// visitor-facing locale switcher) — formatAge still needs a
+// TimeDictionary, so it's given the English one directly.
+const englishTime = en.time;
 
 export interface ReportRow {
   id: string;
@@ -79,7 +85,9 @@ export function RecentReportsList({ reports }: { reports: ReportRow[] }) {
                     </span>
                   )}
                 </td>
-                <td className="py-2 pr-3 text-zinc-500">{formatAge(report.createdAt)}</td>
+                <td className="py-2 pr-3 text-zinc-500">
+                  {formatAge(report.createdAt, englishTime)}
+                </td>
                 <td className="py-2">
                   {report.userId && (
                     <button

@@ -1,3 +1,4 @@
+import { getDictionary, type Locale } from "@/lib/i18n";
 import type { StationObservation } from "@/lib/weather";
 
 const windDirectionCompass = (degrees: number) => {
@@ -8,7 +9,14 @@ const windDirectionCompass = (degrees: number) => {
 // Official Ilmateenistus station reading — air, wind, and (when the
 // station has a water sensor, e.g. Pirita) water temperature. This is
 // distinct from the crowdsourced water_reports shown by WaterTempStat.
-export function WeatherStrip({ observation }: { observation: StationObservation }) {
+export function WeatherStrip({
+  observation,
+  locale,
+}: {
+  observation: StationObservation;
+  locale: Locale;
+}) {
+  const dict = getDictionary(locale);
   const hasAir = observation.airTemperature !== null;
   const hasWind = observation.windSpeed !== null;
   const hasWater = observation.waterTemperature !== null;
@@ -18,7 +26,9 @@ export function WeatherStrip({ observation }: { observation: StationObservation 
   return (
     <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-600 dark:text-zinc-300">
       {hasAir && (
-        <span>🌡️ {observation.airTemperature!.toFixed(1)}°C air</span>
+        <span>
+          🌡️ {observation.airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
+        </span>
       )}
       {hasWind && (
         <span>
@@ -28,7 +38,9 @@ export function WeatherStrip({ observation }: { observation: StationObservation 
         </span>
       )}
       {hasWater && (
-        <span>🌊 {observation.waterTemperature!.toFixed(1)}°C water (station)</span>
+        <span>
+          🌊 {observation.waterTemperature!.toFixed(1)}°C {dict.location.weatherStationWater}
+        </span>
       )}
     </div>
   );

@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 type Status = "idle" | "uploading" | "done" | "error";
 
 export function BeforeAfterPhoto({
   visitId,
   type,
+  locale,
 }: {
   visitId: string;
   type: "before" | "after";
+  locale: Locale;
 }) {
+  const dict = getDictionary(locale).visit;
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
@@ -34,28 +38,24 @@ export function BeforeAfterPhoto({
 
       if (!res.ok) {
         setStatus("error");
-        setMessage(typeof data.error === "string" ? data.error : "Upload failed");
+        setMessage(typeof data.error === "string" ? data.error : dict.uploadFailed);
         return;
       }
 
       setStatus("done");
     } catch {
       setStatus("error");
-      setMessage("Network error");
+      setMessage(dict.networkError);
     }
   }
 
-  const label = type === "before" ? "Take before photo" : "Take after photo";
+  const label = type === "before" ? dict.takeBeforePhoto : dict.takeAfterPhoto;
 
   return (
     <div>
       <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
         📷{" "}
-        {status === "done"
-          ? "Photo saved ✓"
-          : status === "uploading"
-            ? "Uploading…"
-            : label}
+        {status === "done" ? dict.photoSaved : status === "uploading" ? dict.uploading : label}
         <input
           type="file"
           accept="image/*"

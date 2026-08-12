@@ -97,7 +97,7 @@ export function HeroLanding({
               </span>
             )}
             <span className="text-[10px] text-[#7C93A0]">
-              {formatAge(weather.observation.observedAt)}
+              {formatAge(weather.observation.observedAt, dict.time)}
             </span>
           </>
         )}
