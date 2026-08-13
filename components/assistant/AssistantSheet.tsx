@@ -109,16 +109,27 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => enabled && setOpen(true)}
-        disabled={!enabled}
-        aria-label={dict.openLabel}
-        title={enabled ? dict.openLabel : dict.unavailable}
-        className="rounded-full p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
-      >
-        <Sparkles className="h-4 w-4" aria-hidden />
-      </button>
+      {/*
+        Fixed, not part of the header's flex flow — a chat-widget-style FAB
+        over the map. z-[1100] clears Leaflet's zoom control (max z-index
+        1000, see LocationCard's note on the same issue) while staying
+        below the LocationCard sheet (z-[1201]) and this panel's own
+        backdrop (z-[1300]), so it disappears behind either rather than
+        floating on top of them on mobile, where both take the full width
+        at the bottom of the screen.
+      */}
+      {!open && (
+        <button
+          type="button"
+          onClick={() => enabled && setOpen(true)}
+          disabled={!enabled}
+          aria-label={dict.openLabel}
+          title={enabled ? dict.openLabel : dict.unavailable}
+          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-[#E8632C] text-[#F7F3EC] shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Sparkles className="h-6 w-6" aria-hidden />
+        </button>
+      )}
 
       {open && (
         <>
