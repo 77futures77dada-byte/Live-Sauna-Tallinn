@@ -41,6 +41,19 @@
   "map": {
     "loading": "Loading map…"
   },
+  "sidebar": {
+    "searchPlaceholder": "Search locations…",
+    "filterAll": "All",
+    "filterQuiet": "Quiet",
+    "filterActive": "Active",
+    "filterBusy": "Busy",
+    "filterWinterSwimming": "Winter swimming",
+    "liveNow": "Live now",
+    "distanceAwayKm": "{n} km away",
+    "distanceAwayMeters": "{n} m away",
+    "emptyTitle": "No active saunas nearby",
+    "emptyHint": "Try a different search or clear your filters to see more locations."
+  },
   "visit": {
     "checkIn": "I'm here 🔥",
     "checkingIn": "Checking in…",

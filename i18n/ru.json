@@ -41,6 +41,19 @@
   "map": {
     "loading": "Загрузка карты…"
   },
+  "sidebar": {
+    "searchPlaceholder": "Поиск мест…",
+    "filterAll": "Все",
+    "filterQuiet": "Тихо",
+    "filterActive": "Активно",
+    "filterBusy": "Людно",
+    "filterWinterSwimming": "Зимнее плавание",
+    "liveNow": "Сейчас активны",
+    "distanceAwayKm": "{n} км от вас",
+    "distanceAwayMeters": "{n} м от вас",
+    "emptyTitle": "Поблизости нет активных саун",
+    "emptyHint": "Попробуйте изменить поиск или сбросить фильтры, чтобы увидеть больше мест."
+  },
   "visit": {
     "checkIn": "Я здесь 🔥",
     "checkingIn": "Регистрация…",

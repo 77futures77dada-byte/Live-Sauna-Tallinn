@@ -41,6 +41,19 @@
   "map": {
     "loading": "Kaardi laadimine…"
   },
+  "sidebar": {
+    "searchPlaceholder": "Otsi asukohti…",
+    "filterAll": "Kõik",
+    "filterQuiet": "Vaikne",
+    "filterActive": "Aktiivne",
+    "filterBusy": "Rahvarohke",
+    "filterWinterSwimming": "Talisuplus",
+    "liveNow": "Praegu aktiivsed",
+    "distanceAwayKm": "{n} km kaugusel",
+    "distanceAwayMeters": "{n} m kaugusel",
+    "emptyTitle": "Läheduses pole aktiivseid saunu",
+    "emptyHint": "Proovi teistsugust otsingut või eemalda filtrid, et näha rohkem asukohti."
+  },
   "visit": {
     "checkIn": "Ma olen siin 🔥",
     "checkingIn": "Sisseregistreerimine…",
