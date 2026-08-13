@@ -5,6 +5,8 @@ import { Suspense, useEffect, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
+import { LocationListSkeleton } from "@/components/sidebar/LocationListSkeleton";
+import { Sidebar } from "@/components/sidebar/Sidebar";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
@@ -50,6 +52,12 @@ export function MapScreen({
     : null;
 
   const [selected, setSelected] = useState<Location | null>(focusLocation);
+  // Only sidebar selection drives this — marker clicks (MapView's onSelect,
+  // handleMarkerSelect below) leave it untouched, so clicking a marker
+  // that's already on screen never re-pans/zooms it. Marker interaction
+  // itself is Phase 2 territory; this is purely the sidebar's own "focus
+  // the map on this card" behavior.
+  const [focusTarget, setFocusTarget] = useState<[number, number] | null>(null);
   // QR deep links (focusLocationId set) skip the hero — someone who
   // scanned the on-site code wants the check-in flow, not a landing
   // screen.
@@ -151,22 +159,42 @@ export function MapScreen({
 
   const dict = getDictionary(locale);
 
+  function handleSidebarSelect(location: Location) {
+    setSelected(location);
+    setFocusTarget([location.latitude, location.longitude]);
+  }
+
   return (
-    <div className="relative min-h-0 w-full flex-1">
+    <div className="relative flex min-h-0 w-full flex-1">
       <Suspense
         fallback={
-          <div className="flex h-full w-full items-center justify-center text-sm text-zinc-400">
-            {dict.map.loading}
+          <div className="flex h-full w-full">
+            <div className="hidden w-[380px] shrink-0 border-r border-warm-border bg-ivory p-4 lg:block">
+              <LocationListSkeleton />
+            </div>
+            <div className="flex flex-1 animate-pulse items-center justify-center bg-[#f2efe9] text-sm text-steam">
+              {dict.map.loading}
+            </div>
           </div>
         }
       >
-        <MapView
+        <Sidebar
           locations={locations}
           occupancy={occupancy}
-          onSelect={setSelected}
-          center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
-          zoom={focusLocation ? 15 : undefined}
+          selectedId={selected?.id ?? null}
+          locale={locale}
+          onSelect={handleSidebarSelect}
         />
+        <div className="relative min-h-0 flex-1">
+          <MapView
+            locations={locations}
+            occupancy={occupancy}
+            onSelect={setSelected}
+            center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
+            zoom={focusLocation ? 15 : undefined}
+            focusTarget={focusTarget}
+          />
+        </div>
       </Suspense>
       {selected && (
         <LocationCard
