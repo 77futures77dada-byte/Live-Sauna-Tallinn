@@ -52,11 +52,10 @@ export function MapScreen({
     : null;
 
   const [selected, setSelected] = useState<Location | null>(focusLocation);
-  // Only sidebar selection drives this — marker clicks (MapView's onSelect,
-  // handleMarkerSelect below) leave it untouched, so clicking a marker
-  // that's already on screen never re-pans/zooms it. Marker interaction
-  // itself is Phase 2 territory; this is purely the sidebar's own "focus
-  // the map on this card" behavior.
+  // Set by handleSelect below, from either the sidebar or a marker click —
+  // MapContainer's own center/zoom only apply on first mount, so panning
+  // to an already-mounted map needs this imperative target instead (see
+  // MapView's FlyToOnSelect).
   const [focusTarget, setFocusTarget] = useState<[number, number] | null>(null);
   // QR deep links (focusLocationId set) skip the hero — someone who
   // scanned the on-site code wants the check-in flow, not a landing
@@ -159,7 +158,9 @@ export function MapScreen({
 
   const dict = getDictionary(locale);
 
-  function handleSidebarSelect(location: Location) {
+  // Shared by sidebar cards and map markers alike (Phase 2) — either path
+  // both opens the detail card and flies the map to the location.
+  function handleSelect(location: Location) {
     setSelected(location);
     setFocusTarget([location.latitude, location.longitude]);
   }
@@ -183,13 +184,13 @@ export function MapScreen({
           occupancy={occupancy}
           selectedId={selected?.id ?? null}
           locale={locale}
-          onSelect={handleSidebarSelect}
+          onSelect={handleSelect}
         />
         <div className="relative min-h-0 flex-1">
           <MapView
             locations={locations}
             occupancy={occupancy}
-            onSelect={setSelected}
+            onSelect={handleSelect}
             center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
             zoom={focusLocation ? 15 : undefined}
             focusTarget={focusTarget}

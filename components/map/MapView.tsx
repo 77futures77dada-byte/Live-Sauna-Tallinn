@@ -16,9 +16,9 @@ const FOCUS_ZOOM = 15;
 
 // MapContainer's center/zoom only apply on first mount (react-leaflet
 // treats the map as uncontrolled after that) — panning to a location
-// selected from the sidebar after the map is already up needs an
-// imperative flyTo via the map instance, which only useMap() (called from
-// inside MapContainer) can reach.
+// selected from the sidebar or a marker click after the map is already up
+// needs an imperative flyTo via the map instance, which only useMap()
+// (called from inside MapContainer) can reach.
 function FlyToOnSelect({ target }: { target: [number, number] | null }) {
   const map = useMap();
 

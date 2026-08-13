@@ -3,29 +3,41 @@
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Marker } from "react-leaflet";
-import { freshnessColor, freshnessIconColor, getFreshness } from "@/lib/freshness";
+import { getFreshness } from "@/lib/freshness";
 import { locationTypeIconComponent } from "@/lib/location-types";
+import { getOccupancyStatus, occupancyStatusColor } from "@/lib/occupancy-status";
 import type { LatestOccupancy } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-// Leaflet's divIcon takes a raw HTML string, outside React's render tree,
-// so the type glyph is rendered to static markup once per icon build
-// rather than mounted as a component.
+const MARKER_SIZE = 36;
+
+// Leaflet's divIcon takes a raw HTML string, outside React's render tree —
+// same occupancy-status law as the sidebar (quiet/active/busy/unknown, see
+// lib/occupancy-status.ts) so a marker, its sidebar card, and the detail
+// card never disagree about what color a location is. A headcount only
+// ever appears for a live (high/medium freshness) report; anything staler
+// falls back to the plain type glyph instead of a number that looks
+// current but isn't.
 function buildIcon(location: Location, occupancy: LatestOccupancy | undefined) {
-  const level = getFreshness(occupancy?.createdAt ?? null);
-  const color = freshnessColor[level];
+  const freshness = getFreshness(occupancy?.createdAt ?? null);
+  const status = getOccupancyStatus(freshness, occupancy?.peopleCount, location.capacity);
+  const color = occupancyStatusColor[status];
+  const live = status !== "unknown";
+
   const Icon = locationTypeIconComponent[location.type];
-  const glyph = renderToStaticMarkup(
-    <Icon color={freshnessIconColor[level]} size={18} strokeWidth={2.25} aria-hidden />,
-  );
+  const content = live
+    ? `<span class="sauna-marker__count" style="color:${color}">${occupancy!.peopleCount}</span>`
+    : renderToStaticMarkup(<Icon color="#0e2233" size={16} strokeWidth={2.25} aria-hidden />);
+
+  const dotClass = live ? "sauna-marker__dot sauna-marker__dot--pulse" : "sauna-marker__dot";
 
   return L.divIcon({
     className: "",
-    html: `<span class="sauna-live-marker__dot" style="background:${color}">${glyph}</span>`,
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
+    html: `<span class="sauna-marker">${content}<span class="${dotClass}" style="background:${color}"></span></span>`,
+    iconSize: [MARKER_SIZE, MARKER_SIZE],
+    iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
   });
 }
 

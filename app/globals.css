@@ -53,17 +53,70 @@ body {
 /* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
    styling reach, so it gets a couple of plain CSS rules instead of
    Tailwind classes. */
-.sauna-live-marker__dot {
+.sauna-marker {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 9999px;
-  /* A dark ring (rather than a light one) keeps every freshness fill —
-     including the pale gray "unknown" dot — legible against Voyager's
-     light basemap. */
+  background: #f7f3ec;
+  /* A dark ring keeps the badge legible against Voyager's light basemap
+     regardless of what's inside it (count or type glyph). */
   border: 2.5px solid #0e2233;
   box-shadow: 0 2px 6px rgba(14, 34, 51, 0.35);
-  font-size: 16px;
+  position: relative;
+}
+
+.sauna-marker__count {
+  font-family: var(--font-ibm-plex-sans);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Status dot — occupancy status (quiet/active/busy), gray when there's no
+   live report. Corner badge rather than a fill color so the marker stays
+   legible (dark ring + light interior) no matter the status color. */
+.sauna-marker__dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 9999px;
+  border: 2px solid #f7f3ec;
+}
+
+/* Only markers with a live report pulse — a quiet ring expanding from the
+   dot, not the whole badge, so it reads as "active" rather than flashing
+   for attention. */
+.sauna-marker__dot--pulse::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: inherit;
+  opacity: 0.6;
+  animation: sauna-marker-pulse 2.4s ease-out infinite;
+}
+
+@keyframes sauna-marker-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sauna-marker__dot--pulse::before {
+    animation: none;
+  }
 }
