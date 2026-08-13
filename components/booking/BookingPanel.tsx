@@ -6,12 +6,14 @@ import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import type { BookingStatus } from "@/lib/supabase/types";
 import { BookingForm } from "./BookingForm";
 
+// confirmed = waiting on the visitor (Frost, "calm anticipation"), same
+// quiet/busy/neutral vocabulary as occupancy status elsewhere otherwise.
 const statusColor: Record<BookingStatus, string> = {
-  confirmed: "text-amber-600 dark:text-amber-400",
-  fulfilled: "text-emerald-600 dark:text-emerald-400",
-  no_show: "text-red-600 dark:text-red-400",
-  cancelled: "text-zinc-400",
-  completed: "text-zinc-400",
+  confirmed: "text-frost",
+  fulfilled: "text-quiet",
+  no_show: "text-busy",
+  cancelled: "text-steam",
+  completed: "text-steam",
 };
 
 function formatRange(booking: Booking, locale: Locale): string {
@@ -69,19 +71,14 @@ export function BookingPanel({
   const hasActiveConfirmed = bookings?.some((b) => b.status === "confirmed") ?? false;
 
   return (
-    <div className="mt-4 space-y-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
-        {dict.bookSlotTitle}
-      </h3>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{dict.bookSlotHint}</p>
+    <div className="mt-4 space-y-2 border-t border-warm-border pt-4">
+      <h3 className="text-sm font-medium text-fjord">{dict.bookSlotTitle}</h3>
+      <p className="text-xs text-steam">{dict.bookSlotHint}</p>
 
       {bookings && bookings.length > 0 && (
         <ul className="space-y-1">
           {bookings.map((booking) => (
-            <li
-              key={booking.id}
-              className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-300"
-            >
+            <li key={booking.id} className="flex items-center justify-between text-xs text-fjord">
               <span>
                 {formatRange(booking, locale)} · {booking.people_count} {dict.people}
               </span>
@@ -107,7 +104,7 @@ export function BookingPanel({
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="w-full rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="w-full rounded-lg border border-warm-border px-3 py-1.5 text-sm font-medium text-fjord hover:bg-ivory"
           >
             {dict.bookSlotButton}
           </button>

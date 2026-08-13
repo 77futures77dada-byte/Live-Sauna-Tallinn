@@ -54,14 +54,9 @@ export function VisitSummaryForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-3 space-y-3 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800/50"
-    >
+    <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg bg-ivory p-3">
       <div>
-        <p className="mb-1 text-xs font-medium text-zinc-600 dark:text-zinc-300">
-          {dict.rating}
-        </p>
+        <p className="mb-1 text-xs font-medium text-steam">{dict.rating}</p>
         <div className="flex gap-1 text-xl">
           {[1, 2, 3, 4, 5].map((n) => (
             <button
@@ -70,7 +65,7 @@ export function VisitSummaryForm({
               onClick={() => setRating(n)}
               aria-label={dict.starLabel[String(n) as "1" | "2" | "3" | "4" | "5"]}
               aria-pressed={rating === n}
-              className="leading-none"
+              className={`leading-none ${n <= rating ? "text-ember" : "text-steam"}`}
             >
               {n <= rating ? "★" : "☆"}
             </button>
@@ -79,13 +74,11 @@ export function VisitSummaryForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
-          {dict.howBusy}
-        </label>
+        <label className="mb-1 block text-xs font-medium text-steam">{dict.howBusy}</label>
         <select
           value={crowdLevel}
           onChange={(event) => setCrowdLevel(event.target.value as CrowdLevel)}
-          className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          className="w-full rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord"
         >
           {(Object.keys(crowdLevelLabel) as CrowdLevel[]).map((level) => (
             <option key={level} value={level}>
@@ -99,19 +92,19 @@ export function VisitSummaryForm({
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex-1 rounded-lg bg-[#E8632C] px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {status === "submitting" ? dict.finishing : dict.finishVisit}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg px-3 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-lg px-3 py-1.5 text-sm text-steam hover:bg-white"
         >
           {dict.cancel}
         </button>
       </div>
-      {message && <p className="text-xs text-red-600">{message}</p>}
+      {message && <p className="text-xs text-busy">{message}</p>}
     </form>
   );
 }

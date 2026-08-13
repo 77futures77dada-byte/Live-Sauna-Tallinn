@@ -1,5 +1,6 @@
 "use client";
 
+import { Camera } from "lucide-react";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { nextHourSlots } from "@/lib/bookings";
 import type { Booking } from "@/lib/bookings";
@@ -78,18 +79,13 @@ export function BookingForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-3 space-y-3 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800/50"
-    >
+    <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg bg-ivory p-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
-          {dict.timeSlot}
-        </label>
+        <label className="mb-1 block text-xs font-medium text-steam">{dict.timeSlot}</label>
         <select
           value={startTime}
           onChange={(event) => setStartTime(event.target.value)}
-          className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          className="w-full rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord"
         >
           {slots.map((slot) => (
             <option key={slot.toISOString()} value={slot.toISOString()}>
@@ -100,7 +96,7 @@ export function BookingForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
+        <label className="mb-1 block text-xs font-medium text-steam">
           {dict.people} {capacity !== null ? `(${dict.maxSuffix} ${capacity})` : ""}
         </label>
         <input
@@ -109,13 +105,14 @@ export function BookingForm({
           max={capacity ?? undefined}
           value={peopleCount}
           onChange={(event) => setPeopleCount(event.target.value)}
-          className="w-24 rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          className="w-24 rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord"
         />
       </div>
 
       <div>
-        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
-          📷 {file ? dict.photoSelected : dict.takePhoto}
+        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-warm-border bg-white px-3 py-1.5 text-sm text-fjord hover:bg-ivory">
+          <Camera className="h-4 w-4 text-steam" aria-hidden />
+          {file ? dict.photoSelected : dict.takePhoto}
           <input
             type="file"
             accept="image/*"
@@ -125,28 +122,28 @@ export function BookingForm({
             required
           />
         </label>
-        <p className="mt-1 text-xs text-zinc-400">{dict.photoRequiredHint}</p>
+        <p className="mt-1 text-xs text-steam">{dict.photoRequiredHint}</p>
       </div>
 
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{dict.confirmNote}</p>
+      <p className="text-xs text-steam">{dict.confirmNote}</p>
 
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex-1 rounded-lg bg-[#E8632C] px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {status === "submitting" ? dict.confirming : dict.confirmBooking}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg px-3 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-lg px-3 py-1.5 text-sm text-steam hover:bg-ivory"
         >
           {dict.cancel}
         </button>
       </div>
-      {message && <p className="text-xs text-red-600">{message}</p>}
+      {message && <p className="text-xs text-busy">{message}</p>}
     </form>
   );
 }

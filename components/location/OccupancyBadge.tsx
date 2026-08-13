@@ -1,34 +1,38 @@
-import { freshnessColor, type FreshnessLevel } from "@/lib/freshness";
+import { occupancyStatusColor, type OccupancyStatus } from "@/lib/occupancy-status";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
-// The count is only shown for high/medium/low freshness — per
-// docs/ARCHITECTURE.md section 5, "unknown" never shows a number, only
-// that there's no recent data.
+// Same quiet/active/busy/unknown law as the marker and the sidebar card —
+// a location is never a different color in three different places. The
+// count is only ever shown alongside a live (non-"unknown") status.
 export function OccupancyBadge({
-  level,
+  status,
   count,
   locale,
 }: {
-  level: FreshnessLevel;
+  status: OccupancyStatus;
   count?: number;
   locale: Locale;
 }) {
   const dict = getDictionary(locale);
-  const label =
-    level !== "unknown" && count !== undefined
-      ? `${count} ${dict.location.peopleUnit} · ${dict.freshness[level]}`
-      : dict.freshness[level];
+  const color = occupancyStatusColor[status];
+  const statusLabel =
+    status === "quiet"
+      ? dict.sidebar.filterQuiet
+      : status === "active"
+        ? dict.sidebar.filterActive
+        : status === "busy"
+          ? dict.sidebar.filterBusy
+          : dict.freshness.unknown;
 
   return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-200"
-      style={{ backgroundColor: `${freshnessColor[level]}33` }}
-    >
-      <span
-        className="h-2 w-2 rounded-full"
-        style={{ backgroundColor: freshnessColor[level] }}
-      />
-      {label}
+    <span className="inline-flex items-center gap-1.5 text-sm font-medium" style={{ color }}>
+      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} aria-hidden />
+      {statusLabel}
+      {status !== "unknown" && count !== undefined && (
+        <span className="font-normal text-steam">
+          · {count} {dict.location.peopleUnit}
+        </span>
+      )}
     </span>
   );
 }

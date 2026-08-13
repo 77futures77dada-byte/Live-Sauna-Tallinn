@@ -1,5 +1,6 @@
 "use client";
 
+import { Camera } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
@@ -53,8 +54,8 @@ export function BeforeAfterPhoto({
 
   return (
     <div>
-      <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
-        📷{" "}
+      <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-warm-border px-3 py-1.5 text-sm text-fjord hover:bg-ivory">
+        <Camera className="h-4 w-4 text-steam" aria-hidden />
         {status === "done" ? dict.photoSaved : status === "uploading" ? dict.uploading : label}
         <input
           type="file"
@@ -65,7 +66,7 @@ export function BeforeAfterPhoto({
           disabled={status === "uploading"}
         />
       </label>
-      {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
+      {message && <p className="mt-1 text-xs text-busy">{message}</p>}
     </div>
   );
 }

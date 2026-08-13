@@ -35,10 +35,9 @@ function useReportSubmit(endpoint: string, dict: ReturnType<typeof getDictionary
   return { state, message, submit };
 }
 
-const inputClass =
-  "w-28 rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent";
+const inputClass = "w-28 rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord";
 const buttonClass =
-  "rounded-lg bg-[#E8632C] px-3 py-1 text-sm text-white transition hover:brightness-110 disabled:opacity-50";
+  "rounded-lg bg-ember px-3 py-1 text-sm text-white transition hover:brightness-110 disabled:opacity-50";
 
 export function ReportButtons({ locationId, locale }: { locationId: string; locale: Locale }) {
   const dict = getDictionary(locale).report;
@@ -70,8 +69,8 @@ export function ReportButtons({ locationId, locale }: { locationId: string; loca
   }
 
   return (
-    <div className="mt-4 space-y-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">{dict.title}</h3>
+    <div className="mt-4 space-y-3 border-t border-warm-border pt-4">
+      <h3 className="text-sm font-medium text-fjord">{dict.title}</h3>
 
       <form onSubmit={handleOccupancy} className="flex items-center gap-2">
         <input
@@ -92,7 +91,7 @@ export function ReportButtons({ locationId, locale }: { locationId: string; loca
       </form>
       {occupancyReport.message && (
         <p
-          className={`text-xs ${occupancyReport.state === "error" ? "text-red-600" : "text-emerald-600"}`}
+          className={`text-xs ${occupancyReport.state === "error" ? "text-busy" : "text-quiet"}`}
         >
           {occupancyReport.message}
         </p>
@@ -117,7 +116,7 @@ export function ReportButtons({ locationId, locale }: { locationId: string; loca
       </form>
       {waterReport.message && (
         <p
-          className={`text-xs ${waterReport.state === "error" ? "text-red-600" : "text-emerald-600"}`}
+          className={`text-xs ${waterReport.state === "error" ? "text-busy" : "text-quiet"}`}
         >
           {waterReport.message}
         </p>
@@ -143,7 +142,7 @@ export function ReportButtons({ locationId, locale }: { locationId: string; loca
       </form>
       {iceReport.message && (
         <p
-          className={`text-xs ${iceReport.state === "error" ? "text-red-600" : "text-emerald-600"}`}
+          className={`text-xs ${iceReport.state === "error" ? "text-busy" : "text-quiet"}`}
         >
           {iceReport.message}
         </p>

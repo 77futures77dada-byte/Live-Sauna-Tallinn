@@ -1,3 +1,4 @@
+import { Thermometer, Waves, Wind } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { StationObservation } from "@/lib/weather";
 
@@ -24,22 +25,25 @@ export function WeatherStrip({
   if (!hasAir && !hasWind && !hasWater) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-600 dark:text-zinc-300">
+    <div className="flex flex-wrap items-center gap-4 text-sm text-fjord">
       {hasAir && (
-        <span>
-          🌡️ {observation.airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
+        <span className="flex items-center gap-1.5">
+          <Thermometer className="h-3.5 w-3.5 text-ember" aria-hidden />
+          {observation.airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
         </span>
       )}
       {hasWind && (
-        <span>
-          💨 {observation.windSpeed!.toFixed(1)} m/s
+        <span className="flex items-center gap-1.5">
+          <Wind className="h-3.5 w-3.5 text-steam" aria-hidden />
+          {observation.windSpeed!.toFixed(1)} m/s
           {observation.windDirection !== null &&
             ` ${windDirectionCompass(observation.windDirection)}`}
         </span>
       )}
       {hasWater && (
-        <span>
-          🌊 {observation.waterTemperature!.toFixed(1)}°C {dict.location.weatherStationWater}
+        <span className="flex items-center gap-1.5">
+          <Waves className="h-3.5 w-3.5 text-frost" aria-hidden />
+          {observation.waterTemperature!.toFixed(1)}°C {dict.location.weatherStationWater}
         </span>
       )}
     </div>

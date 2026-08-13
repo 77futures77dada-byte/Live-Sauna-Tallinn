@@ -44,16 +44,16 @@ export function CheckInButton({
   }
 
   return (
-    <div className="mt-4 space-y-1.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+    <div className="mt-4 space-y-1.5 border-t border-warm-border pt-4">
       <button
         type="button"
         onClick={handleClick}
         disabled={status === "loading"}
-        className="w-full rounded-lg bg-[#E8632C] px-3 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+        className="w-full rounded-lg bg-ember px-3 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
       >
         {status === "loading" ? dict.checkingIn : dict.checkIn}
       </button>
-      {message && <p className="text-xs text-red-600">{message}</p>}
+      {message && <p className="text-xs text-busy">{message}</p>}
     </div>
   );
 }

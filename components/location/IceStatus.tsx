@@ -1,3 +1,4 @@
+import { Snowflake } from "lucide-react";
 import { formatAge, freshnessColor, getFreshness } from "@/lib/freshness";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { LatestIce } from "@/lib/reports";
@@ -13,16 +14,24 @@ export function IceStatus({ report, locale }: { report?: LatestIce; locale: Loca
   };
 
   if (!report || level === "unknown") {
-    return <p className="text-sm text-zinc-400">{dict.location.noIceReports}</p>;
+    return (
+      <p className="flex items-center gap-1.5 text-sm text-steam">
+        <Snowflake className="h-3.5 w-3.5 text-frost" aria-hidden />
+        {dict.location.noIceReports}
+      </p>
+    );
   }
 
   return (
-    <p className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-300">
+    <p className="flex items-center gap-1.5 text-sm text-fjord">
       <span
         className="h-2 w-2 rounded-full"
         style={{ backgroundColor: freshnessColor[level] }}
+        aria-hidden
       />
-      🧊 {conditionLabel[report.condition]} · {formatAge(report.createdAt, dict.time)}
+      <Snowflake className="h-3.5 w-3.5 text-frost" aria-hidden />
+      {conditionLabel[report.condition]} ·{" "}
+      <span className="text-steam">{formatAge(report.createdAt, dict.time)}</span>
     </p>
   );
 }
