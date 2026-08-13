@@ -25,14 +25,14 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
             aria-pressed={loc === locale}
             className={
               loc === locale
-                ? "font-semibold"
-                : "text-zinc-500 hover:underline dark:text-zinc-400"
+                ? "font-semibold text-[#E8632C]"
+                : "text-[#7C93A0] hover:underline"
             }
           >
             {dict.switcher[loc]}
           </button>
           {index < locales.length - 1 && (
-            <span className="text-zinc-300 dark:text-zinc-700" aria-hidden>
+            <span className="text-[#D9CFBC]" aria-hidden>
               /
             </span>
           )}
