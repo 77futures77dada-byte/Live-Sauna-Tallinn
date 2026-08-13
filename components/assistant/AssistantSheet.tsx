@@ -2,7 +2,8 @@
 
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { getBrowserLocation } from "@/lib/geolocation";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
@@ -18,12 +19,27 @@ interface AssistantMessage {
   location?: AssistantLocation | null;
 }
 
+// "Is this the client" without an effect (setState-in-effect is a lint
+// error here) — never notifies, since client-ness can't change after the
+// first render, so getSnapshot only ever needs to be read once more after
+// getServerSnapshot's initial "no" during hydration.
+function subscribeNever() {
+  return () => {};
+}
+
 export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: boolean }) {
   const dict = getDictionary(locale).assistant;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  // Portal target only exists on the client — see the render below for why
+  // this is portaled at all.
+  const mounted = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
   const nextId = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -81,16 +97,26 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
 
   const examples = [dict.examplesLeastCrowded, dict.examplesColdestWater, dict.examplesNearestSauna];
 
-  return (
+  // Not mounted yet (SSR / first client render, before the useEffect above
+  // fires) means no `document` to portal into — render nothing rather than
+  // in place, to avoid a one-frame flash at the wrong DOM position.
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       {/*
-        Fixed, not part of the header's flex flow — a chat-widget-style FAB
-        over the map. z-[1100] clears Leaflet's zoom control (max z-index
-        1000, see LocationCard's note on the same issue) while staying
-        below the LocationCard sheet (z-[1201]) and this panel's own
-        backdrop (z-[1300]), so it disappears behind either rather than
-        floating on top of them on mobile, where both take the full width
-        at the bottom of the screen.
+        Portaled straight onto <body> — not a DOM-position fix (AppHeader
+        already mounts this once, shared by hero and map alike) but a
+        paint one: even with z-[1100] clearing Leaflet's z-index ceiling
+        of 1000 on paper, the button was getting hidden behind the tile
+        layer once a map actually mounted, despite DOM inspection showing
+        it topmost and correctly styled — a compositing quirk from
+        Leaflet's transformed, GPU-layered panes, not a stacking value bug.
+        Painting last, immune to any ancestor's stacking context, sidesteps
+        it. z-[1100] itself still matters: it clears Leaflet (1000) while
+        staying below the LocationCard sheet (z-[1201]) and this panel's
+        own backdrop (z-[1300]), so it disappears behind either instead of
+        floating over them on mobile, where both span the full width.
       */}
       {!open && (
         <button
@@ -202,6 +228,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           </div>
         </>
       )}
-    </>
+    </>,
+    document.body,
   );
 }
