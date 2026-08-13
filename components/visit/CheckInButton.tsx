@@ -49,7 +49,7 @@ export function CheckInButton({
         type="button"
         onClick={handleClick}
         disabled={status === "loading"}
-        className="w-full rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        className="w-full rounded-lg bg-[#E8632C] px-3 py-2 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
       >
         {status === "loading" ? dict.checkingIn : dict.checkIn}
       </button>

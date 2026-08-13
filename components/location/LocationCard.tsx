@@ -209,7 +209,7 @@ export function LocationCard({
                   <button
                     type="button"
                     onClick={() => setShowFinishForm(true)}
-                    className="w-full rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    className="w-full rounded-lg bg-[#E8632C] px-3 py-2 text-sm font-medium text-white transition hover:brightness-110"
                   >
                     {dict.location.finishVisit}
                   </button>
