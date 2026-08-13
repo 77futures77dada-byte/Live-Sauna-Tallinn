@@ -3,6 +3,7 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { getBrowserLocation } from "@/lib/geolocation";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 interface AssistantLocation {
@@ -15,33 +16,6 @@ interface AssistantMessage {
   role: "user" | "assistant" | "error";
   text: string;
   location?: AssistantLocation | null;
-}
-
-// Resolves with coordinates if the visitor grants permission, null for
-// every other case (denied, unsupported, timed out) — never throws, so a
-// query that doesn't strictly need location can't be blocked by it.
-// Calling getCurrentPosition is itself what triggers the browser's
-// permission prompt the first time, satisfying "ask explicitly, only
-// when not already asked" without any separate detection step.
-function getBrowserLocation(): Promise<{ latitude: number; longitude: number } | null> {
-  return new Promise((resolve) => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      resolve(null);
-      return;
-    }
-    const timeout = setTimeout(() => resolve(null), 5000);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        clearTimeout(timeout);
-        resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-      },
-      () => {
-        clearTimeout(timeout);
-        resolve(null);
-      },
-      { timeout: 5000, maximumAge: 5 * 60_000 },
-    );
-  });
 }
 
 export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: boolean }) {
@@ -125,7 +99,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           disabled={!enabled}
           aria-label={dict.openLabel}
           title={enabled ? dict.openLabel : dict.unavailable}
-          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-[#E8632C] text-[#F7F3EC] shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Sparkles className="h-6 w-6" aria-hidden />
         </button>
