@@ -5,6 +5,7 @@ import { getMapPageData } from "@/lib/map-data";
 import { isAdmin } from "@/lib/admin";
 import { getLocale } from "@/lib/get-locale";
 import { isGeminiConfigured } from "@/lib/gemini";
+import { getHeroImageUrl } from "@/lib/hero";
 
 export default async function MapPage() {
   const supabase = await createClient();
@@ -34,6 +35,7 @@ export default async function MapPage() {
         userId={user?.id ?? null}
         initialOpenVisit={openVisit}
         locale={locale}
+        heroImageUrl={getHeroImageUrl()}
       />
     </div>
   );

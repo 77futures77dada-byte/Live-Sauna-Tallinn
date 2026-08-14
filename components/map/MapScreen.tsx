@@ -13,6 +13,7 @@ import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { getLiveSnapshot } from "@/lib/occupancy-status";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -38,6 +39,7 @@ export function MapScreen({
   initialOpenVisit,
   focusLocationId,
   locale,
+  heroImageUrl,
 }: {
   locations: Location[];
   initialOccupancy: [string, LatestOccupancy][];
@@ -47,6 +49,7 @@ export function MapScreen({
   initialOpenVisit: OpenVisit | null;
   focusLocationId?: string;
   locale: Locale;
+  heroImageUrl: string | null;
 }) {
   const focusLocation = focusLocationId
     ? (locations.find((l) => l.id === focusLocationId) ?? null)
@@ -152,7 +155,12 @@ export function MapScreen({
   if (showHero) {
     return (
       <div className="relative min-h-0 w-full flex-1">
-        <HeroLanding locale={locale} onEnter={() => setShowHero(false)} />
+        <HeroLanding
+          locale={locale}
+          onEnter={() => setShowHero(false)}
+          liveSnapshot={getLiveSnapshot(occupancy)}
+          heroImageUrl={heroImageUrl}
+        />
       </div>
     );
   }
