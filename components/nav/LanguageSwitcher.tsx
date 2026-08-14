@@ -23,11 +23,15 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
             type="button"
             onClick={() => select(loc)}
             aria-pressed={loc === locale}
+            aria-label={dict.switcher[loc]}
             className={
-              loc === locale ? "font-semibold text-ember" : "text-steam hover:underline"
+              loc === locale
+                ? "font-semibold text-ember transition-colors"
+                : "text-steam transition-colors hover:underline"
             }
           >
-            {dict.switcher[loc]}
+            <span className="sm:hidden">{loc.toUpperCase()}</span>
+            <span className="hidden sm:inline">{dict.switcher[loc]}</span>
           </button>
           {index < locales.length - 1 && (
             <span className="text-warm-border" aria-hidden>
