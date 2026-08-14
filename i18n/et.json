@@ -108,7 +108,9 @@
     "conditionsLoading": "Tingimuste laadimine…",
     "conditionsError": "Tingimused pole hetkel saadaval.",
     "air": "õhk",
-    "water": "vesi"
+    "water": "vesi",
+    "liveSnapshotActive": "{locations} aktiivset kohta · {people} inimest just praegu",
+    "liveSnapshotEmpty": "Ole täna esimene, kes end kirja paneb"
   },
   "location": {
     "free": "Tasuta",

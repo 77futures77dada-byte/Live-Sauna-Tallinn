@@ -108,7 +108,9 @@
     "conditionsLoading": "Loading conditions…",
     "conditionsError": "Conditions unavailable right now.",
     "air": "air",
-    "water": "water"
+    "water": "water",
+    "liveSnapshotActive": "{locations} active spots · {people} people right now",
+    "liveSnapshotEmpty": "Be the first to check in today"
   },
   "location": {
     "free": "Free",

@@ -108,7 +108,9 @@
     "conditionsLoading": "Загрузка условий…",
     "conditionsError": "Данные об условиях сейчас недоступны.",
     "air": "воздух",
-    "water": "вода"
+    "water": "вода",
+    "liveSnapshotActive": "{locations} активных мест · {people} человек прямо сейчас",
+    "liveSnapshotEmpty": "Будь первым, кто отметится сегодня"
   },
   "location": {
     "free": "Бесплатно",
