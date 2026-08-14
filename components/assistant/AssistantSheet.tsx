@@ -27,9 +27,16 @@ function subscribeNever() {
   return () => {};
 }
 
+// Matches the exit CSS animation duration below — the panel stays
+// mounted (and `open` stays true) for this long after a close request so
+// the animation has time to actually play instead of the element just
+// vanishing.
+const CLOSE_ANIMATION_MS = 180;
+
 export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: boolean }) {
   const dict = getDictionary(locale).assistant;
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -97,6 +104,15 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
 
   const examples = [dict.examplesLeastCrowded, dict.examplesColdestWater, dict.examplesNearestSauna];
 
+  function requestClose() {
+    if (closing) return;
+    setClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, CLOSE_ANIMATION_MS);
+  }
+
   // Not mounted yet (SSR / first client render, before the useEffect above
   // fires) means no `document` to portal into — render nothing rather than
   // in place, to avoid a one-frame flash at the wrong DOM position.
@@ -117,6 +133,13 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
         staying below the LocationCard sheet (z-[1201]) and this panel's
         own backdrop (z-[1300]), so it disappears behind either instead of
         floating over them on mobile, where both span the full width.
+
+        The mobile bottom offset (bottom-60, clearing lg:bottom-4) leaves
+        room above MobileLiveOverlay's collapsed bottom sheet (220px peek)
+        — when that sheet is expanded instead, it's tall enough to cover
+        this fixed position outright, so the FAB disappears behind it the
+        same way it already does behind this panel's own backdrop, with no
+        extra coordination needed between the two components.
       */}
       {!open && (
         <button
@@ -125,7 +148,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           disabled={!enabled}
           aria-label={dict.openLabel}
           title={enabled ? dict.openLabel : dict.unavailable}
-          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          className="fixed right-4 bottom-60 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 lg:bottom-4"
         >
           <Sparkles className="h-6 w-6" aria-hidden />
         </button>
@@ -136,19 +159,25 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           <button
             type="button"
             aria-label={dict.close}
-            onClick={() => setOpen(false)}
-            className="fixed inset-0 z-[1300] bg-black/30 sm:bg-transparent"
+            onClick={requestClose}
+            className={`fixed inset-0 z-[1300] bg-black/30 lg:bg-transparent ${
+              closing ? "animate-[backdrop-exit_180ms_ease-in_forwards]" : "animate-[backdrop-enter_200ms_ease-out]"
+            }`}
           />
-          <div className="fixed inset-x-0 bottom-0 z-[1301] flex max-h-[75vh] min-h-[50vh] flex-col rounded-t-2xl bg-white shadow-2xl dark:bg-zinc-900 sm:inset-x-auto sm:top-20 sm:right-4 sm:bottom-auto sm:h-[32rem] sm:w-96 sm:rounded-2xl">
-            <div className="flex items-center justify-between gap-2 border-b border-zinc-100 p-4 dark:border-zinc-800">
-              <h2 className="flex items-center gap-1.5 text-sm font-semibold">
-                <Sparkles className="h-4 w-4" aria-hidden />
+          <div
+            className={`fixed inset-x-0 bottom-0 z-[1301] flex max-h-[85vh] min-h-[50vh] flex-col rounded-t-2xl bg-white shadow-2xl lg:inset-x-auto lg:top-20 lg:right-4 lg:bottom-auto lg:h-[32rem] lg:w-96 lg:rounded-2xl ${
+              closing ? "animate-[panel-exit_180ms_ease-in_forwards]" : "animate-[panel-enter_220ms_ease-out]"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-2 border-b border-warm-border p-4">
+              <h2 className="flex items-center gap-1.5 text-sm font-semibold text-fjord">
+                <Sparkles className="h-4 w-4 text-ember" aria-hidden />
                 {dict.title}
               </h2>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800"
+                onClick={requestClose}
+                className="rounded-full p-1 text-steam transition-colors hover:bg-ivory hover:text-fjord"
                 aria-label={dict.close}
               >
                 ✕
@@ -158,14 +187,14 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
             <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
               {messages.length === 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm text-zinc-500">{dict.greeting}</p>
+                  <p className="text-sm text-steam">{dict.greeting}</p>
                   <div className="flex flex-col items-start gap-1.5">
                     {examples.map((example) => (
                       <button
                         key={example}
                         type="button"
                         onClick={() => ask(example)}
-                        className="rounded-full border border-zinc-200 px-3 py-1.5 text-left text-xs text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        className="rounded-full border border-warm-border px-3 py-1.5 text-left text-xs text-steam transition-colors hover:bg-ivory"
                       >
                         {example}
                       </button>
@@ -182,10 +211,10 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
                   <div
                     className={
                       message.role === "user"
-                        ? "max-w-[85%] rounded-2xl bg-zinc-900 px-3 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+                        ? "max-w-[85%] rounded-2xl bg-fjord px-3 py-2 text-sm text-white"
                         : message.role === "error"
-                          ? "max-w-[85%] rounded-2xl bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950 dark:text-red-400"
-                          : "max-w-[85%] rounded-2xl bg-zinc-100 px-3 py-2 text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+                          ? "max-w-[85%] rounded-2xl bg-busy/10 px-3 py-2 text-sm text-busy"
+                          : "max-w-[85%] rounded-2xl bg-ivory px-3 py-2 text-sm text-fjord"
                     }
                   >
                     <p>{message.text}</p>
@@ -201,12 +230,12 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
                 </div>
               ))}
 
-              {loading && <p className="text-sm text-zinc-400">{dict.thinking}</p>}
+              {loading && <p className="text-sm text-steam">{dict.thinking}</p>}
             </div>
 
             <form
               onSubmit={handleSubmit}
-              className="flex items-center gap-2 border-t border-zinc-100 p-3 dark:border-zinc-800"
+              className="flex items-center gap-2 border-t border-warm-border p-3"
             >
               <input
                 type="text"
@@ -215,12 +244,12 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
                 placeholder={dict.placeholder}
                 maxLength={500}
                 disabled={loading}
-                className="flex-1 rounded-full border border-zinc-200 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-transparent"
+                className="flex-1 rounded-full border border-warm-border px-3 py-1.5 text-sm text-fjord"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+                className="rounded-full bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
               >
                 {dict.send}
               </button>

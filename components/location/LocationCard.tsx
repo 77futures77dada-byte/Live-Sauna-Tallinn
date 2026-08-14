@@ -62,6 +62,16 @@ export function LocationCard({
   const dict = getDictionary(locale);
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
   const [showFinishForm, setShowFinishForm] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  // Delays the actual onClose call so the exit animation below has time to
+  // play instead of the card just vanishing — same pattern as
+  // AssistantSheet's panel, same duration.
+  function requestClose() {
+    if (closing) return;
+    setClosing(true);
+    setTimeout(onClose, 180);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -98,12 +108,16 @@ export function LocationCard({
       <button
         type="button"
         aria-label={dict.location.close}
-        onClick={onClose}
-        className="fixed inset-0 z-[1200] bg-black/30 sm:bg-transparent"
+        onClick={requestClose}
+        className={`fixed inset-0 z-[1200] bg-black/30 lg:bg-transparent ${
+          closing ? "animate-[backdrop-exit_180ms_ease-in_forwards]" : "animate-[backdrop-enter_200ms_ease-out]"
+        }`}
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-[1201] flex max-h-[75vh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl
-                   sm:inset-x-auto sm:right-4 sm:top-20 sm:bottom-auto sm:w-96 sm:rounded-2xl"
+        className={`fixed inset-x-0 bottom-0 z-[1201] flex max-h-[90vh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl
+                   lg:inset-x-auto lg:right-4 lg:top-20 lg:bottom-auto lg:max-h-[75vh] lg:w-96 lg:rounded-2xl ${
+                     closing ? "animate-[panel-exit_180ms_ease-in_forwards]" : "animate-[panel-enter_220ms_ease-out]"
+                   }`}
       >
         {/*
           No location photo gallery exists in this app — the `photos`
@@ -116,7 +130,7 @@ export function LocationCard({
           <LocationTypeBanner type={location.type} className="h-full w-full" />
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-fjord/40 text-white backdrop-blur-sm transition hover:bg-fjord/60"
             aria-label={dict.location.close}
           >

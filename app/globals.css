@@ -120,3 +120,81 @@ body {
     animation: none;
   }
 }
+
+/* Micro-animations (Phase 3) — list cards fading in, the detail card and
+   assistant panel sliding/fading open and closed. Kept as plain @keyframes
+   (referenced via Tailwind's arbitrary `animate-[...]` syntax) rather than
+   JS-driven transitions: a keyframe animation plays automatically the
+   moment its element mounts, so a freshly-rendered card or a freshly
+   `{open && ...}`-mounted panel animates in for free, with no effect/state
+   needed — only the *exit* side needs any JS at all (delaying the real
+   close callback long enough for the exit keyframe to play; see
+   AssistantSheet/LocationCard's `closing` state). */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes panel-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdrop-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Blanket prefers-reduced-motion guarantee — rather than special-casing
+   every Tailwind `transition-*`/`animate-[...]` usage individually, this
+   collapses all of them to near-instant globally. Anything gated behind a
+   JS timeout keyed to a specific duration (the panel/backdrop exit delays
+   above) still waits out that timeout, but since the CSS animation itself
+   is now imperceptible, that's just an inert extra beat before unmount,
+   not visible motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
