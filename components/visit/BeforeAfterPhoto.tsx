@@ -54,7 +54,7 @@ export function BeforeAfterPhoto({
 
   return (
     <div>
-      <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-warm-border px-3 py-1.5 text-sm text-fjord hover:bg-ivory">
+      <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-warm-border px-3 py-1.5 text-sm text-fjord transition-colors hover:bg-ivory">
         <Camera className="h-4 w-4 text-steam" aria-hidden />
         {status === "done" ? dict.photoSaved : status === "uploading" ? dict.uploading : label}
         <input

@@ -99,7 +99,7 @@ export function VisitSummaryForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg px-3 py-1.5 text-sm text-steam hover:bg-white"
+          className="rounded-lg px-3 py-1.5 text-sm text-steam transition-colors hover:bg-white"
         >
           {dict.cancel}
         </button>

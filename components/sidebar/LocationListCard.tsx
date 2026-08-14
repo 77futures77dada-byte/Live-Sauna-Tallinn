@@ -48,7 +48,7 @@ export function LocationListCard({
     <button
       type="button"
       onClick={() => onSelect(location)}
-      className={`w-full rounded-xl border p-3 text-left transition ${
+      className={`w-full animate-[card-enter_200ms_ease-out] rounded-xl border p-3 text-left transition ${
         selected
           ? "border-ember bg-ember/5 ring-1 ring-ember/30"
           : "border-warm-border bg-white hover:border-steam/50"

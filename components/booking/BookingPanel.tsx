@@ -104,7 +104,7 @@ export function BookingPanel({
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="w-full rounded-lg border border-warm-border px-3 py-1.5 text-sm font-medium text-fjord hover:bg-ivory"
+            className="w-full rounded-lg border border-warm-border px-3 py-1.5 text-sm font-medium text-fjord transition-colors hover:bg-ivory"
           >
             {dict.bookSlotButton}
           </button>
