@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
+import { MobileLiveOverlay } from "@/components/mobile/MobileLiveOverlay";
 import { LocationListSkeleton } from "@/components/sidebar/LocationListSkeleton";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { createClient } from "@/lib/supabase/client";
@@ -180,6 +181,13 @@ export function MapScreen({
         }
       >
         <Sidebar
+          locations={locations}
+          occupancy={occupancy}
+          selectedId={selected?.id ?? null}
+          locale={locale}
+          onSelect={handleSelect}
+        />
+        <MobileLiveOverlay
           locations={locations}
           occupancy={occupancy}
           selectedId={selected?.id ?? null}
