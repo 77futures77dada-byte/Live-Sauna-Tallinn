@@ -160,6 +160,7 @@ export function MapScreen({
           onEnter={() => setShowHero(false)}
           liveSnapshot={getLiveSnapshot(occupancy)}
           heroImageUrl={heroImageUrl}
+          userId={userId}
         />
       </div>
     );

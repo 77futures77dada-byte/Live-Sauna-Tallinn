@@ -30,11 +30,13 @@ export function HeroLanding({
   onEnter,
   liveSnapshot,
   heroImageUrl,
+  userId,
 }: {
   locale: Locale;
   onEnter: () => void;
   liveSnapshot: LiveSnapshot;
   heroImageUrl: string | null;
+  userId: string | null;
 }) {
   const dict = getDictionary(locale);
   const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
@@ -148,12 +150,14 @@ export function HeroLanding({
           >
             {dict.hero.viewMap}
           </button>
-          <Link
-            href="/login"
-            className="rounded-full border border-[#3FA9D6]/40 px-6 py-2.5 text-sm font-medium text-[#EAF3F5] transition hover:bg-white/5"
-          >
-            {dict.hero.login}
-          </Link>
+          {!userId && (
+            <Link
+              href="/login"
+              className="rounded-full border border-[#3FA9D6]/40 px-6 py-2.5 text-sm font-medium text-[#EAF3F5] transition hover:bg-white/5"
+            >
+              {dict.hero.login}
+            </Link>
+          )}
         </div>
       </div>
     </div>
