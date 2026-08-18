@@ -87,7 +87,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          user_id: string;
+          user_id: string | null;
           people_count: number;
           created_at: string;
         };
@@ -129,7 +129,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          user_id: string;
+          user_id: string | null;
           condition: IceCondition;
           created_at: string;
         };
@@ -149,7 +149,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          user_id: string;
+          user_id: string | null;
           started_at: string;
           finished_at: string | null;
           rating: number | null;
@@ -197,7 +197,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          user_id: string;
+          user_id: string | null;
           start_time: string;
           end_time: string;
           people_count: number;
@@ -223,7 +223,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          user_id: string;
+          user_id: string | null;
           rating: number;
           created_at: string;
         };
