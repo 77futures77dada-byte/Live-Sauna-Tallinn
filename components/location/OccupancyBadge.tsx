@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import { occupancyStatusColor, type OccupancyStatus } from "@/lib/occupancy-status";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
@@ -26,7 +27,11 @@ export function OccupancyBadge({
 
   return (
     <span className="inline-flex items-center gap-1.5 text-sm font-medium" style={{ color }}>
-      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} aria-hidden />
+      {status === "unknown" ? (
+        <MapPin className="h-3 w-3" strokeWidth={2.25} aria-hidden />
+      ) : (
+        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} aria-hidden />
+      )}
       {statusLabel}
       {status !== "unknown" && count !== undefined && (
         <span className="font-normal text-steam">

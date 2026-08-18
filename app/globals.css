@@ -12,6 +12,7 @@
    class correctly. */
 @theme {
   --color-ivory: #f7f3ec;
+  --color-ivory-shade: #efe6d4;
   --color-fjord: #0e2233;
   --color-ember: #e8632c;
   --color-frost: #3fa9d6;

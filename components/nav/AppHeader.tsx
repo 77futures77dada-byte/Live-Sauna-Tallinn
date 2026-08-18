@@ -30,7 +30,7 @@ export function AppHeader({
 
   return (
     <header className="z-10 flex items-center justify-between gap-2 border-b border-warm-border bg-ivory px-3 py-2.5 text-fjord sm:px-4 sm:py-3">
-      <h1 className="flex min-w-0 items-center gap-1.5 truncate font-display text-base tracking-tight sm:text-lg">
+      <h1 className="flex min-w-0 items-center gap-1.5 truncate font-display text-base leading-tight font-semibold tracking-tight sm:text-lg">
         <Flame className="h-4 w-4 shrink-0 text-ember" aria-hidden />
         {dict.app.name}
       </h1>

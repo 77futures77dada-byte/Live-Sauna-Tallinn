@@ -33,7 +33,9 @@ export function Sidebar({
   return (
     <aside className="hidden h-full w-[380px] shrink-0 flex-col border-r border-warm-border bg-ivory lg:flex">
       <div className="shrink-0 space-y-3 border-b border-warm-border p-4">
-        <h1 className="font-display text-2xl leading-tight text-fjord">{dict.app.name}</h1>
+        <h1 className="font-display text-2xl leading-tight font-semibold tracking-tight text-fjord">
+          {dict.app.name}
+        </h1>
 
         <div className="relative">
           <Search
@@ -77,7 +79,7 @@ export function Sidebar({
         {entries.length === 0 ? (
           <LocationListEmptyState locale={locale} />
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {entries.map(({ location, occupancy: locationOccupancy, distance }) => (
               <LocationListCard
                 key={location.id}

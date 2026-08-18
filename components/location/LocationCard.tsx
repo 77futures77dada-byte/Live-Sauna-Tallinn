@@ -138,19 +138,21 @@ export function LocationCard({
           </button>
         </div>
 
-        <div className="overflow-y-auto p-5">
-          <h2 className="font-display text-xl text-fjord">{location.name}</h2>
+        <div className="overflow-y-auto p-4">
+          <h2 className="font-display text-2xl leading-tight font-semibold tracking-tight text-fjord">
+            {location.name}
+          </h2>
 
-          <div className="mt-2">
+          <div className="mt-1.5">
             <OccupancyBadge status={occupancyStatus} count={occupancy?.peopleCount} locale={locale} />
-            <p className="mt-1 text-xs text-steam">
+            <p className="mt-0.5 text-xs text-steam">
               {occupancy && freshness !== "unknown"
                 ? `${dict.location.updatedPrefix} ${formatAge(occupancy.createdAt, dict.time)}`
                 : dict.location.noOccupancy}
             </p>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
             <span className={tagClass}>
               <TypeIcon className="h-3 w-3" aria-hidden />
               {dict.locationType[location.type]}
@@ -165,12 +167,12 @@ export function LocationCard({
           </div>
 
           {location.description && (
-            <p className="mt-3 text-sm text-steam">{location.description}</p>
+            <p className="mt-2.5 text-sm text-steam">{location.description}</p>
           )}
 
           {openingHours && (
-            <div className="mt-4 text-sm">
-              <h3 className="font-medium text-fjord">{dict.location.openingHours}</h3>
+            <div className="mt-3 text-sm">
+              <h3 className="font-semibold text-fjord">{dict.location.openingHours}</h3>
               <ul className="mt-1 space-y-0.5 text-steam">
                 {weekdays
                   .filter((day) => day in openingHours)
@@ -183,12 +185,12 @@ export function LocationCard({
             </div>
           )}
 
-          <div className="mt-4 space-y-1.5">
+          <div className="mt-3 space-y-1.5">
             <WaterTempStat report={water} locale={locale} />
             <IceStatus report={ice} locale={locale} />
           </div>
 
-          <div className="mt-4 space-y-2 border-t border-warm-border pt-4">
+          <div className="mt-3 space-y-2 border-t border-warm-border pt-3">
             {weather.status === "loading" && (
               <p className="text-sm text-steam">{dict.location.loadingWeather}</p>
             )}

@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import { formatAge, getFreshness } from "@/lib/freshness";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { locationTypeIconComponent } from "@/lib/location-types";
@@ -48,10 +49,10 @@ export function LocationListCard({
     <button
       type="button"
       onClick={() => onSelect(location)}
-      className={`w-full animate-[card-enter_200ms_ease-out] rounded-xl border p-3 text-left transition ${
+      className={`w-full animate-[card-enter_200ms_ease-out] rounded-xl border p-2.5 text-left transition ${
         selected
           ? "border-ember bg-ember/5 ring-1 ring-ember/30"
-          : "border-warm-border bg-white hover:border-steam/50"
+          : "border-transparent bg-ivory-shade hover:border-warm-border"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -60,7 +61,7 @@ export function LocationListCard({
             <TypeIcon className="h-4 w-4" aria-hidden />
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-fjord">{location.name}</p>
+            <p className="truncate text-sm font-semibold text-fjord">{location.name}</p>
             <p className="truncate text-xs text-steam">{dict.locationType[location.type]}</p>
           </div>
         </div>
@@ -69,12 +70,21 @@ export function LocationListCard({
         )}
       </div>
 
-      <div className="mt-2.5 flex items-center gap-1.5 text-xs">
-        <span
-          className="h-2 w-2 shrink-0 rounded-full"
-          style={{ backgroundColor: statusColor }}
-          aria-hidden
-        />
+      <div className="mt-1.5 flex items-center gap-1.5 text-xs">
+        {status === "unknown" ? (
+          <MapPin
+            className="h-3 w-3 shrink-0"
+            style={{ color: statusColor }}
+            strokeWidth={2.25}
+            aria-hidden
+          />
+        ) : (
+          <span
+            className="h-2 w-2 shrink-0 rounded-full"
+            style={{ backgroundColor: statusColor }}
+            aria-hidden
+          />
+        )}
         <span className="font-medium" style={{ color: statusColor }}>
           {statusLabel}
         </span>
@@ -83,13 +93,12 @@ export function LocationListCard({
             · {occupancy.peopleCount} {dict.location.peopleUnit}
           </span>
         )}
+        {showUpdated && (
+          <span className="text-[11px] text-steam/80">
+            · {formatAge(occupancy.createdAt, dict.time)}
+          </span>
+        )}
       </div>
-
-      {showUpdated && (
-        <p className="mt-0.5 text-[11px] text-steam">
-          {dict.location.updatedPrefix} {formatAge(occupancy.createdAt, dict.time)}
-        </p>
-      )}
     </button>
   );
 }
