@@ -116,7 +116,9 @@
     "air": "air",
     "water": "water",
     "liveSnapshotActive": "{locations} active spots · {people} people right now",
-    "liveSnapshotEmpty": "Be the first to check in today"
+    "liveSnapshotEmpty": "Be the first to check in today",
+    "liveSnapshotSpotsLabel": "active spots",
+    "liveSnapshotPeopleLabel": "people now"
   },
   "location": {
     "free": "Free",

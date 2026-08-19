@@ -116,7 +116,9 @@
     "air": "õhk",
     "water": "vesi",
     "liveSnapshotActive": "{locations} aktiivset kohta · {people} inimest just praegu",
-    "liveSnapshotEmpty": "Ole täna esimene, kes end kirja paneb"
+    "liveSnapshotEmpty": "Ole täna esimene, kes end kirja paneb",
+    "liveSnapshotSpotsLabel": "aktiivset kohta",
+    "liveSnapshotPeopleLabel": "praegu kohal"
   },
   "location": {
     "free": "Tasuta",

@@ -116,7 +116,9 @@
     "air": "воздух",
     "water": "вода",
     "liveSnapshotActive": "{locations} активных мест · {people} человек прямо сейчас",
-    "liveSnapshotEmpty": "Будь первым, кто отметится сегодня"
+    "liveSnapshotEmpty": "Будь первым, кто отметится сегодня",
+    "liveSnapshotSpotsLabel": "активных мест",
+    "liveSnapshotPeopleLabel": "человек сейчас"
   },
   "location": {
     "free": "Бесплатно",

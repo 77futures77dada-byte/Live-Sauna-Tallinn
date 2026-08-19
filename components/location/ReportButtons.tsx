@@ -37,7 +37,7 @@ function useReportSubmit(endpoint: string, dict: ReturnType<typeof getDictionary
 
 const inputClass = "w-28 rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord";
 const buttonClass =
-  "rounded-lg bg-ember px-3 py-1 text-sm text-white transition hover:brightness-110 disabled:opacity-50";
+  "rounded-lg border border-ember bg-ivory-shade/40 px-3 py-1 text-sm font-medium text-ember transition hover:bg-ember/10 disabled:opacity-50";
 
 export function ReportButtons({ locationId, locale }: { locationId: string; locale: Locale }) {
   const dict = getDictionary(locale).report;
