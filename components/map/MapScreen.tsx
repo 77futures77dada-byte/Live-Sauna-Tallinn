@@ -39,7 +39,6 @@ export function MapScreen({
   initialOpenVisit,
   focusLocationId,
   locale,
-  heroImageUrl,
 }: {
   locations: Location[];
   initialOccupancy: [string, LatestOccupancy][];
@@ -49,7 +48,6 @@ export function MapScreen({
   initialOpenVisit: OpenVisit | null;
   focusLocationId?: string;
   locale: Locale;
-  heroImageUrl: string | null;
 }) {
   const focusLocation = focusLocationId
     ? (locations.find((l) => l.id === focusLocationId) ?? null)
@@ -159,7 +157,6 @@ export function MapScreen({
           locale={locale}
           onEnter={() => setShowHero(false)}
           liveSnapshot={getLiveSnapshot(occupancy)}
-          heroImageUrl={heroImageUrl}
           userId={userId}
         />
       </div>

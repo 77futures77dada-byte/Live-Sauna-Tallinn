@@ -29,13 +29,11 @@ export function HeroLanding({
   locale,
   onEnter,
   liveSnapshot,
-  heroImageUrl,
   userId,
 }: {
   locale: Locale;
   onEnter: () => void;
   liveSnapshot: LiveSnapshot;
-  heroImageUrl: string | null;
   userId: string | null;
 }) {
   const dict = getDictionary(locale);
@@ -67,7 +65,7 @@ export function HeroLanding({
 
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden bg-ivory px-6 py-12 text-center text-fjord">
-      <HeroBackground imageUrl={heroImageUrl} />
+      <HeroBackground />
       <div className="relative z-10 flex flex-col items-center">
         {/* Group 1-3: headline, live snapshot, primary CTA — kept tight so
             they read as one block (docs request: sharpen the hierarchy so

@@ -6,7 +6,6 @@ import { getMapPageData } from "@/lib/map-data";
 import { isAdmin } from "@/lib/admin";
 import { getLocale } from "@/lib/get-locale";
 import { isGeminiConfigured } from "@/lib/gemini";
-import { getHeroImageUrl } from "@/lib/hero";
 
 // Deep-link target for QR codes (scripts/generate-qr.ts) — same map/card
 // UI as the main screen, just centered on and pre-opened to one location.
@@ -52,7 +51,6 @@ export default async function LocationPage({
         initialOpenVisit={openVisit}
         focusLocationId={location.id}
         locale={locale}
-        heroImageUrl={getHeroImageUrl()}
       />
     </div>
   );

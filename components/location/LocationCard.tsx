@@ -120,11 +120,11 @@ export function LocationCard({
                    }`}
       >
         {/*
-          No location photo gallery exists in this app — the `photos`
-          table only holds per-visit before/after and booking-verification
-          shots, not curated location photography (see
-          LocationTypeBanner) — so this is always the type-tuned gradient,
-          never a real photo, until/unless that changes.
+          No location photo gallery exists in this app — the `photos` table
+          only holds per-visit before/after and booking-verification shots,
+          not curated location photography — so this is always the generic
+          per-type stock photo (see LocationTypeBanner), never a photo of
+          this specific location.
         */}
         <div className="relative h-32 shrink-0">
           <LocationTypeBanner type={location.type} className="h-full w-full" />
