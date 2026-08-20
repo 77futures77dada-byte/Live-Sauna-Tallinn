@@ -28,26 +28,12 @@ const tintByType: Record<LocationType, string> = {
   ice_swimming: "linear-gradient(135deg, #0a1620 0%, #16414f 55%, #3fa9d6 140%)",
 };
 
-// A soft top-left bloom layered over the photo, so the banner reads as lit
-// from one corner rather than flat, plus a bottom scrim so the icon
-// watermarks stay legible over busy photo detail.
-const lightingOverlay = `
-  radial-gradient(130% 90% at 12% -15%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 55%),
-  linear-gradient(180deg, rgba(10,20,30,0.1) 0%, rgba(10,20,30,0.4) 100%)
-`;
-
-// Scattered, oversized, low-opacity copies of the type glyph — a tiled
-// watermark rather than one small centered icon — so the banner feels like
-// branded texture instead of a placeholder. Fixed positions (not a CSS
-// tile) since these are React icon components, not a background-image.
-const watermarks = [
-  { top: "-12%", left: "-6%", size: 104, opacity: 0.14, rotate: -14 },
-  { top: "8%", left: "34%", size: 64, opacity: 0.18, rotate: 10 },
-  { top: "-6%", left: "68%", size: 88, opacity: 0.13, rotate: 6 },
-  { top: "48%", left: "4%", size: 72, opacity: 0.12, rotate: 18 },
-  { top: "42%", left: "82%", size: 96, opacity: 0.15, rotate: -8 },
-  { top: "68%", left: "44%", size: 60, opacity: 0.17, rotate: -20 },
-];
+// Just a bottom scrim now — the repeating icon watermark pattern (see git
+// history) was designed to give the old flat gradient placeholder some
+// texture; over a real photo it just adds clutter. This only exists to
+// keep the close button and any future overlaid text/status icons legible
+// against busy photo detail.
+const bottomScrim = "linear-gradient(180deg, rgba(10,20,30,0) 55%, rgba(10,20,30,0.45) 100%)";
 
 export function LocationTypeBanner({
   type,
@@ -65,22 +51,7 @@ export function LocationTypeBanner({
         className="absolute inset-0 opacity-50 mix-blend-multiply"
         style={{ background: tintByType[type] }}
       />
-      <div className="absolute inset-0" style={{ background: lightingOverlay }} />
-      {watermarks.map((mark, i) => (
-        <Icon
-          key={i}
-          className="absolute text-white drop-shadow-sm"
-          strokeWidth={1.25}
-          style={{
-            top: mark.top,
-            left: mark.left,
-            width: mark.size,
-            height: mark.size,
-            opacity: mark.opacity,
-            transform: `rotate(${mark.rotate}deg)`,
-          }}
-        />
-      ))}
+      <div className="absolute inset-0" style={{ background: bottomScrim }} />
       <Icon className="relative h-14 w-14 text-white/70 drop-shadow" strokeWidth={1.5} />
     </div>
   );
