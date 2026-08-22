@@ -13,11 +13,12 @@ export function isHourAligned(date: Date): boolean {
 }
 
 // Upcoming hour-aligned slots for the booking form's picker, starting at
-// the next full hour from now.
+// the current hour (so a visitor can book "now" and check in immediately —
+// findFulfillableBooking only requires the check-in to land before the
+// slot's end_time, which the current hour still satisfies).
 export function nextHourSlots(count: number, from: Date = new Date()): Date[] {
   const first = new Date(from);
   first.setUTCMinutes(0, 0, 0);
-  first.setUTCHours(first.getUTCHours() + 1);
 
   return Array.from({ length: count }, (_, i) => new Date(first.getTime() + i * HOUR_MS));
 }

@@ -5,6 +5,7 @@ import { bcp47Locale, getDictionary } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getReputationSummary } from "@/lib/reputation";
+import { signOutAction } from "@/lib/actions/sign-out";
 
 export default async function ProfilePage() {
   const locale = await getLocale();
@@ -65,8 +66,20 @@ export default async function ProfilePage() {
         {dict.profile.backToMap}
       </Link>
 
-      <h1 className="mt-2 text-2xl font-semibold">{dict.profile.title}</h1>
-      <p className="text-sm text-zinc-500">{user.email}</p>
+      <div className="mt-2 flex items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-semibold">{dict.profile.title}</h1>
+          <p className="text-sm text-zinc-500">{user.email}</p>
+        </div>
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          >
+            {dict.auth.logout}
+          </button>
+        </form>
+      </div>
 
       <div className="mt-6 rounded-xl border border-zinc-100 p-5 dark:border-zinc-800">
         <p className="text-3xl font-semibold">{summary.reputation}</p>

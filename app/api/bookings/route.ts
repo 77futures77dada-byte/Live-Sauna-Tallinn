@@ -86,8 +86,9 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  if (startTime.getTime() < Date.now() - 5 * 60_000) {
-    return NextResponse.json({ error: "start_time must be in the future" }, { status: 400 });
+  const endTime = new Date(startTime.getTime() + 60 * 60_000);
+  if (endTime.getTime() <= Date.now()) {
+    return NextResponse.json({ error: "start_time's hour has already ended" }, { status: 400 });
   }
 
   if (!(file instanceof File)) {
@@ -125,8 +126,6 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-
-  const endTime = new Date(startTime.getTime() + 60 * 60_000);
 
   const { data: booking, error: bookingError } = await supabase
     .from("bookings")

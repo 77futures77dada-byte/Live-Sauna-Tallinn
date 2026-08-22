@@ -8,13 +8,19 @@ import { createClient } from "@/lib/supabase/client";
 type Step = "email" | "code";
 type Status = "idle" | "sending" | "sent" | "verifying" | "error" | "codeError";
 
-export function LoginForm({ locale }: { locale: Locale }) {
+export function LoginForm({
+  locale,
+  initialError = false,
+}: {
+  locale: Locale;
+  initialError?: boolean;
+}) {
   const dict = getDictionary(locale);
   const router = useRouter();
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<Status>(initialError ? "error" : "idle");
 
   async function sendCode(event: React.SyntheticEvent) {
     event.preventDefault();
