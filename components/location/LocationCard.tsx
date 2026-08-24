@@ -208,6 +208,7 @@ export function LocationCard({
                 <BookingPanel
                   locationId={location.id}
                   capacity={location.capacity}
+                  openingHours={location.opening_hours}
                   locale={locale}
                   refreshToken={openVisit?.locationId === location.id ? openVisit.id : null}
                 />

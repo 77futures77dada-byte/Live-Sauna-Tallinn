@@ -1,19 +1,122 @@
 "use client";
 
-import { Camera } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { nextHourSlots } from "@/lib/bookings";
+import { Camera, ChevronDown } from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
+import { nextOpenHourSlots } from "@/lib/bookings";
 import type { Booking } from "@/lib/bookings";
 import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 
 const SLOT_COUNT = 12;
 
-function formatSlot(date: Date, locale: Locale): string {
-  return date.toLocaleString(bcp47Locale[locale], {
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+// Slots are shown as bare "HH:MM" when they're all the same calendar day
+// (the common case), since a weekday abbreviation adds nothing there — and
+// in Estonian, Intl's "short" weekday is a single letter (e.g. "T" for
+// Teisipäev/Tuesday), which reads as noise rather than context. Once slots
+// span multiple days, a full date is shown instead of that abbreviation.
+function formatSlots(slots: Date[], locale: Locale): string[] {
+  const tag = bcp47Locale[locale];
+  const sameDay = slots.every((slot) => slot.toDateString() === slots[0]?.toDateString());
+
+  return slots.map((slot) =>
+    sameDay
+      ? slot.toLocaleString(tag, { hour: "2-digit", minute: "2-digit" })
+      : slot.toLocaleString(tag, { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }),
+  );
+}
+
+// A native <select>'s own popup can't be restyled with CSS — its option
+// list stays browser/OS chrome no matter what the closed control looks
+// like — so the time-slot picker is a small hand-rolled listbox instead,
+// styled to match the rest of the form. There's no existing dropdown
+// component elsewhere in the app to reuse.
+function TimeSlotSelect({
+  slots,
+  labels,
+  value,
+  onChange,
+}: {
+  slots: Date[];
+  labels: string[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const selectedIndex = slots.findIndex((slot) => slot.toISOString() === value);
+
+  useEffect(() => {
+    if (!open) return;
+    function handlePointerDown(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, [open]);
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === "ArrowDown" && selectedIndex < slots.length - 1) {
+      event.preventDefault();
+      onChange(slots[selectedIndex + 1].toISOString());
+    } else if (event.key === "ArrowUp" && selectedIndex > 0) {
+      event.preventDefault();
+      onChange(slots[selectedIndex - 1].toISOString());
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        onKeyDown={handleKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex w-full items-center justify-between rounded-lg border border-warm-border bg-white px-2 py-1.5 text-left text-sm text-fjord transition-colors hover:border-fjord/30 focus:border-ember focus:ring-2 focus:ring-ember/25 focus:outline-none"
+      >
+        <span>{labels[selectedIndex] ?? ""}</span>
+        <ChevronDown
+          className={`h-4 w-4 text-steam transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        />
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-warm-border bg-white py-1 text-sm shadow-lg"
+        >
+          {slots.map((slot, index) => (
+            <li
+              key={slot.toISOString()}
+              role="option"
+              aria-selected={index === selectedIndex}
+              onClick={() => {
+                onChange(slot.toISOString());
+                setOpen(false);
+              }}
+              className={`cursor-pointer px-2 py-1.5 ${
+                index === selectedIndex ? "bg-ember/10 font-medium text-ember" : "text-fjord hover:bg-ivory"
+              }`}
+            >
+              {labels[index]}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 // The verification-photo requirement and QR wording here are deliberate —
@@ -22,18 +125,21 @@ function formatSlot(date: Date, locale: Locale): string {
 export function BookingForm({
   locationId,
   capacity,
+  openingHours,
   locale,
   onCreated,
   onCancel,
 }: {
   locationId: string;
   capacity: number | null;
+  openingHours: Record<string, string> | null;
   locale: Locale;
   onCreated: (booking: Booking) => void;
   onCancel: () => void;
 }) {
   const dict = getDictionary(locale).booking;
-  const [slots] = useState(() => nextHourSlots(SLOT_COUNT));
+  const [slots] = useState(() => nextOpenHourSlots(SLOT_COUNT, openingHours));
+  const slotLabels = useMemo(() => formatSlots(slots, locale), [slots, locale]);
   const [startTime, setStartTime] = useState(slots[0].toISOString());
   const [peopleCount, setPeopleCount] = useState("1");
   const [file, setFile] = useState<File | null>(null);
@@ -82,17 +188,7 @@ export function BookingForm({
     <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg bg-ivory p-3">
       <div>
         <label className="mb-1 block text-xs font-medium text-steam">{dict.timeSlot}</label>
-        <select
-          value={startTime}
-          onChange={(event) => setStartTime(event.target.value)}
-          className="w-full rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord"
-        >
-          {slots.map((slot) => (
-            <option key={slot.toISOString()} value={slot.toISOString()}>
-              {formatSlot(slot, locale)}
-            </option>
-          ))}
-        </select>
+        <TimeSlotSelect slots={slots} labels={slotLabels} value={startTime} onChange={setStartTime} />
       </div>
 
       <div>

@@ -29,11 +29,13 @@ function formatRange(booking: Booking, locale: Locale): string {
 export function BookingPanel({
   locationId,
   capacity,
+  openingHours,
   locale,
   refreshToken,
 }: {
   locationId: string;
   capacity: number | null;
+  openingHours: Record<string, string> | null;
   locale: Locale;
   // Bumped by LocationCard when this location's open visit changes, so a
   // QR check-in that fulfills a booking is reflected without a manual
@@ -92,6 +94,7 @@ export function BookingPanel({
         <BookingForm
           locationId={locationId}
           capacity={capacity}
+          openingHours={openingHours}
           locale={locale}
           onCreated={(booking) => {
             setBookings((prev) => [booking, ...(prev ?? [])]);
