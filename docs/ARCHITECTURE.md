@@ -243,7 +243,7 @@ create table ratings (
 
 1. **Map (главный)** — точки с маркерами, цвет = occupancy freshness, клик → bottom sheet с карточкой места.
 2. **Location card** — occupancy, вода, лёд, погода, "Go here" (маршрут), "I'm going there", "Report status".
-3. **Check-in flow** — QR или кнопка → создаётся `visit` → опционально Before-фото → таймер визита идёт в фоне.
+3. **Check-in flow** — кнопка "I'm here" → геолокация браузера сверяется с координатами локации (radius `CHECKIN_RADIUS_METERS`, см. lib/geo.ts), плюс обязательное Before-фото прямо в моменте check-in → без обоих условий `visit` не создаётся → таймер визита идёт в фоне.
 4. **Finish visit** — рейтинг, crowd level, обновление воды/льда одним экраном, After-фото → reputation +N.
 5. **Booking** (только для мест с `booking_enabled`) — выбор даты/времени/людей → подтверждение (без оплаты в MVP).
 6. **Profile** — визиты, репутация, бейджи, история фото.

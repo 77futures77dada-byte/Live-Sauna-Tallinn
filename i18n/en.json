@@ -63,8 +63,15 @@
   "visit": {
     "checkIn": "I'm here 🔥",
     "checkingIn": "Checking in…",
+    "locating": "Confirming your location…",
     "genericError": "Something went wrong",
     "networkError": "Network error",
+    "takeCheckInPhoto": "Take a photo to check in",
+    "photoSelected": "Photo ready ✓",
+    "checkInPhotoHint": "A photo is required to confirm you're on site.",
+    "checkInPhotoRequiredError": "Take a photo first, then check in.",
+    "locationRequiredError": "We need your location to confirm you're at the sauna. Please allow location access and try again.",
+    "tooFarError": "Looks like you're not at this location yet. Get closer and try again.",
     "rating": "Rating",
     "starLabel": {
       "1": "1 star",

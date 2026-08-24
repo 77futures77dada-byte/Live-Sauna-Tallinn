@@ -63,8 +63,15 @@
   "visit": {
     "checkIn": "Ma olen siin 🔥",
     "checkingIn": "Sisseregistreerimine…",
+    "locating": "Asukoha kinnitamine…",
     "genericError": "Midagi läks valesti",
     "networkError": "Võrgu viga",
+    "takeCheckInPhoto": "Tee foto sisseregistreerimiseks",
+    "photoSelected": "Foto valmis ✓",
+    "checkInPhotoHint": "Foto on kohapeal viibimise kinnitamiseks kohustuslik.",
+    "checkInPhotoRequiredError": "Tee kõigepealt foto, seejärel registreeri end sisse.",
+    "locationRequiredError": "Sinu asukoht on vajalik, et kinnitada, et oled saunas kohapeal. Luba asukoha kasutamine ja proovi uuesti.",
+    "tooFarError": "Tundub, et sa ei ole veel selles asukohas. Mine lähemale ja proovi uuesti.",
     "rating": "Hinnang",
     "starLabel": {
       "1": "1 täht",
