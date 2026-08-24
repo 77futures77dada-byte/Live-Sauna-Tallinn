@@ -2,15 +2,6 @@ import { NextResponse } from "next/server";
 import { isUserBanned } from "@/lib/moderation";
 import { isHourAligned, getUserBookingsForLocation } from "@/lib/bookings";
 import { createClient } from "@/lib/supabase/server";
-import { createServiceClient } from "@/lib/supabase/service";
-
-const MAX_BYTES = 10 * 1024 * 1024;
-const EXTENSION_BY_MIME: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/heic": "heic",
-};
 
 // GET /api/bookings?location_id=<uuid> — the caller's own bookings for one
 // location (lazily expired to 'no_show' first — see lib/bookings.ts).
@@ -34,16 +25,15 @@ export async function GET(request: Request) {
   return NextResponse.json(bookings);
 }
 
-// POST /api/bookings — multipart form: location_id, start_time (ISO,
-// hour-aligned), people_count, file (verification photo).
+// POST /api/bookings — JSON body: location_id, start_time (ISO,
+// hour-aligned), people_count.
 //
-// No payment in MVP, so a booking is confirmed the moment it's created —
-// but only once a verification photo is attached, per
-// docs/ARCHITECTURE.md section 9.5. The photo is validated *before* the
-// booking row is inserted so a rejected upload never leaves a bare
-// booking behind; a booking row is only deleted afterwards if the
-// Storage write or photo insert itself fails (best-effort cleanup, same
-// non-transactional style as app/api/photos).
+// No payment in MVP, so a booking is confirmed the moment it's created — see
+// docs/ARCHITECTURE.md section 9.5. There's no verification photo at this
+// step: presence is confirmed later, on site, by the check-in flow's own
+// geolocation + before-photo requirement (and again by the after-photo at
+// visit finish) — a booking made remotely, ahead of the visit, can't
+// produce an "on site" photo anyway.
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -57,16 +47,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Your account is banned from booking" }, { status: 403 });
   }
 
-  const form = await request.formData().catch(() => null);
-  const locationId = form?.get("location_id");
-  const startTimeRaw = form?.get("start_time");
-  const peopleCountRaw = form?.get("people_count");
-  const file = form?.get("file");
+  const body = await request.json().catch(() => null);
+  const locationId = body?.location_id;
+  const startTimeRaw = body?.start_time;
+  const peopleCountRaw = body?.people_count;
 
   if (
     typeof locationId !== "string" ||
     typeof startTimeRaw !== "string" ||
-    typeof peopleCountRaw !== "string"
+    (typeof peopleCountRaw !== "string" && typeof peopleCountRaw !== "number")
   ) {
     return NextResponse.json(
       { error: "location_id, start_time, and people_count are required" },
@@ -89,23 +78,6 @@ export async function POST(request: Request) {
   const endTime = new Date(startTime.getTime() + 60 * 60_000);
   if (endTime.getTime() <= Date.now()) {
     return NextResponse.json({ error: "start_time's hour has already ended" }, { status: 400 });
-  }
-
-  if (!(file instanceof File)) {
-    return NextResponse.json(
-      { error: "A verification photo is required to confirm a booking" },
-      { status: 400 },
-    );
-  }
-  const extension = EXTENSION_BY_MIME[file.type];
-  if (!extension) {
-    return NextResponse.json(
-      { error: "Unsupported image type. Use JPEG, PNG, WebP, or HEIC." },
-      { status: 400 },
-    );
-  }
-  if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "Photo is larger than 10MB" }, { status: 400 });
   }
 
   const { data: location, error: locationError } = await supabase
@@ -142,32 +114,6 @@ export async function POST(request: Request) {
 
   if (bookingError || !booking) {
     return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
-  }
-
-  const path = `${user.id}/booking/${booking.id}/verification.${extension}`;
-  const service = createServiceClient();
-
-  const { error: uploadError } = await service.storage
-    .from("visit-photos")
-    .upload(path, file, { contentType: file.type, upsert: true });
-
-  if (uploadError) {
-    await supabase.from("bookings").delete().eq("id", booking.id);
-    return NextResponse.json({ error: "Failed to upload verification photo" }, { status: 500 });
-  }
-
-  const { error: photoError } = await supabase.from("photos").insert({
-    user_id: user.id,
-    location_id: locationId,
-    booking_id: booking.id,
-    type: "booking_verification",
-    storage_url: path,
-  });
-
-  if (photoError) {
-    await service.storage.from("visit-photos").remove([path]);
-    await supabase.from("bookings").delete().eq("id", booking.id);
-    return NextResponse.json({ error: "Failed to save verification photo" }, { status: 500 });
   }
 
   return NextResponse.json(booking, { status: 201 });

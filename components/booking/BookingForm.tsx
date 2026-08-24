@@ -1,15 +1,7 @@
 "use client";
 
-import { Camera, ChevronDown } from "lucide-react";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-  type KeyboardEvent,
-} from "react";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { nextOpenHourSlots } from "@/lib/bookings";
 import type { Booking } from "@/lib/bookings";
 import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
@@ -119,9 +111,13 @@ function TimeSlotSelect({
   );
 }
 
-// The verification-photo requirement and QR wording here are deliberate —
-// see docs/ARCHITECTURE.md section 9.5: without payment, a booking only
-// becomes a real hold once the visitor checks in on site.
+// No verification photo at booking time — see docs/ARCHITECTURE.md section
+// 9.5: presence is confirmed later, on site, by the check-in flow's own
+// geolocation + before-photo requirement, and again by the after-photo at
+// visit finish. A booking made remotely, ahead of the visit, can't produce
+// an "on site" photo anyway. Without payment, a booking only becomes a real
+// hold once that on-site check-in happens — the QR wording below reflects
+// that.
 export function BookingForm({
   locationId,
   capacity,
@@ -142,33 +138,20 @@ export function BookingForm({
   const slotLabels = useMemo(() => formatSlots(slots, locale), [slots, locale]);
   const [startTime, setStartTime] = useState(slots[0].toISOString());
   const [peopleCount, setPeopleCount] = useState("1");
-  const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
 
-  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    setFile(event.target.files?.[0] ?? null);
-  }
-
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!file) {
-      setStatus("error");
-      setMessage(dict.photoRequiredError);
-      return;
-    }
-
     setStatus("submitting");
     setMessage(null);
 
-    const formData = new FormData();
-    formData.append("location_id", locationId);
-    formData.append("start_time", startTime);
-    formData.append("people_count", peopleCount);
-    formData.append("file", file);
-
     try {
-      const res = await fetch("/api/bookings", { method: "POST", body: formData });
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ location_id: locationId, start_time: startTime, people_count: peopleCount }),
+      });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -203,22 +186,6 @@ export function BookingForm({
           onChange={(event) => setPeopleCount(event.target.value)}
           className="w-24 rounded-lg border border-warm-border px-2 py-1 text-sm text-fjord"
         />
-      </div>
-
-      <div>
-        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-warm-border bg-white px-3 py-1.5 text-sm text-fjord transition-colors hover:bg-ivory">
-          <Camera className="h-4 w-4 text-steam" aria-hidden />
-          {file ? dict.photoSelected : dict.takePhoto}
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={handleFileChange}
-            required
-          />
-        </label>
-        <p className="mt-1 text-xs text-steam">{dict.photoRequiredHint}</p>
       </div>
 
       <p className="text-xs text-steam">{dict.confirmNote}</p>
