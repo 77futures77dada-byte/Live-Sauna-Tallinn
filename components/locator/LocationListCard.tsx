@@ -51,7 +51,7 @@ export function LocationListCard({
     <div
       className={`w-full animate-[card-enter_200ms_ease-out] rounded-2xl border p-4 transition sm:p-5 ${
         selected
-          ? "border-ember bg-ember/5 shadow-md ring-1 ring-ember/30"
+          ? "border-fjord bg-fjord/5 shadow-md ring-1 ring-fjord/30"
           : "border-warm-border bg-white shadow-sm hover:border-steam/40 hover:shadow-md"
       }`}
     >
@@ -99,7 +99,7 @@ export function LocationListCard({
         <button
           type="button"
           onClick={() => onSelect(location)}
-          className="mt-3.5 w-full rounded-full bg-ember px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 sm:w-auto"
+          className="mt-3.5 w-full rounded-full bg-fjord px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 sm:w-auto"
         >
           {dict.booking.bookSlotButton}
         </button>

@@ -141,7 +141,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           disabled={!enabled}
           aria-label={dict.openLabel}
           title={enabled ? dict.openLabel : dict.unavailable}
-          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-fjord text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Sparkles className="h-6 w-6" aria-hidden />
         </button>
@@ -164,7 +164,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           >
             <div className="flex items-center justify-between gap-2 border-b border-warm-border p-4">
               <h2 className="flex items-center gap-1.5 text-sm font-semibold text-fjord">
-                <Sparkles className="h-4 w-4 text-ember" aria-hidden />
+                <Sparkles className="h-4 w-4 text-fjord" aria-hidden />
                 {dict.title}
               </h2>
               <button
@@ -242,7 +242,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="rounded-full bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+                className="rounded-full bg-fjord px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
               >
                 {dict.send}
               </button>

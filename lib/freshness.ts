@@ -16,9 +16,9 @@ export const freshnessColor: Record<FreshnessLevel, string> = {
 // pale gray ones, so pick light-on-dark or dark-on-light per level.
 export const freshnessIconColor: Record<FreshnessLevel, string> = {
   high: "#EAF3F5",
-  medium: "#0E2233",
-  low: "#0E2233",
-  unknown: "#0E2233",
+  medium: "#111111",
+  low: "#111111",
+  unknown: "#111111",
 };
 
 // 0-15min = high, 15-30 = medium, 30-60 = low, 60+ = unknown. A null

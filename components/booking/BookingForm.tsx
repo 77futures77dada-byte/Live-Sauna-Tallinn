@@ -75,7 +75,7 @@ function TimeSlotSelect({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-lg border border-warm-border bg-white px-2 py-1.5 text-left text-sm text-fjord transition-colors hover:border-fjord/30 focus:border-ember focus:ring-2 focus:ring-ember/25 focus:outline-none"
+        className="flex w-full items-center justify-between rounded-lg border border-warm-border bg-white px-2 py-1.5 text-left text-sm text-fjord transition-colors hover:border-fjord/30 focus:border-fjord focus:ring-2 focus:ring-fjord/25 focus:outline-none"
       >
         <span>{labels[selectedIndex] ?? ""}</span>
         <ChevronDown
@@ -99,7 +99,7 @@ function TimeSlotSelect({
                 setOpen(false);
               }}
               className={`cursor-pointer px-2 py-1.5 ${
-                index === selectedIndex ? "bg-ember/10 font-medium text-ember" : "text-fjord hover:bg-ivory"
+                index === selectedIndex ? "bg-fjord/10 font-semibold text-fjord" : "text-fjord hover:bg-ivory"
               }`}
             >
               {labels[index]}
@@ -194,7 +194,7 @@ export function BookingForm({
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex-1 rounded-lg bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-fjord px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {status === "submitting" ? dict.confirming : dict.confirmBooking}
         </button>

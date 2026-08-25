@@ -36,19 +36,14 @@ export function LocatorHeroBanner({
         aria-hidden
         style={{
           background:
-            "linear-gradient(90deg, rgba(14,34,51,0.88) 0%, rgba(14,34,51,0.62) 48%, rgba(14,34,51,0.18) 100%)",
+            "linear-gradient(90deg, rgba(17,17,17,0.88) 0%, rgba(17,17,17,0.62) 48%, rgba(17,17,17,0.18) 100%)",
         }}
       />
       <div className="relative mx-auto flex h-full max-w-[1360px] flex-col justify-center px-4 lg:px-8">
         <p className="text-xs font-medium tracking-[0.2em] text-white/70 uppercase">
           {dict.hero.eyebrow}
         </p>
-        <h1
-          className="mt-1 text-4xl leading-none font-medium text-white sm:text-5xl"
-          style={{ fontFamily: "var(--font-fraunces)" }}
-        >
-          Harku
-        </h1>
+        <h1 className="mt-1 text-4xl leading-none font-semibold text-white sm:text-5xl">Harku</h1>
 
         <div
           className="mt-4 inline-flex w-fit items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 backdrop-blur-sm"

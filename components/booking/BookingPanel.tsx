@@ -6,10 +6,12 @@ import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import type { BookingStatus } from "@/lib/supabase/types";
 import { BookingForm } from "./BookingForm";
 
-// confirmed = waiting on the visitor (Frost, "calm anticipation"), same
-// quiet/busy/neutral vocabulary as occupancy status elsewhere otherwise.
+// confirmed = waiting on the visitor (caution/amber, "not resolved yet"),
+// same quiet/busy/neutral vocabulary as occupancy status elsewhere
+// otherwise — these are functional status colors, kept saturated even
+// under the monochrome rebrand (see app/globals.css).
 const statusColor: Record<BookingStatus, string> = {
-  confirmed: "text-frost",
+  confirmed: "text-caution",
   fulfilled: "text-quiet",
   no_show: "text-busy",
   cancelled: "text-steam",

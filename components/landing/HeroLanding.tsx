@@ -6,8 +6,8 @@ import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 // Full-screen splash before the dashboard (map + three sauna cards) —
-// deliberately a different register from it: bright brand gradient here,
-// calm Ivory interior there, same two-scene split as the TallinnVäljak
+// deliberately a different register from it: bold near-black splash here,
+// white interior there, same two-scene split as the TallinnVäljak
 // reference this was designed against. MapScreen renders this inside a
 // `fixed inset-0` wrapper (not this component's own doing) specifically so
 // it covers AppHeader's bar too — this screen owns its own corner
@@ -28,10 +28,10 @@ export function HeroLanding({
     <div
       className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden px-6 py-12 text-center"
       style={{
-        // Fjord Ink -> Ember, diagonal — the same "cold outside, warm
-        // inside" metaphor as the rest of the brand, not a generic blue
-        // gradient like the reference itself uses.
-        background: "linear-gradient(155deg, #0e2233 0%, #0e2233 42%, #e8632c 115%)",
+        // Near-solid near-black, barely a gradient — the old Fjord
+        // Ink -> Ember warm diagonal is gone with the rest of the brand
+        // color; this is monochrome by design, not a muted version of it.
+        background: "linear-gradient(155deg, #111111 0%, #1a1a1a 100%)",
       }}
     >
       {/* Oversized, low-opacity, bleeding past the viewport edges — decorative
@@ -55,22 +55,20 @@ export function HeroLanding({
       />
 
       <div className="absolute top-5 left-5 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg sm:top-6 sm:left-6">
-        <Flame className="h-6 w-6 text-ember" aria-hidden />
+        <Flame className="h-6 w-6 text-fjord" aria-hidden />
       </div>
       <div className="absolute top-5 right-5 sm:top-6 sm:right-6">
         <LanguageSwitcher locale={locale} variant="pill" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        {/* IBM Plex Sans at a heavy weight, not Fraunces — a one-off poster
-            treatment for this wordmark only (see the file-level comment);
-            the rest of the app keeps Fraunces for display type. */}
-        <h1
-          className="text-6xl leading-none font-extrabold tracking-tight sm:text-7xl"
-          style={{ fontFamily: "var(--font-ibm-plex-sans)" }}
-        >
+        {/* Heavy-weight IBM Plex Sans poster treatment, white + light gray
+            — the two-tone wordmark used to split white/Ember; monochrome
+            now, so the split is white vs. dimmed white instead of a color
+            contrast. */}
+        <h1 className="text-6xl leading-none font-extrabold tracking-tight sm:text-7xl">
           <span className="text-white">Live</span>
-          <span className="text-ember">Sauna</span>
+          <span className="text-white/55">Sauna</span>
         </h1>
 
         <p className="mt-4 text-sm font-medium tracking-wide text-white/80">{dict.hero.tagline}</p>

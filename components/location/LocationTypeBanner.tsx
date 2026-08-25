@@ -16,16 +16,17 @@ const photoByType: Record<LocationType, string> = {
   beach: "/atmosphere/beach.webp",
 };
 
-// Same fire-and-ice language the gradient placeholder used, now as a color
-// wash (mix-blend-mode: multiply) over the real photo instead of a flat
-// fill, so each type still reads as warm (sauna) or cold (winter swimming)
-// at a glance.
+// The old fire-and-ice color wash (warm orange for sauna, cold blue for
+// winter swimming) was brand decoration, not information — gone under the
+// monochrome rebrand along with Ember/Frost. Grayscale-only now, still one
+// mix-blend-mode: multiply wash per type over the real photo, just varying
+// in depth/contrast rather than hue.
 const tintByType: Record<LocationType, string> = {
-  sauna: "linear-gradient(135deg, #0e2233 0%, #6a2f14 55%, #e8632c 130%)",
-  sauna_swimming: "linear-gradient(135deg, #0e2233 0%, #2c5064 45%, #e8632c 130%)",
-  winter_swimming: "linear-gradient(135deg, #0e2233 0%, #1c4a63 60%, #3fa9d6 140%)",
-  beach: "linear-gradient(135deg, #0e2233 0%, #2c5064 45%, #d9cfbc 140%)",
-  ice_swimming: "linear-gradient(135deg, #0a1620 0%, #16414f 55%, #3fa9d6 140%)",
+  sauna: "linear-gradient(135deg, #111111 0%, #3f3f3f 55%, #6b6b6b 130%)",
+  sauna_swimming: "linear-gradient(135deg, #111111 0%, #3a3a3a 45%, #6b6b6b 130%)",
+  winter_swimming: "linear-gradient(135deg, #111111 0%, #3a3a3a 60%, #808080 140%)",
+  beach: "linear-gradient(135deg, #111111 0%, #3a3a3a 45%, #a3a3a3 140%)",
+  ice_swimming: "linear-gradient(135deg, #0a0a0a 0%, #2e2e2e 55%, #808080 140%)",
 };
 
 // Just a bottom scrim now — the repeating icon watermark pattern (see git
@@ -33,7 +34,7 @@ const tintByType: Record<LocationType, string> = {
 // texture; over a real photo it just adds clutter. This only exists to
 // keep the close button and any future overlaid text/status icons legible
 // against busy photo detail.
-const bottomScrim = "linear-gradient(180deg, rgba(10,20,30,0) 55%, rgba(10,20,30,0.45) 100%)";
+const bottomScrim = "linear-gradient(180deg, rgba(17,17,17,0) 55%, rgba(17,17,17,0.45) 100%)";
 
 export function LocationTypeBanner({
   type,

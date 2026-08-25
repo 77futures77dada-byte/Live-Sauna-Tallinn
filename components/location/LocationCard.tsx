@@ -241,7 +241,7 @@ export function LocationCard({
                     <button
                       type="button"
                       onClick={() => setShowFinishForm(true)}
-                      className="w-full rounded-lg bg-ember px-3 py-2 text-sm font-medium text-white transition hover:brightness-110"
+                      className="w-full rounded-lg bg-fjord px-3 py-2 text-sm font-medium text-white transition hover:brightness-110"
                     >
                       {dict.location.finishVisit}
                     </button>
@@ -263,7 +263,7 @@ export function LocationCard({
             </>
           ) : (
             <p className="mt-4 border-t border-warm-border pt-4 text-sm text-steam">
-              <Link href="/login" className="text-ember underline">
+              <Link href="/login" className="text-fjord underline">
                 {dict.auth.login}
               </Link>{" "}
               {dict.location.loginToReport}

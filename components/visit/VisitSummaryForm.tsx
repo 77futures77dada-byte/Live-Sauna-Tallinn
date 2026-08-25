@@ -65,7 +65,7 @@ export function VisitSummaryForm({
               onClick={() => setRating(n)}
               aria-label={dict.starLabel[String(n) as "1" | "2" | "3" | "4" | "5"]}
               aria-pressed={rating === n}
-              className={`leading-none ${n <= rating ? "text-ember" : "text-steam"}`}
+              className={`leading-none ${n <= rating ? "text-fjord" : "text-steam"}`}
             >
               {n <= rating ? "★" : "☆"}
             </button>
@@ -92,7 +92,7 @@ export function VisitSummaryForm({
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="flex-1 rounded-lg bg-ember px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-fjord px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {status === "submitting" ? dict.finishing : dict.finishVisit}
         </button>

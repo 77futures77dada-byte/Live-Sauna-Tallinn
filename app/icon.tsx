@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
 
-// Placeholder favicon until real branding exists — echoes the ember flame
-// mark used next to the wordmark in AppHeader, on the fjord navy ground,
-// so the browser tab isn't the default Next.js/Vercel triangle at demos.
+// Placeholder favicon until real branding exists — echoes the flame mark
+// used next to the wordmark in AppHeader, on the near-black ground, so
+// the browser tab isn't the default Next.js/Vercel triangle at demos.
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
@@ -16,7 +16,7 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0e2233",
+          background: "#111111",
           borderRadius: 7,
         }}
       >
@@ -24,7 +24,7 @@ export default function Icon() {
           style={{
             width: 16,
             height: 16,
-            background: "#e8632c",
+            background: "#ffffff",
             borderRadius: "50% 50% 50% 0%",
             transform: "rotate(-45deg)",
           }}

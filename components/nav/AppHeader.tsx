@@ -27,7 +27,7 @@ export function AppHeader({
   return (
     <header className="z-10 flex items-center justify-between gap-2 border-b border-warm-border bg-ivory px-3 py-2.5 text-fjord sm:px-4 sm:py-3">
       <h1 className="flex min-w-0 items-center gap-1.5 truncate font-display text-base leading-tight font-semibold tracking-tight sm:text-lg">
-        <Flame className="h-4 w-4 shrink-0 text-ember" aria-hidden />
+        <Flame className="h-4 w-4 shrink-0 text-fjord" aria-hidden />
         {dict.app.name}
       </h1>
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -36,7 +36,7 @@ export function AppHeader({
         {isAdmin && (
           <Link
             href="/admin"
-            className="text-ember transition-colors hover:underline"
+            className="text-fjord transition-colors hover:underline"
             aria-label="Admin"
           >
             <Shield className="h-4 w-4 sm:hidden" aria-hidden />
@@ -55,7 +55,7 @@ export function AppHeader({
         ) : (
           <Link
             href="/login"
-            className="text-sm font-medium whitespace-nowrap text-ember transition-colors hover:underline"
+            className="text-sm font-medium whitespace-nowrap text-fjord transition-colors hover:underline"
           >
             {dict.auth.login}
           </Link>

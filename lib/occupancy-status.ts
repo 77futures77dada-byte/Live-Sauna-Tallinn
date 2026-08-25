@@ -8,11 +8,14 @@ import type { LatestOccupancy } from "./reports";
 // were current.
 export type OccupancyStatus = "quiet" | "active" | "busy" | "unknown";
 
+// Traffic-light functional colors, kept saturated on purpose even under
+// the otherwise-monochrome rebrand (see app/globals.css) — this is data
+// (how busy a place is), not brand decoration.
 export const occupancyStatusColor: Record<OccupancyStatus, string> = {
   quiet: "#22c55e",
-  active: "#e8632c",
+  active: "#f59e0b",
   busy: "#ef4444",
-  unknown: "#7c93a0",
+  unknown: "#6b7280",
 };
 
 export function getOccupancyStatus(

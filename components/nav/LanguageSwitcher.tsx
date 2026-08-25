@@ -60,7 +60,7 @@ export function LanguageSwitcher({
             aria-label={dict.switcher[loc]}
             className={
               loc === locale
-                ? "font-semibold text-ember transition-colors"
+                ? "font-semibold text-fjord transition-colors"
                 : "text-steam transition-colors hover:underline"
             }
           >

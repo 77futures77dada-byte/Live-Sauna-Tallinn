@@ -16,7 +16,7 @@ export function IceStatus({ report, locale }: { report?: LatestIce; locale: Loca
   if (!report || level === "unknown") {
     return (
       <p className="flex items-center gap-1.5 text-sm text-steam">
-        <Snowflake className="h-3.5 w-3.5 text-frost" aria-hidden />
+        <Snowflake className="h-3.5 w-3.5 text-steam" aria-hidden />
         {dict.location.noIceReports}
       </p>
     );
@@ -29,7 +29,7 @@ export function IceStatus({ report, locale }: { report?: LatestIce; locale: Loca
         style={{ backgroundColor: freshnessColor[level] }}
         aria-hidden
       />
-      <Snowflake className="h-3.5 w-3.5 text-frost" aria-hidden />
+      <Snowflake className="h-3.5 w-3.5 text-steam" aria-hidden />
       {conditionLabel[report.condition]} ·{" "}
       <span className="text-steam">{formatAge(report.createdAt, dict.time)}</span>
     </p>

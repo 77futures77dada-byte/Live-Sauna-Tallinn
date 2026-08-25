@@ -6,8 +6,9 @@ import type { LatestWater } from "@/lib/reports";
 // Crowdsourced water_reports — distinct from the official station reading
 // shown by WeatherStrip. No placeholder value when there's no recent
 // report; per docs/ARCHITECTURE.md section 5, "unknown" shows no number.
-// The Waves icon is a fixed Frost Blue (the palette's "water" accent) —
-// the small dot alongside it is the one that tracks report freshness.
+// The Waves icon is a fixed neutral gray (no more thematic "water blue"
+// under the monochrome rebrand) — the small dot alongside it is the one
+// that tracks report freshness.
 export function WaterTempStat({ report, locale }: { report?: LatestWater; locale: Locale }) {
   const dict = getDictionary(locale);
   const level = getFreshness(report?.createdAt ?? null);
@@ -15,7 +16,7 @@ export function WaterTempStat({ report, locale }: { report?: LatestWater; locale
   if (!report || level === "unknown") {
     return (
       <p className="flex items-center gap-1.5 text-sm text-steam">
-        <Waves className="h-3.5 w-3.5 text-frost" aria-hidden />
+        <Waves className="h-3.5 w-3.5 text-steam" aria-hidden />
         {dict.location.noWaterReports}
       </p>
     );
@@ -28,7 +29,7 @@ export function WaterTempStat({ report, locale }: { report?: LatestWater; locale
         style={{ backgroundColor: freshnessColor[level] }}
         aria-hidden
       />
-      <Waves className="h-3.5 w-3.5 text-frost" aria-hidden />
+      <Waves className="h-3.5 w-3.5 text-steam" aria-hidden />
       {report.temperature.toFixed(1)}°C {dict.location.waterReported} ·{" "}
       <span className="text-steam">{formatAge(report.createdAt, dict.time)}</span>
     </p>

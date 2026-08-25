@@ -29,7 +29,7 @@ function buildIcon(location: Location, occupancy: LatestOccupancy | undefined) {
   const Icon = locationTypeIconComponent[location.type];
   const content = live
     ? `<span class="sauna-marker__count" style="color:${color}">${occupancy!.peopleCount}</span>`
-    : renderToStaticMarkup(<Icon color="#0e2233" size={16} strokeWidth={2.25} aria-hidden />);
+    : renderToStaticMarkup(<Icon color="#111111" size={16} strokeWidth={2.25} aria-hidden />);
 
   const dotClass = live ? "sauna-marker__dot sauna-marker__dot--pulse" : "sauna-marker__dot";
 

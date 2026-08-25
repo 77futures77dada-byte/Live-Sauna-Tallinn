@@ -28,7 +28,7 @@ export function WeatherStrip({
     <div className="flex flex-wrap items-center gap-4 text-sm text-fjord">
       {hasAir && (
         <span className="flex items-center gap-1.5">
-          <Thermometer className="h-3.5 w-3.5 text-ember" aria-hidden />
+          <Thermometer className="h-3.5 w-3.5 text-fjord" aria-hidden />
           {observation.airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
         </span>
       )}
@@ -42,7 +42,7 @@ export function WeatherStrip({
       )}
       {hasWater && (
         <span className="flex items-center gap-1.5">
-          <Waves className="h-3.5 w-3.5 text-frost" aria-hidden />
+          <Waves className="h-3.5 w-3.5 text-steam" aria-hidden />
           {observation.waterTemperature!.toFixed(1)}°C {dict.location.weatherStationWater}
         </span>
       )}

@@ -1,40 +1,39 @@
 @import "tailwindcss";
 
-/* Live Sauna Tallinn brand palette — one fixed light theme (Ivory/Fjord
-   Ink/Ember), deliberately not OS-dark-mode-adaptive. It's meant to sit
-   against the light CartoDB Voyager basemap, not switch away from it.
-   Plain (non-`inline`) `@theme` here, not aliased through `:root` — these
-   are static values, and aliasing a theme token to a `:root` custom
-   property of the *same name* (`--color-ember: var(--color-ember)`) is a
-   self-reference: CSS treats that as a cyclic value, silently dropping it,
-   which left every `bg-ember`/`text-ember` etc. utility with no color at
-   all (invisible, e.g. the assistant FAB) despite Tailwind emitting the
-   class correctly. */
+/* Live Sauna Tallinn brand palette — a strict monochrome theme (white /
+   near-black / grays), deliberately not OS-dark-mode-adaptive. The old
+   Ivory/Fjord Ink/Ember/Frost Blue warm palette is gone (client called it
+   too casual for an official/municipal audience); "fjord"/"ivory"/"steam"
+   keep their names below purely to avoid renaming every className across
+   the app — only their hex values changed, to plain grayscale. quiet/busy
+   (occupancy red/green) and the new caution (amber) are the one
+   exception: those are functional data colors, not brand decoration, and
+   stay saturated on purpose — see lib/occupancy-status.ts. */
 @theme {
-  --color-ivory: #f7f3ec;
-  --color-ivory-shade: #efe6d4;
-  --color-fjord: #0e2233;
-  --color-ember: #e8632c;
-  --color-frost: #3fa9d6;
-  --color-steam: #7c93a0;
+  --color-ivory: #ffffff;
+  --color-ivory-shade: #f3f4f6;
+  --color-fjord: #111111;
+  --color-steam: #6b7280;
   --color-quiet: #22c55e;
+  --color-caution: #f59e0b;
   --color-busy: #ef4444;
-  --color-warm-border: #e3d9c8;
+  --color-warm-border: #e5e7eb;
 }
 
 :root {
-  --background: #f7f3ec;
-  --foreground: #0e2233;
+  --background: #ffffff;
+  --foreground: #111111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* Fraunces for display/headings (`font-display`), IBM Plex Sans for
-     body/data text (`font-sans`) — the pairing already loaded in
-     app/layout.tsx for the landing hero, now the app-wide default. */
+  /* IBM Plex Sans everywhere, `font-display` included — the Fraunces
+     serif pairing (and the font-weight/size split it justified) is gone;
+     `font-display` is now just an alias so headings that still carry the
+     class don't need touching one by one. */
   --font-sans: var(--font-ibm-plex-sans);
-  --font-display: var(--font-fraunces);
+  --font-display: var(--font-ibm-plex-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -48,7 +47,7 @@ body {
    before CartoDB Voyager's tiles arrive and around any ungeocoded edge —
    match Voyager's own light neutral base so the flash is unnoticeable. */
 .leaflet-container {
-  background: #f2efe9;
+  background: #f3f4f6;
 }
 
 /* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
@@ -61,11 +60,11 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 9999px;
-  background: #f7f3ec;
+  background: #ffffff;
   /* A dark ring keeps the badge legible against Voyager's light basemap
      regardless of what's inside it (count or type glyph). */
-  border: 2.5px solid #0e2233;
-  box-shadow: 0 2px 6px rgba(14, 34, 51, 0.35);
+  border: 2.5px solid #111111;
+  box-shadow: 0 2px 6px rgba(17, 17, 17, 0.35);
   position: relative;
 }
 
@@ -86,7 +85,7 @@ body {
   width: 11px;
   height: 11px;
   border-radius: 9999px;
-  border: 2px solid #f7f3ec;
+  border: 2px solid #ffffff;
 }
 
 /* Only markers with a live report pulse — a quiet ring expanding from the
