@@ -169,7 +169,14 @@ export async function POST(request: Request) {
         return intent.order === "asc" ? diff : -diff;
       });
 
-    topMatch = ranked[0] ?? null;
+    // The Harku pilot's three saunas share one point on the lake, so a
+    // "nearest" question can legitimately tie across all of them —
+    // picking one as "the" topMatch would misrepresent that tie as a real
+    // answer (a specific "closest" sauna, and a misleading "show on map"
+    // link). Only pick a topMatch when the top result is uniquely best.
+    const topValue = ranked.length > 0 ? valueOf(ranked[0]) : null;
+    const tiedAtTop = topValue !== null && ranked.filter((entry) => valueOf(entry) === topValue).length > 1;
+    topMatch = tiedAtTop ? null : (ranked[0] ?? null);
   }
 
   try {
