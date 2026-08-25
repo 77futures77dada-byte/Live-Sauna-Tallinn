@@ -6,6 +6,7 @@ import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
 import { LocationList } from "@/components/locator/LocationList";
+import { LocatorHeroBanner } from "@/components/locator/LocatorHeroBanner";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
@@ -166,27 +167,34 @@ export function MapScreen({
   const site = locations[0] ?? null;
 
   return (
-    <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-[#f2efe9]">
-      <div className="mx-auto flex max-w-xl flex-col gap-4 p-4">
-        {site && (
-          <Suspense
-            fallback={
-              <div className="h-48 w-full animate-pulse rounded-2xl bg-ivory-shade sm:h-56" />
-            }
-          >
-            <div className="h-48 w-full overflow-hidden rounded-2xl border border-warm-border shadow-sm sm:h-56">
-              <MapView site={site} />
-            </div>
-          </Suspense>
-        )}
+    <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-ivory">
+      <LocatorHeroBanner locale={locale} liveSnapshot={getLiveSnapshot(occupancy)} />
 
-        <LocationList
-          locations={locations}
-          occupancy={occupancy}
-          selectedId={selected?.id ?? null}
-          locale={locale}
-          onSelect={handleSelect}
-        />
+      <div className="mx-auto max-w-[1360px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        {/* 3fr/2fr reads as ~60/40 — map on the left gets the bulk of the
+            width, the three cards sit in a column that's dense, not
+            stretched full-width with empty space either side of it. */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr] lg:gap-8">
+          {site && (
+            <Suspense
+              fallback={
+                <div className="h-64 w-full animate-pulse rounded-3xl bg-ivory-shade sm:h-80 lg:h-[560px]" />
+              }
+            >
+              <div className="h-64 w-full overflow-hidden rounded-3xl border border-warm-border shadow-md sm:h-80 lg:h-[560px]">
+                <MapView site={site} />
+              </div>
+            </Suspense>
+          )}
+
+          <LocationList
+            locations={locations}
+            occupancy={occupancy}
+            selectedId={selected?.id ?? null}
+            locale={locale}
+            onSelect={handleSelect}
+          />
+        </div>
       </div>
 
       {selected && (
