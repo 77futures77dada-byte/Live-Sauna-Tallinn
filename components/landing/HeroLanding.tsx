@@ -50,6 +50,20 @@ export function HeroLanding({
         className="pointer-events-none absolute -top-16 -left-20 h-72 w-72 text-white/10 sm:h-80 sm:w-80"
         strokeWidth={1}
       />
+      {/* The one deliberate warm touch against this otherwise cool teal
+          splash (see lib/occupancy-status.ts for the same idea on the
+          dashboard's status dot) — a soft amber glow behind the flame,
+          sitting under it in paint order rather than tinting the icon
+          itself, so the icon vocabulary (white, matching its snowflake/
+          wave siblings) stays consistent. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/4 -right-24 h-80 w-80 sm:h-96 sm:w-96"
+        style={{
+          background: "radial-gradient(circle, rgba(242,184,75,0.35) 0%, rgba(242,184,75,0) 70%)",
+          filter: "blur(24px)",
+        }}
+      />
       <Flame
         aria-hidden
         className="pointer-events-none absolute top-1/4 -right-24 h-80 w-80 text-white/10 sm:h-96 sm:w-96"

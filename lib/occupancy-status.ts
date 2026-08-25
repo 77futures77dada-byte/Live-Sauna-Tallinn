@@ -10,10 +10,13 @@ export type OccupancyStatus = "quiet" | "active" | "busy" | "unknown";
 
 // Traffic-light functional colors, kept saturated on purpose even under
 // the otherwise-monochrome rebrand (see app/globals.css) — this is data
-// (how busy a place is), not brand decoration.
+// (how busy a place is), not brand decoration. "active" specifically uses
+// the warm "steam" amber (#f2b84b, distinct from BookingPanel's cooler
+// caution token) — a deliberate point of warmth against the rest of the
+// monochrome/cold-teal palette, not a generic caution color.
 export const occupancyStatusColor: Record<OccupancyStatus, string> = {
   quiet: "#22c55e",
-  active: "#f59e0b",
+  active: "#f2b84b",
   busy: "#ef4444",
   unknown: "#6b7280",
 };

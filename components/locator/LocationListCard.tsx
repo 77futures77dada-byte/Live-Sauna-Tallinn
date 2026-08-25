@@ -1,8 +1,8 @@
-import { MapPin } from "lucide-react";
-import { formatAge, getFreshness } from "@/lib/freshness";
+import { MapPin, Thermometer, Waves } from "lucide-react";
+import { getFreshness } from "@/lib/freshness";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getOccupancyStatus, occupancyStatusColor } from "@/lib/occupancy-status";
-import type { LatestOccupancy } from "@/lib/reports";
+import type { LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
@@ -10,6 +10,8 @@ type Location = Database["public"]["Tables"]["locations"]["Row"];
 export function LocationListCard({
   location,
   occupancy,
+  water,
+  airTemperature,
   number,
   selected,
   locale,
@@ -17,6 +19,8 @@ export function LocationListCard({
 }: {
   location: Location;
   occupancy?: LatestOccupancy;
+  water?: LatestWater;
+  airTemperature: number | null;
   number: number;
   selected: boolean;
   locale: Locale;
@@ -36,12 +40,14 @@ export function LocationListCard({
           ? dict.occupancyStatus.busy
           : dict.freshness.unknown;
 
-  // Freshness gates the headcount (only "Live"/"Recent" reports are shown
-  // as a number — a "Stale" one degrades to the neutral status above,
-  // never a number that looks current but isn't), independent of whether
-  // an "Updated N min ago" line is worth showing at all.
+  // Each stat is independently gated on its own freshness/availability —
+  // occupancy having no fresh report doesn't hide a water reading that
+  // does, or the shared station's air reading (which carries no per-report
+  // freshness of its own, same convention as WeatherStrip).
   const showPeopleCount = status !== "unknown" && occupancy;
-  const showUpdated = occupancy && freshness !== "unknown";
+  const showWater = water && getFreshness(water.createdAt) !== "unknown";
+  const showAir = airTemperature !== null;
+  const hasAnyLiveData = showPeopleCount || showWater || showAir;
 
   return (
     // A <div>, not a <button>, because the always-visible booking CTA below
@@ -49,48 +55,71 @@ export function LocationListCard({
     // name/status block and the CTA are siblings, each independently
     // clickable but both opening the same detail sheet (LocationCard).
     <div
-      className={`w-full animate-[card-enter_200ms_ease-out] rounded-2xl border p-4 transition sm:p-5 ${
+      className={`w-full animate-[card-enter_200ms_ease-out] rounded-2xl border p-3 transition sm:p-3.5 ${
         selected
           ? "border-fjord bg-fjord/5 shadow-md ring-1 ring-fjord/30"
           : "border-warm-border bg-white shadow-sm hover:border-steam/40 hover:shadow-md"
       }`}
     >
-      <button type="button" onClick={() => onSelect(location)} className="flex w-full items-start gap-3.5 text-left">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-fjord font-display text-lg font-semibold text-ivory">
+      <button type="button" onClick={() => onSelect(location)} className="flex w-full items-center gap-3 text-left">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fjord font-display text-base font-semibold text-ivory">
           {number}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-xl font-semibold text-fjord">{location.name}</p>
-          <p className="text-xs text-steam">{dict.locationType[location.type]}</p>
+          {!hasAnyLiveData ? (
+            <div className="flex items-center justify-between gap-2">
+              <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
+              <span className="shrink-0 text-xs text-steam">{dict.location.noDataShort}</span>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between gap-2">
+                <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
+                {status === "unknown" ? (
+                  <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-steam">
+                    <MapPin className="h-3 w-3" strokeWidth={2.25} aria-hidden />
+                    {statusLabel}
+                  </span>
+                ) : (
+                  <span
+                    className="flex shrink-0 items-center gap-1.5 text-xs font-medium"
+                    style={{ color: statusColor }}
+                  >
+                    {/* Solid dot plus a soft halo (box-shadow, not
+                        Tailwind's `ring` utility — its color is a CSS var
+                        this component doesn't control) so status reads as
+                        a real indicator, not a flat gray bullet. */}
+                    <span
+                      className="h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: statusColor, boxShadow: `0 0 0 3px ${statusColor}26` }}
+                      aria-hidden
+                    />
+                    {statusLabel}
+                  </span>
+                )}
+              </div>
 
-          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-            {status === "unknown" ? (
-              <span className="flex items-center gap-1.5 font-medium text-steam">
-                <MapPin className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden />
-                {statusLabel}
-              </span>
-            ) : (
-              <span className="flex items-center gap-2 font-medium" style={{ color: statusColor }}>
-                {/* Solid dot plus a soft halo (box-shadow, not Tailwind's
-                    `ring` utility — its color is a CSS var this component
-                    doesn't control) so status reads as a real indicator,
-                    not a flat gray bullet. */}
-                <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: statusColor, boxShadow: `0 0 0 4px ${statusColor}26` }}
-                  aria-hidden
-                />
-                {statusLabel}
-              </span>
-            )}
-            {showPeopleCount && (
-              <span className="text-steam">
-                · {occupancy.peopleCount} {dict.location.peopleUnit}
-              </span>
-            )}
-          </div>
-          {showUpdated && (
-            <p className="mt-0.5 text-[11px] text-steam/80">{formatAge(occupancy.createdAt, dict.time)}</p>
+              <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                {showPeopleCount && (
+                  <span className="flex items-baseline gap-1 leading-none">
+                    <span className="text-xl font-bold text-fjord">{occupancy.peopleCount}</span>
+                    <span className="text-[11px] text-steam">{dict.location.peopleUnit}</span>
+                  </span>
+                )}
+                {showWater && (
+                  <span className="flex items-center gap-1 text-xs text-steam">
+                    <Waves className="h-3 w-3" aria-hidden />
+                    {water.temperature.toFixed(1)}°
+                  </span>
+                )}
+                {showAir && (
+                  <span className="flex items-center gap-1 text-xs text-steam">
+                    <Thermometer className="h-3 w-3" aria-hidden />
+                    {airTemperature!.toFixed(1)}°
+                  </span>
+                )}
+              </div>
+            </>
           )}
         </div>
       </button>
@@ -99,7 +128,7 @@ export function LocationListCard({
         <button
           type="button"
           onClick={() => onSelect(location)}
-          className="mt-3.5 w-full rounded-full bg-fjord px-4 py-2 text-sm font-medium text-white transition hover:brightness-110 sm:w-auto"
+          className="mt-2.5 w-full rounded-full border border-fjord/25 px-3 py-1.5 text-xs font-medium text-fjord transition hover:bg-fjord/5 sm:w-auto"
         >
           {dict.booking.bookSlotButton}
         </button>

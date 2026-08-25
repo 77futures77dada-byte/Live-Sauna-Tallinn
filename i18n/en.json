@@ -110,10 +110,7 @@
     "subtitle": "Free igloo saunas on Lake Harku, tracked live.",
     "viewMap": "Open the app",
     "login": "Log in",
-    "liveSnapshotActive": "{locations} active spots · {people} people right now",
-    "liveSnapshotEmpty": "Be the first to check in today",
-    "liveSnapshotSpotsLabel": "active spots",
-    "liveSnapshotPeopleLabel": "people now"
+    "liveSnapshotBanner": "{total} saunas · {people} people right now"
   },
   "location": {
     "free": "Free",
@@ -121,6 +118,7 @@
     "capacity": "Capacity",
     "openingHours": "Opening hours",
     "noOccupancy": "No live occupancy reports yet for this location.",
+    "noDataShort": "No data yet",
     "updatedPrefix": "Updated",
     "youAreHere": "You are here",
     "startedAt": "started",

@@ -168,7 +168,11 @@ export function MapScreen({
 
   return (
     <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-ivory">
-      <LocatorHeroBanner locale={locale} liveSnapshot={getLiveSnapshot(occupancy)} />
+      <LocatorHeroBanner
+        locale={locale}
+        totalSaunas={locations.length}
+        liveSnapshot={getLiveSnapshot(occupancy)}
+      />
 
       <div className="mx-auto max-w-[1360px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         {/* 3fr/2fr reads as ~60/40 — map on the left gets the bulk of the
@@ -190,6 +194,7 @@ export function MapScreen({
           <LocationList
             locations={locations}
             occupancy={occupancy}
+            water={water}
             selectedId={selected?.id ?? null}
             locale={locale}
             onSelect={handleSelect}

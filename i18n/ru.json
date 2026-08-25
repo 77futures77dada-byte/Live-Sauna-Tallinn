@@ -110,10 +110,7 @@
     "subtitle": "Бесплатные иглу-сауны на Харку — в реальном времени.",
     "viewMap": "Открыть приложение",
     "login": "Войти",
-    "liveSnapshotActive": "{locations} активных мест · {people} человек прямо сейчас",
-    "liveSnapshotEmpty": "Будь первым, кто отметится сегодня",
-    "liveSnapshotSpotsLabel": "активных мест",
-    "liveSnapshotPeopleLabel": "человек сейчас"
+    "liveSnapshotBanner": "{total} сауны · {people} человек сейчас"
   },
   "location": {
     "free": "Бесплатно",
@@ -121,6 +118,7 @@
     "capacity": "Вместимость",
     "openingHours": "Часы работы",
     "noOccupancy": "Для этого места пока нет данных о занятости в реальном времени.",
+    "noDataShort": "Нет данных",
     "updatedPrefix": "Обновлено",
     "youAreHere": "Вы здесь",
     "startedAt": "начался",

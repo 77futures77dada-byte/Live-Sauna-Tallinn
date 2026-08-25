@@ -110,10 +110,7 @@
     "subtitle": "Tasuta iglusaunad Harku järvel, reaalajas jälgitavad.",
     "viewMap": "Ava rakendus",
     "login": "Logi sisse",
-    "liveSnapshotActive": "{locations} aktiivset kohta · {people} inimest just praegu",
-    "liveSnapshotEmpty": "Ole täna esimene, kes end kirja paneb",
-    "liveSnapshotSpotsLabel": "aktiivset kohta",
-    "liveSnapshotPeopleLabel": "praegu kohal"
+    "liveSnapshotBanner": "{total} sauna · {people} inimest praegu"
   },
   "location": {
     "free": "Tasuta",
@@ -121,6 +118,7 @@
     "capacity": "Mahutavus",
     "openingHours": "Lahtiolekuajad",
     "noOccupancy": "Sellel asukohal pole veel reaalajas hõivatuse andmeid.",
+    "noDataShort": "Andmeid pole veel",
     "updatedPrefix": "Uuendatud",
     "youAreHere": "Sa oled siin",
     "startedAt": "algas",
