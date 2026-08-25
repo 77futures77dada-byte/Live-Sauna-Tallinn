@@ -145,14 +145,14 @@ export function MapScreen({
   }, []);
 
   if (showHero) {
+    // fixed inset-0 rather than this component's usual flex-1 slot below
+    // AppHeader — the splash is meant to cover the whole viewport,
+    // AppHeader's bar included (see HeroLanding's file comment), and
+    // AppHeader stays mounted underneath rather than being conditionally
+    // rendered from the page component, so no state there is lost.
     return (
-      <div className="relative min-h-0 w-full flex-1">
-        <HeroLanding
-          locale={locale}
-          onEnter={() => setShowHero(false)}
-          liveSnapshot={getLiveSnapshot(occupancy)}
-          userId={userId}
-        />
+      <div className="fixed inset-0 z-50">
+        <HeroLanding locale={locale} onEnter={() => setShowHero(false)} userId={userId} />
       </div>
     );
   }

@@ -1,181 +1,95 @@
 "use client";
 
 import Link from "next/link";
-import { Users } from "lucide-react";
-import { useEffect, useState } from "react";
-import { HeroBackground } from "@/components/landing/HeroBackground";
-import { formatAge } from "@/lib/freshness";
+import { ArrowRight, Flame, Snowflake, Waves } from "lucide-react";
+import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import type { LiveSnapshot } from "@/lib/occupancy-status";
-import type { StationObservation } from "@/lib/weather";
 
-// All three Harku pilot saunas map to the same station (lib/weather-stations.ts,
-// Tallinn-Harku — an inland lake with no water sensor), so any one of them
-// works here; this strip only ever shows air, never water, for that
-// reason. Shown before login, with no location selected yet.
-const CONDITIONS_SLUG = "harku-1";
-const CONDITIONS_NAME = "Harku";
-const POLL_MS = 60_000;
-
-type WeatherState =
-  | { status: "loading" }
-  | { status: "ready"; observation: StationObservation }
-  | { status: "error" };
-
-// Shown in place of the flat "Loading map…" text (see MapScreen) — the
-// first thing anyone sees, logged in or not. Deliberately one live
-// element (the conditions strip) rather than decorative motion —
-// docs request for this screen was "don't overload it".
+// Full-screen splash before the dashboard (map + three sauna cards) —
+// deliberately a different register from it: bright brand gradient here,
+// calm Ivory interior there, same two-scene split as the TallinnVäljak
+// reference this was designed against. MapScreen renders this inside a
+// `fixed inset-0` wrapper (not this component's own doing) specifically so
+// it covers AppHeader's bar too — this screen owns its own corner
+// logo/language chrome instead of sharing that bar, which is why both
+// appear here despite AppHeader already existing.
 export function HeroLanding({
   locale,
   onEnter,
-  liveSnapshot,
   userId,
 }: {
   locale: Locale;
   onEnter: () => void;
-  liveSnapshot: LiveSnapshot;
   userId: string | null;
 }) {
   const dict = getDictionary(locale);
-  const [weather, setWeather] = useState<WeatherState>({ status: "loading" });
-
-  useEffect(() => {
-    let cancelled = false;
-
-    function load() {
-      fetch(`/api/weather?slug=${CONDITIONS_SLUG}`)
-        .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-        .then((observation: StationObservation) => {
-          if (!cancelled) setWeather({ status: "ready", observation });
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setWeather((prev) => (prev.status === "ready" ? prev : { status: "error" }));
-          }
-        });
-    }
-
-    load();
-    const id = setInterval(load, POLL_MS);
-    return () => {
-      cancelled = true;
-      clearInterval(id);
-    };
-  }, []);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden bg-ivory px-6 py-12 text-center text-fjord">
-      <HeroBackground />
+    <div
+      className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden px-6 py-12 text-center"
+      style={{
+        // Fjord Ink -> Ember, diagonal — the same "cold outside, warm
+        // inside" metaphor as the rest of the brand, not a generic blue
+        // gradient like the reference itself uses.
+        background: "linear-gradient(155deg, #0e2233 0%, #0e2233 42%, #e8632c 115%)",
+      }}
+    >
+      {/* Oversized, low-opacity, bleeding past the viewport edges — decorative
+          only, so they're aria-hidden and inert to pointer events. Icons are
+          the app's own vocabulary (snowflake/flame/waves, see
+          lib/location-types.ts) standing in for the reference's ball icons. */}
+      <Snowflake
+        aria-hidden
+        className="pointer-events-none absolute -top-16 -left-20 h-72 w-72 text-white/10 sm:h-80 sm:w-80"
+        strokeWidth={1}
+      />
+      <Flame
+        aria-hidden
+        className="pointer-events-none absolute top-1/4 -right-24 h-80 w-80 text-white/10 sm:h-96 sm:w-96"
+        strokeWidth={1}
+      />
+      <Waves
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 left-1/5 h-64 w-64 text-white/10 sm:h-72 sm:w-72"
+        strokeWidth={1}
+      />
+
+      <div className="absolute top-5 left-5 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg sm:top-6 sm:left-6">
+        <Flame className="h-6 w-6 text-ember" aria-hidden />
+      </div>
+      <div className="absolute top-5 right-5 sm:top-6 sm:right-6">
+        <LanguageSwitcher locale={locale} variant="pill" />
+      </div>
+
       <div className="relative z-10 flex flex-col items-center">
-        {/* Group 1-3: headline, live snapshot, primary CTA — kept tight so
-            they read as one block (docs request: sharpen the hierarchy so
-            these three are the first thing anyone registers). */}
-        <p className="text-xs font-medium tracking-[0.2em] text-steam uppercase">
-          {dict.hero.eyebrow}
-        </p>
+        {/* IBM Plex Sans at a heavy weight, not Fraunces — a one-off poster
+            treatment for this wordmark only (see the file-level comment);
+            the rest of the app keeps Fraunces for display type. */}
         <h1
-          className="mt-2 max-w-md text-4xl leading-[1.05] font-medium text-fjord sm:text-5xl"
-          style={{ fontFamily: "var(--font-fraunces)" }}
+          className="text-6xl leading-none font-extrabold tracking-tight sm:text-7xl"
+          style={{ fontFamily: "var(--font-ibm-plex-sans)" }}
         >
-          {dict.hero.headline}
+          <span className="text-white">Live</span>
+          <span className="text-ember">Sauna</span>
         </h1>
 
-        <div
-          className="mt-5 flex items-center gap-5 rounded-2xl border border-warm-border bg-white px-6 py-4 shadow-sm"
-          style={{ fontFamily: "var(--font-ibm-plex-sans)" }}
-          aria-label={
-            liveSnapshot.activeLocations > 0
-              ? dict.hero.liveSnapshotActive
-                  .replace("{locations}", String(liveSnapshot.activeLocations))
-                  .replace("{people}", String(liveSnapshot.peopleCount))
-              : dict.hero.liveSnapshotEmpty
-          }
-        >
-          {liveSnapshot.activeLocations > 0 ? (
-            <>
-              <span className="flex flex-col items-center leading-none">
-                <span className="text-3xl font-semibold text-ember">
-                  {liveSnapshot.activeLocations}
-                </span>
-                <span className="mt-1 text-[10px] text-steam">
-                  {dict.hero.liveSnapshotSpotsLabel}
-                </span>
-              </span>
-              <span className="h-8 w-px bg-warm-border" aria-hidden />
-              <span className="flex flex-col items-center leading-none">
-                <span className="text-3xl font-semibold text-frost">
-                  {liveSnapshot.peopleCount}
-                </span>
-                <span className="mt-1 text-[10px] text-steam">
-                  {dict.hero.liveSnapshotPeopleLabel}
-                </span>
-              </span>
-            </>
-          ) : (
-            <span className="flex items-center gap-2 text-sm font-medium text-steam">
-              <Users className="h-4 w-4 text-frost" aria-hidden />
-              {dict.hero.liveSnapshotEmpty}
-            </span>
-          )}
-        </div>
+        <p className="mt-4 text-sm font-medium tracking-wide text-white/80">{dict.hero.tagline}</p>
+
+        <p className="mt-5 max-w-xs text-sm text-white/70">{dict.hero.subtitle}</p>
 
         <button
           type="button"
           onClick={onEnter}
-          className="mt-6 rounded-full bg-ember px-10 py-4 text-base font-semibold text-white shadow-lg shadow-ember/25 transition hover:brightness-110"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-fjord shadow-lg transition hover:brightness-95"
         >
           {dict.hero.viewMap}
+          <ArrowRight className="h-4 w-4" aria-hidden />
         </button>
-
-        {/* Group 4-5: description and login — deliberately quieter, with
-            more air separating them from the primary block above. */}
-        <p className="mt-12 max-w-sm text-xs text-steam">{dict.hero.subtitle}</p>
-
-        <div
-          className="mt-4 flex items-center gap-4 rounded-xl border border-warm-border bg-ivory-shade/50 px-4 py-2.5"
-          style={{ fontFamily: "var(--font-ibm-plex-sans)" }}
-        >
-          <span className="flex items-center gap-1.5 text-[11px] font-medium text-steam">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-frost" />
-            {CONDITIONS_NAME}
-          </span>
-
-          {weather.status === "ready" && (
-            <>
-              {weather.observation.airTemperature !== null && (
-                <span className="flex flex-col items-start leading-none">
-                  <span className="text-sm font-semibold text-fjord">
-                    {weather.observation.airTemperature.toFixed(1)}°
-                  </span>
-                  <span className="mt-0.5 text-[9px] text-steam">{dict.hero.air}</span>
-                </span>
-              )}
-              {weather.observation.waterTemperature !== null && (
-                <span className="flex flex-col items-start leading-none">
-                  <span className="text-sm font-semibold text-fjord">
-                    {weather.observation.waterTemperature.toFixed(1)}°
-                  </span>
-                  <span className="mt-0.5 text-[9px] text-steam">{dict.hero.water}</span>
-                </span>
-              )}
-              <span className="text-[9px] text-steam">
-                {formatAge(weather.observation.observedAt, dict.time)}
-              </span>
-            </>
-          )}
-          {weather.status === "loading" && (
-            <span className="text-[11px] text-steam">{dict.hero.conditionsLoading}</span>
-          )}
-          {weather.status === "error" && (
-            <span className="text-[11px] text-steam">{dict.hero.conditionsError}</span>
-          )}
-        </div>
 
         {!userId && (
           <Link
             href="/login"
-            className="mt-4 text-xs font-medium text-steam underline-offset-2 transition hover:text-fjord hover:underline"
+            className="mt-6 text-xs font-medium text-white/70 underline-offset-2 transition hover:text-white hover:underline"
           >
             {dict.hero.login}
           </Link>
