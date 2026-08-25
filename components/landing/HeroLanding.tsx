@@ -6,9 +6,14 @@ import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 // Full-screen splash before the dashboard (map + three sauna cards) —
-// deliberately a different register from it: bold near-black splash here,
-// white interior there, same two-scene split as the TallinnVäljak
-// reference this was designed against. MapScreen renders this inside a
+// deliberately a different register from it: a bright ice/water teal
+// splash here, strict monochrome white interior there. The dashboard
+// (including AppHeader's in-app logo) stays black/white per the rebrand;
+// this screen alone keeps a soft Frost Blue accent as a warmer first
+// impression, scoped to this file only — no shared color token reused
+// here, so it can't leak into the monochrome interior by accident. Same
+// two-scene split as the TallinnVäljak reference this was designed
+// against. MapScreen renders this inside a
 // `fixed inset-0` wrapper (not this component's own doing) specifically so
 // it covers AppHeader's bar too — this screen owns its own corner
 // logo/language chrome instead of sharing that bar, which is why both
@@ -28,10 +33,12 @@ export function HeroLanding({
     <div
       className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden px-6 py-12 text-center"
       style={{
-        // Near-solid near-black, barely a gradient — the old Fjord
-        // Ink -> Ember warm diagonal is gone with the rest of the brand
-        // color; this is monochrome by design, not a muted version of it.
-        background: "linear-gradient(155deg, #111111 0%, #1a1a1a 100%)",
+        // Deep-to-light ice/water teal, not black — the one place the
+        // monochrome rebrand deliberately doesn't apply (see file-level
+        // comment). Frost Blue (#3fa9d6) as the light stop, a deeper
+        // version of the same hue underneath rather than a different
+        // color entirely.
+        background: "linear-gradient(155deg, #0e4a5c 0%, #3fa9d6 100%)",
       }}
     >
       {/* Oversized, low-opacity, bleeding past the viewport edges — decorative
@@ -62,13 +69,12 @@ export function HeroLanding({
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        {/* Heavy-weight IBM Plex Sans poster treatment, white + light gray
-            — the two-tone wordmark used to split white/Ember; monochrome
-            now, so the split is white vs. dimmed white instead of a color
-            contrast. */}
+        {/* Heavy-weight IBM Plex Sans poster treatment — white + the same
+            Frost Blue as the background's light stop, not the dashboard's
+            monochrome fjord/steam. */}
         <h1 className="text-6xl leading-none font-extrabold tracking-tight sm:text-7xl">
           <span className="text-white">Live</span>
-          <span className="text-white/55">Sauna</span>
+          <span className="text-[#3fa9d6]">Sauna</span>
         </h1>
 
         <p className="mt-4 text-sm font-medium tracking-wide text-white/80">{dict.hero.tagline}</p>
