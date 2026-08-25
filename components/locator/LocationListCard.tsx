@@ -11,14 +11,12 @@ type Location = Database["public"]["Tables"]["locations"]["Row"];
 export function LocationListCard({
   location,
   occupancy,
-  distanceLabel,
   selected,
   locale,
   onSelect,
 }: {
   location: Location;
   occupancy?: LatestOccupancy;
-  distanceLabel: string | null;
   selected: boolean;
   locale: Locale;
   onSelect: (location: Location) => void;
@@ -31,11 +29,11 @@ export function LocationListCard({
 
   const statusLabel =
     status === "quiet"
-      ? dict.sidebar.filterQuiet
+      ? dict.occupancyStatus.quiet
       : status === "active"
-        ? dict.sidebar.filterActive
+        ? dict.occupancyStatus.active
         : status === "busy"
-          ? dict.sidebar.filterBusy
+          ? dict.occupancyStatus.busy
           : dict.freshness.unknown;
 
   // Freshness gates the headcount (only "Live"/"Recent" reports are shown
@@ -65,9 +63,6 @@ export function LocationListCard({
             <p className="truncate text-xs text-steam">{dict.locationType[location.type]}</p>
           </div>
         </div>
-        {distanceLabel && (
-          <span className="shrink-0 text-xs text-steam">{distanceLabel}</span>
-        )}
       </div>
 
       <div className="mt-1.5 flex items-center gap-1.5 text-xs">

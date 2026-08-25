@@ -9,11 +9,12 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import type { LiveSnapshot } from "@/lib/occupancy-status";
 import type { StationObservation } from "@/lib/weather";
 
-// Pirita has both an air and a water sensor (lib/weather-stations.ts), so
-// it's the one location that can carry this strip on its own before
-// login, with no location selected yet.
-const CONDITIONS_SLUG = "pirita";
-const CONDITIONS_NAME = "Pirita";
+// All three Harku pilot saunas map to the same station (lib/weather-stations.ts,
+// Tallinn-Harku — an inland lake with no water sensor), so any one of them
+// works here; this strip only ever shows air, never water, for that
+// reason. Shown before login, with no location selected yet.
+const CONDITIONS_SLUG = "harku-1";
+const CONDITIONS_NAME = "Harku";
 const POLL_MS = 60_000;
 
 type WeatherState =

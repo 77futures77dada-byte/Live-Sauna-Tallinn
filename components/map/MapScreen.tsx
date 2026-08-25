@@ -5,14 +5,12 @@ import { Suspense, useEffect, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
-import { MobileLiveOverlay } from "@/components/mobile/MobileLiveOverlay";
-import { LocationListSkeleton } from "@/components/sidebar/LocationListSkeleton";
-import { Sidebar } from "@/components/sidebar/Sidebar";
+import { LocationList } from "@/components/locator/LocationList";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { getLiveSnapshot } from "@/lib/occupancy-status";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
@@ -54,11 +52,6 @@ export function MapScreen({
     : null;
 
   const [selected, setSelected] = useState<Location | null>(focusLocation);
-  // Set by handleSelect below, from either the sidebar or a marker click —
-  // MapContainer's own center/zoom only apply on first mount, so panning
-  // to an already-mounted map needs this imperative target instead (see
-  // MapView's FlyToOnSelect).
-  const [focusTarget, setFocusTarget] = useState<[number, number] | null>(null);
   // QR deep links (focusLocationId set) skip the hero — someone who
   // scanned the on-site code wants the check-in flow, not a landing
   // screen.
@@ -163,54 +156,39 @@ export function MapScreen({
     );
   }
 
-  const dict = getDictionary(locale);
-
-  // Shared by sidebar cards and map markers alike (Phase 2) — either path
-  // both opens the detail card and flies the map to the location.
   function handleSelect(location: Location) {
     setSelected(location);
-    setFocusTarget([location.latitude, location.longitude]);
   }
 
+  // All three pilot saunas sit at the same point on Lake Harku — the
+  // locator map just needs one representative location for its shared
+  // coordinates, not one marker per sauna (see MapView).
+  const site = locations[0] ?? null;
+
   return (
-    <div className="relative flex min-h-0 w-full flex-1">
-      <Suspense
-        fallback={
-          <div className="flex h-full w-full">
-            <div className="hidden w-[380px] shrink-0 border-r border-warm-border bg-ivory p-4 lg:block">
-              <LocationListSkeleton />
+    <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-[#f2efe9]">
+      <div className="mx-auto flex max-w-xl flex-col gap-4 p-4">
+        {site && (
+          <Suspense
+            fallback={
+              <div className="h-48 w-full animate-pulse rounded-2xl bg-ivory-shade sm:h-56" />
+            }
+          >
+            <div className="h-48 w-full overflow-hidden rounded-2xl border border-warm-border shadow-sm sm:h-56">
+              <MapView site={site} />
             </div>
-            <div className="flex flex-1 animate-pulse items-center justify-center bg-[#f2efe9] text-sm text-steam">
-              {dict.map.loading}
-            </div>
-          </div>
-        }
-      >
-        <Sidebar
+          </Suspense>
+        )}
+
+        <LocationList
           locations={locations}
           occupancy={occupancy}
           selectedId={selected?.id ?? null}
           locale={locale}
           onSelect={handleSelect}
         />
-        <MobileLiveOverlay
-          locations={locations}
-          occupancy={occupancy}
-          selectedId={selected?.id ?? null}
-          locale={locale}
-          onSelect={handleSelect}
-        />
-        <div className="relative min-h-0 flex-1">
-          <MapView
-            locations={locations}
-            occupancy={occupancy}
-            onSelect={handleSelect}
-            center={focusLocation ? [focusLocation.latitude, focusLocation.longitude] : undefined}
-            zoom={focusLocation ? 15 : undefined}
-            focusTarget={focusTarget}
-          />
-        </div>
-      </Suspense>
+      </div>
+
       {selected && (
         <LocationCard
           key={selected.id}

@@ -133,13 +133,6 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
         staying below the LocationCard sheet (z-[1201]) and this panel's
         own backdrop (z-[1300]), so it disappears behind either instead of
         floating over them on mobile, where both span the full width.
-
-        The mobile bottom offset (bottom-60, clearing lg:bottom-4) leaves
-        room above MobileLiveOverlay's collapsed bottom sheet (220px peek)
-        — when that sheet is expanded instead, it's tall enough to cover
-        this fixed position outright, so the FAB disappears behind it the
-        same way it already does behind this panel's own backdrop, with no
-        extra coordination needed between the two components.
       */}
       {!open && (
         <button
@@ -148,7 +141,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
           disabled={!enabled}
           aria-label={dict.openLabel}
           title={enabled ? dict.openLabel : dict.unavailable}
-          className="fixed right-4 bottom-60 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 lg:bottom-4"
+          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-ember text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Sparkles className="h-6 w-6" aria-hidden />
         </button>

@@ -4,10 +4,6 @@ import { AssistantSheet } from "@/components/assistant/AssistantSheet";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
-// The sidebar (desktop, lg+) carries its own larger "Live Sauna Tallinn"
-// heading — this stays a compact wordmark so the two don't visually
-// duplicate the same headline at the same size.
-//
 // Below `sm` (640px), Admin/profile collapse to icon-only links and the
 // language switcher shows 2-letter codes instead of full names — at
 // "Eesti / Русский / English" plus the title, the row didn't fit one line

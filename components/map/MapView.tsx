@@ -1,54 +1,33 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import { useEffect } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { LocationMarker } from "./LocationMarker";
 import type { Database } from "@/lib/supabase/types";
-import type { LatestOccupancy } from "@/lib/reports";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-// Tallinn city center — a reasonable default view over all 7 seeded
-// locations without needing to fit-bounds them.
-const TALLINN_CENTER: [number, number] = [59.437, 24.7536];
-const FOCUS_ZOOM = 15;
+// All three Harku pilot saunas share one point on the lake (see
+// 0009_harku_pilot.sql), so this is a "you are here" locator, not a map to
+// browse — the view is locked on that point and every gesture that would
+// let it pan or zoom elsewhere is disabled. `site` just needs to be any
+// one of the three locations, purely for its shared coordinates; the
+// marker itself carries no occupancy status (undefined below), since it
+// doesn't represent one specific sauna.
+const FIXED_ZOOM = 15;
 
-// MapContainer's center/zoom only apply on first mount (react-leaflet
-// treats the map as uncontrolled after that) — panning to a location
-// selected from the sidebar or a marker click after the map is already up
-// needs an imperative flyTo via the map instance, which only useMap()
-// (called from inside MapContainer) can reach.
-function FlyToOnSelect({ target }: { target: [number, number] | null }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (target) map.flyTo(target, FOCUS_ZOOM);
-  }, [map, target]);
-
-  return null;
-}
-
-export default function MapView({
-  locations,
-  occupancy,
-  onSelect,
-  center,
-  zoom,
-  focusTarget,
-}: {
-  locations: Location[];
-  occupancy: Map<string, LatestOccupancy>;
-  onSelect: (location: Location) => void;
-  center?: [number, number];
-  zoom?: number;
-  focusTarget?: [number, number] | null;
-}) {
+export default function MapView({ site }: { site: Location }) {
   return (
     <MapContainer
-      center={center ?? TALLINN_CENTER}
-      zoom={zoom ?? 11}
-      scrollWheelZoom
+      center={[site.latitude, site.longitude]}
+      zoom={FIXED_ZOOM}
+      dragging={false}
+      scrollWheelZoom={false}
+      doubleClickZoom={false}
+      touchZoom={false}
+      boxZoom={false}
+      keyboard={false}
+      zoomControl={false}
       className="h-full w-full"
     >
       <TileLayer
@@ -57,15 +36,7 @@ export default function MapView({
         subdomains="abcd"
         maxZoom={20}
       />
-      {locations.map((location) => (
-        <LocationMarker
-          key={location.id}
-          location={location}
-          occupancy={occupancy.get(location.id)}
-          onSelect={onSelect}
-        />
-      ))}
-      {focusTarget !== undefined && <FlyToOnSelect target={focusTarget} />}
+      <LocationMarker location={site} occupancy={undefined} onSelect={() => {}} />
     </MapContainer>
   );
 }

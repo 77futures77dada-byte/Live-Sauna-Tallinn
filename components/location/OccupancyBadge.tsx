@@ -2,9 +2,9 @@ import { MapPin } from "lucide-react";
 import { occupancyStatusColor, type OccupancyStatus } from "@/lib/occupancy-status";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
-// Same quiet/active/busy/unknown law as the marker and the sidebar card —
-// a location is never a different color in three different places. The
-// count is only ever shown alongside a live (non-"unknown") status.
+// Same quiet/active/busy/unknown law as the marker and the location list
+// card — a location is never a different color in three different places.
+// The count is only ever shown alongside a live (non-"unknown") status.
 export function OccupancyBadge({
   status,
   count,
@@ -18,11 +18,11 @@ export function OccupancyBadge({
   const color = occupancyStatusColor[status];
   const statusLabel =
     status === "quiet"
-      ? dict.sidebar.filterQuiet
+      ? dict.occupancyStatus.quiet
       : status === "active"
-        ? dict.sidebar.filterActive
+        ? dict.occupancyStatus.active
         : status === "busy"
-          ? dict.sidebar.filterBusy
+          ? dict.occupancyStatus.busy
           : dict.freshness.unknown;
 
   return (
