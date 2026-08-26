@@ -180,6 +180,12 @@
     "genericError": "Something went wrong",
     "networkError": "Network error"
   },
+  "forecast": {
+    "title": "Weather forecast",
+    "today": "Today",
+    "loading": "Loading forecast…",
+    "unavailable": "Forecast unavailable right now."
+  },
   "assistant": {
     "title": "Ask the assistant",
     "openLabel": "AI assistant",

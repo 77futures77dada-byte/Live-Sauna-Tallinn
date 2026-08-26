@@ -180,6 +180,12 @@
     "genericError": "Midagi läks valesti",
     "networkError": "Võrgu viga"
   },
+  "forecast": {
+    "title": "Ilmaennustus",
+    "today": "Täna",
+    "loading": "Ennustuse laadimine…",
+    "unavailable": "Ilmaennustus pole hetkel saadaval."
+  },
   "assistant": {
     "title": "Küsi assistendilt",
     "openLabel": "AI assistent",

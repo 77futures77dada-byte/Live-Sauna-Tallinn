@@ -180,6 +180,12 @@
     "genericError": "Что-то пошло не так",
     "networkError": "Ошибка сети"
   },
+  "forecast": {
+    "title": "Прогноз погоды",
+    "today": "Сегодня",
+    "loading": "Загрузка прогноза…",
+    "unavailable": "Прогноз сейчас недоступен."
+  },
   "assistant": {
     "title": "Спросить ассистента",
     "openLabel": "AI-ассистент",
