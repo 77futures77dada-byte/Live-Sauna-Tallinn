@@ -109,13 +109,13 @@ export function LocationListCard({
                 {showWater && (
                   <span className="flex items-center gap-1 text-xs text-steam">
                     <Waves className="h-3 w-3" aria-hidden />
-                    {water.temperature.toFixed(1)}°
+                    {water.temperature.toFixed(1)}°C {dict.location.waterShort}
                   </span>
                 )}
                 {showAir && (
                   <span className="flex items-center gap-1 text-xs text-steam">
                     <Thermometer className="h-3 w-3" aria-hidden />
-                    {airTemperature!.toFixed(1)}°
+                    {airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
                   </span>
                 )}
               </div>

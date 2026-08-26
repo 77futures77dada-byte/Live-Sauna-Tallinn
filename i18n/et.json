@@ -132,6 +132,7 @@
     "close": "Sulge",
     "weatherAir": "õhk",
     "weatherStationWater": "vesi (jaam)",
+    "waterShort": "vesi",
     "waterReported": "teatatud",
     "peopleUnit": "inimest",
     "noWaterReports": "Hiljutisi vee temperatuuri teateid pole.",

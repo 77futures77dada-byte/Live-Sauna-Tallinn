@@ -132,6 +132,7 @@
     "close": "Close",
     "weatherAir": "air",
     "weatherStationWater": "water (station)",
+    "waterShort": "water",
     "waterReported": "reported",
     "peopleUnit": "people",
     "noWaterReports": "No recent water temperature reports.",

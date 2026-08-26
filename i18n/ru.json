@@ -132,6 +132,7 @@
     "close": "Закрыть",
     "weatherAir": "воздух",
     "weatherStationWater": "вода (станция)",
+    "waterShort": "вода",
     "waterReported": "сообщено",
     "peopleUnit": "человек",
     "noWaterReports": "Нет недавних сообщений о температуре воды.",
