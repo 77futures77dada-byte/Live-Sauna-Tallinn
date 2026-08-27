@@ -135,16 +135,25 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
         floating over them on mobile, where both span the full width.
       */}
       {!open && (
-        <button
-          type="button"
-          onClick={() => enabled && setOpen(true)}
-          disabled={!enabled}
-          aria-label={dict.openLabel}
-          title={enabled ? dict.openLabel : dict.unavailable}
-          className="fixed right-4 bottom-4 z-[1100] flex h-14 w-14 items-center justify-center rounded-full bg-fjord text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <Sparkles className="h-6 w-6" aria-hidden />
-        </button>
+        <div className="group fixed right-4 bottom-4 z-[1100]">
+          {/* Hover/focus tooltip — decorative (aria-hidden); the button's
+              own aria-label carries the same text for assistive tech. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-full bottom-1/2 mr-3 translate-y-1/2 rounded-lg bg-fjord px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-ivory opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+          >
+            {enabled ? dict.title : dict.unavailable}
+          </span>
+          <button
+            type="button"
+            onClick={() => enabled && setOpen(true)}
+            disabled={!enabled}
+            aria-label={enabled ? dict.title : dict.unavailable}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-fjord text-ivory shadow-lg transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Sparkles className="h-6 w-6" aria-hidden />
+          </button>
+        </div>
       )}
 
       {open && (

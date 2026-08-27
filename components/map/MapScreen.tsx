@@ -179,6 +179,12 @@ export function MapScreen({
     };
   }, [representativeSlug]);
 
+  // All three pilot saunas sit at the same point on Lake Harku — the
+  // locator map just needs one representative location for its shared
+  // coordinates, not one marker per sauna (see MapView).
+  const site = locations[0] ?? null;
+  const liveSnapshot = getLiveSnapshot(occupancy);
+
   if (showHero) {
     // fixed inset-0 rather than this component's usual flex-1 slot below
     // AppHeader — the splash is meant to cover the whole viewport,
@@ -187,7 +193,13 @@ export function MapScreen({
     // rendered from the page component, so no state there is lost.
     return (
       <div className="fixed inset-0 z-50">
-        <HeroLanding locale={locale} onEnter={() => setShowHero(false)} userId={userId} />
+        <HeroLanding
+          locale={locale}
+          onEnter={() => setShowHero(false)}
+          userId={userId}
+          liveSnapshot={liveSnapshot}
+          site={site}
+        />
       </div>
     );
   }
@@ -195,12 +207,6 @@ export function MapScreen({
   function handleSelect(location: Location) {
     setSelected(location);
   }
-
-  // All three pilot saunas sit at the same point on Lake Harku — the
-  // locator map just needs one representative location for its shared
-  // coordinates, not one marker per sauna (see MapView).
-  const site = locations[0] ?? null;
-  const liveSnapshot = getLiveSnapshot(occupancy);
 
   return (
     <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-ivory">
