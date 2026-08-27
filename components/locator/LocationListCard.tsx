@@ -16,6 +16,7 @@ export function LocationListCard({
   selected,
   locale,
   onSelect,
+  dashWhenEmpty = false,
 }: {
   location: Location;
   occupancy?: LatestOccupancy;
@@ -25,6 +26,11 @@ export function LocationListCard({
   selected: boolean;
   locale: Locale;
   onSelect: (location: Location) => void;
+  // Set by LocationList when not one sauna has a fresh crowdsourced
+  // reading: a single shared banner above the column explains that once,
+  // and each card collapses to a bare "—" instead of repeating the long
+  // "no live data" status line three times down the column.
+  dashWhenEmpty?: boolean;
 }) {
   const dict = getDictionary(locale);
   const freshness = getFreshness(occupancy?.createdAt ?? null);
@@ -47,7 +53,7 @@ export function LocationListCard({
   const showPeopleCount = status !== "unknown" && occupancy;
   const showWater = water && getFreshness(water.createdAt) !== "unknown";
   const showAir = airTemperature !== null;
-  const hasAnyLiveData = showPeopleCount || showWater || showAir;
+  const hasAnything = Boolean(showPeopleCount || showWater || showAir);
 
   return (
     // A <div>, not a <button>, because the always-visible booking CTA below
@@ -66,7 +72,14 @@ export function LocationListCard({
           {number}
         </span>
         <div className="min-w-0 flex-1">
-          {!hasAnyLiveData ? (
+          {dashWhenEmpty ? (
+            <div className="flex items-center justify-between gap-2">
+              <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
+              <span className="shrink-0 text-sm text-steam" aria-label={dict.freshness.unknown}>
+                —
+              </span>
+            </div>
+          ) : !hasAnything ? (
             <div className="flex items-center justify-between gap-2">
               <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
               <span className="shrink-0 text-xs text-steam">{dict.location.noDataShort}</span>

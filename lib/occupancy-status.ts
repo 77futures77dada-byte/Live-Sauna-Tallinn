@@ -1,6 +1,6 @@
 import { getFreshness } from "./freshness";
 import type { FreshnessLevel } from "./freshness";
-import type { LatestOccupancy } from "./reports";
+import type { LatestOccupancy, LatestWater } from "./reports";
 
 // Derived purely for the "LIVE NOW" location list — not a stored field.
 // "unknown" covers both no report and a stale one (freshness "low"/
@@ -41,6 +41,23 @@ export function getOccupancyStatus(
   if (peopleCount <= 3) return "quiet";
   if (peopleCount <= 8) return "active";
   return "busy";
+}
+
+// Whether a sauna has a fresh crowdsourced signal of its own — a recent
+// headcount or a recent water-temperature report. Deliberately excludes
+// the shared Ilmateenistus station reading (which is ambient weather, not
+// per-sauna, and is surfaced separately in the LiveStatsBar): LocationList
+// uses this to decide whether to show per-card states or a single shared
+// "no live data yet" banner above the column.
+export function hasCrowdLiveData(
+  occupancy: LatestOccupancy | undefined,
+  water: LatestWater | undefined,
+): boolean {
+  const occupancyFresh =
+    occupancy !== undefined &&
+    ["high", "medium"].includes(getFreshness(occupancy.createdAt));
+  const waterFresh = water !== undefined && getFreshness(water.createdAt) !== "unknown";
+  return occupancyFresh || waterFresh;
 }
 
 export interface LiveSnapshot {

@@ -47,6 +47,12 @@
   "sidebar": {
     "liveNow": "Live now"
   },
+  "liveStats": {
+    "saunasActive": "{n} saunas active",
+    "people": "{n} people",
+    "water": "{t}°C water",
+    "air": "{t}°C air"
+  },
   "occupancyStatus": {
     "quiet": "Quiet",
     "active": "Active",
@@ -119,6 +125,8 @@
     "openingHours": "Opening hours",
     "noOccupancy": "No live occupancy reports yet for this location.",
     "noDataShort": "No data yet",
+    "noDataBannerTitle": "Live data isn't available yet",
+    "noDataBannerBody": "None of the three Harku saunas has had an occupancy or water-temperature report in the last hour. Info shows up as soon as someone on site shares an update.",
     "updatedPrefix": "Updated",
     "youAreHere": "You are here",
     "startedAt": "started",

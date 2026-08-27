@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { hasCrowdLiveData } from "@/lib/occupancy-status";
 import type { LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import { LocationListCard } from "./LocationListCard";
@@ -12,6 +12,7 @@ export function LocationList({
   locations,
   occupancy,
   water,
+  airTemperature,
   selectedId,
   locale,
   onSelect,
@@ -19,37 +20,16 @@ export function LocationList({
   locations: Location[];
   occupancy: Map<string, LatestOccupancy>;
   water: Map<string, LatestWater>;
+  // Shared Ilmateenistus station reading, fetched once in MapScreen — the
+  // three pilot saunas sit at the same point on Lake Harku and share one
+  // station (lib/weather-stations.ts), so it's the same number on every
+  // card. null when the station has nothing in the current feed.
+  airTemperature: number | null;
   selectedId: string | null;
   locale: Locale;
   onSelect: (location: Location) => void;
 }) {
   const dict = getDictionary(locale);
-  const [airTemperature, setAirTemperature] = useState<number | null>(null);
-
-  // All three pilot saunas sit at the same point on Lake Harku and share
-  // one weather station (lib/weather-stations.ts), so one fetch — using
-  // any one location's slug — covers every card here instead of one
-  // request per card for what would be an identical reading.
-  const representativeSlug = locations[0]?.slug;
-
-  useEffect(() => {
-    if (!representativeSlug) return;
-    let cancelled = false;
-
-    fetch(`/api/weather?slug=${representativeSlug}`)
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-      .then((observation: { airTemperature: number | null }) => {
-        if (!cancelled) setAirTemperature(observation.airTemperature);
-      })
-      .catch(() => {
-        // No station data — cards just fall back to occupancy/water, same
-        // "nothing invented" rule as everywhere else weather is shown.
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [representativeSlug]);
 
   // Fixed 1/2/3 order by slug, not a live-freshness sort — with a numbered
   // badge as each card's visual anchor, having the cards themselves
@@ -59,9 +39,31 @@ export function LocationList({
   // are the stable identity.
   const ordered = [...locations].sort((a, b) => a.slug.localeCompare(b.slug));
 
+  // If not one sauna has a fresh crowdsourced reading, a single banner
+  // above the column says so once — instead of every card repeating the
+  // same "no live data" line. As soon as any sauna has a report, each card
+  // carries its own state again. The shared station's air temperature
+  // (shown on the cards and in the LiveStatsBar) doesn't count here — it's
+  // ambient weather, not a per-sauna signal.
+  const noneHaveLiveData = ordered.every(
+    (location) => !hasCrowdLiveData(occupancy.get(location.id), water.get(location.id)),
+  );
+
   return (
     <div className="flex flex-col gap-3">
       <h2 className="font-display text-lg font-semibold text-fjord">{dict.sidebar.liveNow}</h2>
+
+      {noneHaveLiveData && (
+        <div className="rounded-2xl border border-warm-border bg-white p-3.5 shadow-sm">
+          <p className="font-display text-sm font-semibold text-fjord">
+            {dict.location.noDataBannerTitle}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-steam">
+            {dict.location.noDataBannerBody}
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2.5">
         {ordered.map((location, index) => (
           <LocationListCard
@@ -74,6 +76,7 @@ export function LocationList({
             selected={selectedId === location.id}
             locale={locale}
             onSelect={onSelect}
+            dashWhenEmpty={noneHaveLiveData}
           />
         ))}
       </div>

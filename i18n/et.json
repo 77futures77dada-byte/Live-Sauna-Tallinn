@@ -47,6 +47,12 @@
   "sidebar": {
     "liveNow": "Praegu aktiivsed"
   },
+  "liveStats": {
+    "saunasActive": "{n} aktiivset sauna",
+    "people": "{n} inimest",
+    "water": "{t}°C vesi",
+    "air": "{t}°C õhk"
+  },
   "occupancyStatus": {
     "quiet": "Vaikne",
     "active": "Aktiivne",
@@ -119,6 +125,8 @@
     "openingHours": "Lahtiolekuajad",
     "noOccupancy": "Sellel asukohal pole veel reaalajas hõivatuse andmeid.",
     "noDataShort": "Andmeid pole veel",
+    "noDataBannerTitle": "Reaalajas andmed pole veel saadaval",
+    "noDataBannerBody": "Ükski kolmest Harku saunast pole viimase tunni jooksul hõivatust ega veetemperatuuri raporteerinud. Info ilmub kohe, kui keegi kohapeal olekut jagab.",
     "updatedPrefix": "Uuendatud",
     "youAreHere": "Sa oled siin",
     "startedAt": "algas",

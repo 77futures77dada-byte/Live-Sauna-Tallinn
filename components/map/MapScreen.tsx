@@ -6,6 +6,7 @@ import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
 import { ForecastStrip } from "@/components/locator/ForecastStrip";
+import { LiveStatsBar } from "@/components/locator/LiveStatsBar";
 import { LocationList } from "@/components/locator/LocationList";
 import { LocatorHeroBanner } from "@/components/locator/LocatorHeroBanner";
 import { createClient } from "@/lib/supabase/client";
@@ -62,6 +63,10 @@ export function MapScreen({
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
   const [openVisit, setOpenVisit] = useState(initialOpenVisit);
+  const [station, setStation] = useState<{
+    airTemperature: number | null;
+    waterTemperature: number | null;
+  } | null>(null);
   const [, setTick] = useState(0);
 
   const openVisitLocationName = openVisit
@@ -145,6 +150,35 @@ export function MapScreen({
     return () => clearInterval(id);
   }, []);
 
+  // The three pilot saunas share one Ilmateenistus station
+  // (lib/weather-stations.ts), so one fetch — keyed off any location's
+  // slug — covers the whole dashboard: the LiveStatsBar's water/air
+  // figures and every card's air reading. No station data → those
+  // figures just don't render, same "nothing invented" rule as elsewhere.
+  const representativeSlug = locations[0]?.slug;
+  useEffect(() => {
+    if (!representativeSlug) return;
+    let cancelled = false;
+
+    fetch(`/api/weather?slug=${representativeSlug}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((observation: { airTemperature: number | null; waterTemperature: number | null }) => {
+        if (!cancelled) {
+          setStation({
+            airTemperature: observation.airTemperature,
+            waterTemperature: observation.waterTemperature,
+          });
+        }
+      })
+      .catch(() => {
+        // Station absent from the current feed — leave `station` null.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [representativeSlug]);
+
   if (showHero) {
     // fixed inset-0 rather than this component's usual flex-1 slot below
     // AppHeader — the splash is meant to cover the whole viewport,
@@ -166,13 +200,22 @@ export function MapScreen({
   // locator map just needs one representative location for its shared
   // coordinates, not one marker per sauna (see MapView).
   const site = locations[0] ?? null;
+  const liveSnapshot = getLiveSnapshot(occupancy);
 
   return (
     <div className="relative min-h-0 w-full flex-1 overflow-y-auto bg-ivory">
       <LocatorHeroBanner
         locale={locale}
         totalSaunas={locations.length}
-        liveSnapshot={getLiveSnapshot(occupancy)}
+        liveSnapshot={liveSnapshot}
+      />
+
+      <LiveStatsBar
+        activeSaunas={liveSnapshot.activeLocations}
+        peopleCount={liveSnapshot.peopleCount}
+        waterTemperature={station?.waterTemperature ?? null}
+        airTemperature={station?.airTemperature ?? null}
+        locale={locale}
       />
 
       <div className="mx-auto max-w-[1360px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
@@ -196,6 +239,7 @@ export function MapScreen({
             locations={locations}
             occupancy={occupancy}
             water={water}
+            airTemperature={station?.airTemperature ?? null}
             selectedId={selected?.id ?? null}
             locale={locale}
             onSelect={handleSelect}
