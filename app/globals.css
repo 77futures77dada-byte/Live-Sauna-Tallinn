@@ -44,10 +44,10 @@ body {
 }
 
 /* Leaflet's default tile-load background is light gray, which flashes
-   before CartoDB Voyager's tiles arrive and around any ungeocoded edge —
-   match Voyager's own light neutral base so the flash is unnoticeable. */
+   before the OpenStreetMap tiles arrive and around any ungeocoded edge —
+   match OSM's own land tone so the flash is unnoticeable. */
 .leaflet-container {
-  background: #f3f4f6;
+  background: #f2efe9;
 }
 
 /* Leaflet renders LocationMarker's divIcon as raw HTML, outside React's
@@ -61,7 +61,7 @@ body {
   height: 36px;
   border-radius: 9999px;
   background: #ffffff;
-  /* A dark ring keeps the badge legible against Voyager's light basemap
+  /* A dark ring keeps the badge legible against the light OSM basemap
      regardless of what's inside it (count or type glyph). */
   border: 2.5px solid #111111;
   box-shadow: 0 2px 6px rgba(17, 17, 17, 0.35);

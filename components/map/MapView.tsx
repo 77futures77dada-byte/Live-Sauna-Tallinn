@@ -30,11 +30,16 @@ export default function MapView({ site }: { site: Location }) {
       zoomControl={false}
       className="h-full w-full"
     >
+      {/* Standard OpenStreetMap tiles — key-free and reliable. CARTO's
+          anonymous Voyager/Positron endpoint started stamping an "API KEY
+          REQUIRED" watermark on tiles; a styled CARTO basemap via a real
+          (free) API key is a later pass. OSM's standard style maxes out at
+          zoom 19. */}
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png"
-        subdomains="abcd"
-        maxZoom={20}
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        subdomains="abc"
+        maxZoom={19}
       />
       <LocationMarker location={site} occupancy={undefined} onSelect={() => {}} />
     </MapContainer>
