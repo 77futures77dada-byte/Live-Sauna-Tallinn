@@ -122,6 +122,7 @@
     "free": "Tasuta",
     "paid": "Tasuline",
     "capacity": "Mahutavus",
+    "capacityShort": "Kuni {n} inimest",
     "openingHours": "Lahtiolekuajad",
     "noOccupancy": "Sellel asukohal pole veel reaalajas hõivatuse andmeid.",
     "noDataShort": "Andmeid pole veel",

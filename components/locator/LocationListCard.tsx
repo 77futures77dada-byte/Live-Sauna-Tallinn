@@ -55,6 +55,39 @@ export function LocationListCard({
   const showAir = airTemperature !== null;
   const hasAnything = Boolean(showPeopleCount || showWater || showAir);
 
+  const capacityLabel =
+    location.capacity !== null
+      ? dict.location.capacityShort.replace("{n}", String(location.capacity))
+      : null;
+
+  const rightSide = dashWhenEmpty ? (
+    <span className="shrink-0 text-sm text-steam" aria-label={dict.freshness.unknown}>
+      —
+    </span>
+  ) : !hasAnything ? (
+    <span className="shrink-0 text-xs text-steam">{dict.location.noDataShort}</span>
+  ) : status === "unknown" ? (
+    <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-steam">
+      <MapPin className="h-3 w-3" strokeWidth={2.25} aria-hidden />
+      {statusLabel}
+    </span>
+  ) : (
+    <span
+      className="flex shrink-0 items-center gap-1.5 text-xs font-medium"
+      style={{ color: statusColor }}
+    >
+      {/* Solid dot plus a soft halo (box-shadow, not Tailwind's `ring`
+          utility — its color is a CSS var this component doesn't control)
+          so status reads as a real indicator, not a flat gray bullet. */}
+      <span
+        className="h-2 w-2 shrink-0 rounded-full"
+        style={{ backgroundColor: statusColor, boxShadow: `0 0 0 3px ${statusColor}26` }}
+        aria-hidden
+      />
+      {statusLabel}
+    </span>
+  );
+
   return (
     // A <div>, not a <button>, because the always-visible booking CTA below
     // is its own button — two nested <button>s isn't valid HTML, so the
@@ -72,67 +105,35 @@ export function LocationListCard({
           {number}
         </span>
         <div className="min-w-0 flex-1">
-          {dashWhenEmpty ? (
-            <div className="flex items-center justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
               <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
-              <span className="shrink-0 text-sm text-steam" aria-label={dict.freshness.unknown}>
-                —
-              </span>
+              {capacityLabel && <p className="text-[11px] text-steam">{capacityLabel}</p>}
             </div>
-          ) : !hasAnything ? (
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
-              <span className="shrink-0 text-xs text-steam">{dict.location.noDataShort}</span>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between gap-2">
-                <p className="truncate font-display text-lg font-semibold text-fjord">{location.name}</p>
-                {status === "unknown" ? (
-                  <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-steam">
-                    <MapPin className="h-3 w-3" strokeWidth={2.25} aria-hidden />
-                    {statusLabel}
-                  </span>
-                ) : (
-                  <span
-                    className="flex shrink-0 items-center gap-1.5 text-xs font-medium"
-                    style={{ color: statusColor }}
-                  >
-                    {/* Solid dot plus a soft halo (box-shadow, not
-                        Tailwind's `ring` utility — its color is a CSS var
-                        this component doesn't control) so status reads as
-                        a real indicator, not a flat gray bullet. */}
-                    <span
-                      className="h-2 w-2 shrink-0 rounded-full"
-                      style={{ backgroundColor: statusColor, boxShadow: `0 0 0 3px ${statusColor}26` }}
-                      aria-hidden
-                    />
-                    {statusLabel}
-                  </span>
-                )}
-              </div>
+            {rightSide}
+          </div>
 
-              <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                {showPeopleCount && (
-                  <span className="flex items-baseline gap-1 leading-none">
-                    <span className="text-xl font-bold text-fjord">{occupancy.peopleCount}</span>
-                    <span className="text-[11px] text-steam">{dict.location.peopleUnit}</span>
-                  </span>
-                )}
-                {showWater && (
-                  <span className="flex items-center gap-1 text-xs text-steam">
-                    <Waves className="h-3 w-3" aria-hidden />
-                    {water.temperature.toFixed(1)}°C {dict.location.waterShort}
-                  </span>
-                )}
-                {showAir && (
-                  <span className="flex items-center gap-1 text-xs text-steam">
-                    <Thermometer className="h-3 w-3" aria-hidden />
-                    {airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
-                  </span>
-                )}
-              </div>
-            </>
+          {hasAnything && !dashWhenEmpty && (
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+              {showPeopleCount && (
+                <span className="flex items-baseline gap-1 leading-none">
+                  <span className="text-xl font-bold text-fjord">{occupancy.peopleCount}</span>
+                  <span className="text-[11px] text-steam">{dict.location.peopleUnit}</span>
+                </span>
+              )}
+              {showWater && (
+                <span className="flex items-center gap-1 text-xs text-steam">
+                  <Waves className="h-3 w-3" aria-hidden />
+                  {water.temperature.toFixed(1)}°C {dict.location.waterShort}
+                </span>
+              )}
+              {showAir && (
+                <span className="flex items-center gap-1 text-xs text-steam">
+                  <Thermometer className="h-3 w-3" aria-hidden />
+                  {airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </button>
@@ -141,7 +142,7 @@ export function LocationListCard({
         <button
           type="button"
           onClick={() => onSelect(location)}
-          className="mt-2.5 w-full rounded-full border border-fjord/25 px-3 py-1.5 text-xs font-medium text-fjord transition hover:bg-fjord/5 sm:w-auto"
+          className="mt-2.5 w-full rounded-full border-2 border-fjord px-3 py-1.5 text-xs font-semibold text-fjord transition hover:bg-fjord hover:text-ivory sm:w-auto"
         >
           {dict.booking.bookSlotButton}
         </button>

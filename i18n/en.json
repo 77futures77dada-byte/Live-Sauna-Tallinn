@@ -122,6 +122,7 @@
     "free": "Free",
     "paid": "Paid",
     "capacity": "Capacity",
+    "capacityShort": "Up to {n} people",
     "openingHours": "Opening hours",
     "noOccupancy": "No live occupancy reports yet for this location.",
     "noDataShort": "No data yet",
