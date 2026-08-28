@@ -46,13 +46,6 @@ const LINE = "#DCE9EF";
 type Tone = "frost" | "ember";
 const toneColor = (tone: Tone) => (tone === "ember" ? EMBER : FROST);
 
-// Quick-glance panel on the splash — a third, neutral tone for the
-// "come by" step, which is neither the cold path (frost) nor the warm
-// sauna itself (ember).
-type QuickTone = Tone | "neutral";
-const quickIconBg = (tone: QuickTone) =>
-  tone === "neutral" ? "rgba(255,255,255,0.22)" : toneColor(tone);
-
 // Temporary stand-in imagery until the client hands over real Lake Harku
 // photos — deliberately the stylised atmosphere shots already licensed
 // for the app, shown under an honest "not this exact site" caption
@@ -146,26 +139,33 @@ export function HeroLanding({
   // Quick-glance version of the same three steps, shown directly in the
   // hero so the gist is visible without scrolling. Deliberately shorter
   // than `steps` above — that's the detailed "Kuidas see käib" section.
+  // Each step gets a photo circle (recycled atmosphere shots — same ones
+  // used in the gallery section, no new imagery) with the icon as a small
+  // badge on top, rather than the icon being the only visual.
   const quickSteps: {
     icon: typeof Eye;
+    image: string;
     label: string;
     shortLabel: string;
-    tone: QuickTone;
+    tone: Tone;
   }[] = [
     {
       icon: Eye,
+      image: "/atmosphere/winter-swimming.webp",
       label: t.quickStep1,
       shortLabel: t.quickStep1Short,
       tone: "frost",
     },
     {
       icon: Footprints,
+      image: "/atmosphere/beach.webp",
       label: t.quickStep2,
       shortLabel: t.quickStep2Short,
-      tone: "neutral",
+      tone: "ember",
     },
     {
       icon: Camera,
+      image: "/atmosphere/sauna.webp",
       label: t.quickStep3,
       shortLabel: t.quickStep3Short,
       tone: "ember",
@@ -264,24 +264,39 @@ export function HeroLanding({
 
             {/* Mobile quick-glance row — a compact, one-screen hint of the
               process. Desktop shows the fuller glass panel instead
-              (see below), so this is hidden at lg. */}
-            <div className="mt-6 flex items-center gap-6 lg:hidden">
-              {quickSteps.map(({ icon: Icon, shortLabel, tone }) => (
-                <div
-                  key={shortLabel}
-                  className="flex flex-col items-center gap-1.5"
-                >
-                  <span
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-white"
-                    style={{ backgroundColor: quickIconBg(tone) }}
+              (see below), so this is hidden at lg. Each item fades/scales
+              in on mount (which for this row means "as soon as it's on
+              screen", since it never requires scrolling) — staggered
+              slightly per step for a little life without being busy. */}
+            <div className="mt-6 flex items-start justify-center gap-5 lg:hidden">
+              {quickSteps.map(
+                ({ icon: Icon, image, shortLabel, tone }, index) => (
+                  <div
+                    key={shortLabel}
+                    className="flex w-20 animate-[quick-step-enter_500ms_ease-out_both] flex-col items-center gap-1.5"
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <Icon className="h-4 w-4" aria-hidden />
-                  </span>
-                  <span className="text-[11px] font-medium text-white/90">
-                    {shortLabel}
-                  </span>
-                </div>
-              ))}
+                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full ring-2 ring-white/40">
+                      <Image
+                        src={image}
+                        alt=""
+                        fill
+                        sizes="48px"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <span
+                        className="absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full text-white ring-2 ring-white/80"
+                        style={{ backgroundColor: toneColor(tone) }}
+                      >
+                        <Icon className="h-3 w-3" aria-hidden />
+                      </span>
+                    </span>
+                    <span className="text-center text-[11px] leading-tight font-medium text-white/90">
+                      {shortLabel}
+                    </span>
+                  </div>
+                ),
+              )}
             </div>
 
             {!userId && (
@@ -296,15 +311,31 @@ export function HeroLanding({
 
           {/* Desktop quick-glance panel — a compact glass card next to the
             hero copy so the gist is visible without scrolling. Hidden
-            below lg, where the row above takes over. */}
+            below lg, where the row above takes over. Each row gets a
+            subtle hover lift (translate + a slow zoom on the photo) —
+            a hover-only echo of the mobile row's on-appear animation,
+            since hover isn't available on touch. */}
           <div className="hidden shrink-0 flex-col gap-5 rounded-3xl border border-white/25 bg-white/15 p-6 text-left shadow-xl backdrop-blur-xl lg:flex lg:w-72 xl:w-80">
-            {quickSteps.map(({ icon: Icon, label, tone }) => (
-              <div key={label} className="flex items-center gap-4">
-                <span
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white"
-                  style={{ backgroundColor: quickIconBg(tone) }}
-                >
-                  <Icon className="h-5 w-5" aria-hidden />
+            {quickSteps.map(({ icon: Icon, image, label, tone }) => (
+              <div
+                key={label}
+                className="group flex items-center gap-4 rounded-2xl transition-transform duration-300 ease-out hover:-translate-y-0.5"
+              >
+                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-white/40 transition duration-300 group-hover:ring-white/70">
+                  <Image
+                    src={image}
+                    alt=""
+                    fill
+                    sizes="56px"
+                    style={{ objectFit: "cover" }}
+                    className="transition-transform duration-500 ease-out group-hover:scale-110"
+                  />
+                  <span
+                    className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full text-white ring-2 ring-white/80"
+                    style={{ backgroundColor: toneColor(tone) }}
+                  >
+                    <Icon className="h-3.5 w-3.5" aria-hidden />
+                  </span>
                 </span>
                 <span className="text-sm font-semibold text-white">
                   {label}
