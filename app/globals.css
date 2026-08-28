@@ -25,6 +25,26 @@
   --foreground: #111111;
 }
 
+/* Dashboard dark theme — a manual toggle (see ThemeToggle), not
+   OS-driven: the app previously opted out of prefers-color-scheme on
+   purpose (see the file header), so dark only applies when someone
+   actually asks for it, via the [data-theme="dark"] attribute set on
+   <html>. Logically inverted monochrome only — quiet/caution/busy stay
+   saturated functional colors in both themes, unchanged here. This
+   scopes to the dashboard (map, cards, header): HeroLanding never reads
+   these tokens, it carries its own fixed teal/warm palette as literal
+   hex (see components/landing/HeroLanding.tsx), so it renders identically
+   regardless of this attribute. */
+:root[data-theme="dark"] {
+  --color-ivory: #16191d;
+  --color-ivory-shade: #1f2328;
+  --color-fjord: #f2f3f4;
+  --color-steam: #9aa3ad;
+  --color-warm-border: #2b3036;
+  --background: #16191d;
+  --foreground: #f2f3f4;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

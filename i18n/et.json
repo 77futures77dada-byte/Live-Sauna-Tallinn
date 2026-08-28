@@ -110,6 +110,9 @@
     "ru": "Русский",
     "en": "English"
   },
+  "theme": {
+    "toggle": "Vaheta värviteemat"
+  },
   "hero": {
     "eyebrow": "Harku järv, reaalajas",
     "tagline": "Harku · 3 sauna reaalajas",

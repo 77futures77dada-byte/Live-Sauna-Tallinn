@@ -52,7 +52,7 @@ export function ForecastStrip({
   const todayIso = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="mt-6 rounded-3xl border border-warm-border bg-white p-4 shadow-sm sm:p-5">
+    <div className="mt-6 rounded-3xl border border-warm-border bg-ivory p-4 shadow-sm sm:p-5">
       <h2 className="font-display text-sm font-semibold text-fjord">{dict.title}</h2>
 
       {state.status === "loading" && (
@@ -86,8 +86,8 @@ export function ForecastStrip({
                   {isToday ? dict.today : weekday}
                 </span>
                 <Icon
-                  className="h-5 w-5"
-                  style={{ color: isToday ? TODAY_ACCENT : "#111111" }}
+                  className={`h-5 w-5 ${isToday ? "" : "text-fjord"}`}
+                  style={isToday ? { color: TODAY_ACCENT } : undefined}
                   aria-hidden
                 />
                 <span className="text-sm font-semibold text-fjord">

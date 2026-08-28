@@ -82,7 +82,7 @@ export function CheckInButton({
 
   return (
     <div className="mt-4 space-y-1.5 border-t border-warm-border pt-4">
-      <label className="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-warm-border bg-white px-3 py-1.5 text-sm text-fjord transition-colors hover:bg-ivory">
+      <label className="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-warm-border bg-ivory px-3 py-1.5 text-sm text-fjord transition-colors hover:bg-ivory-shade">
         <Camera className="h-4 w-4 text-steam" aria-hidden />
         {file ? dict.photoSelected : dict.takeCheckInPhoto}
         <input

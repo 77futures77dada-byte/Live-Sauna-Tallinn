@@ -110,6 +110,9 @@
     "ru": "Русский",
     "en": "English"
   },
+  "theme": {
+    "toggle": "Toggle color theme"
+  },
   "hero": {
     "eyebrow": "Lake Harku, live",
     "tagline": "Harku · 3 saunas, live",

@@ -8,6 +8,11 @@ import { createClient } from "@/lib/supabase/client";
 type Step = "email" | "code";
 type Status = "idle" | "sending" | "sent" | "verifying" | "error" | "codeError";
 
+// Google-only login for the client demo — OTP stays fully wired (Supabase
+// still handles it below) behind this flag so it can go back into the UI
+// with a one-line flip, not a rebuild.
+const EMAIL_LOGIN_ENABLED = false;
+
 export function LoginForm({
   locale,
   initialError = false,
@@ -80,37 +85,41 @@ export function LoginForm({
             {dict.auth.continueWithGoogle}
           </button>
 
-          <div className="flex items-center gap-3 text-xs text-zinc-500">
-            <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-            {dict.auth.or}
-            <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-          </div>
+          {EMAIL_LOGIN_ENABLED && (
+            <>
+              <div className="flex items-center gap-3 text-xs text-zinc-500">
+                <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+                {dict.auth.or}
+                <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+              </div>
 
-          <form onSubmit={sendCode} className="flex flex-col gap-3">
-            <input
-              type="email"
-              required
-              placeholder={dict.auth.emailPlaceholder}
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="rounded-full border border-black/[.08] px-4 py-3 text-sm dark:border-white/[.145] dark:bg-transparent"
-            />
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background disabled:opacity-50"
-            >
-              {status === "sending" ? dict.auth.sending : dict.auth.sendCode}
-            </button>
-          </form>
+              <form onSubmit={sendCode} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  required
+                  placeholder={dict.auth.emailPlaceholder}
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="rounded-full border border-black/[.08] px-4 py-3 text-sm dark:border-white/[.145] dark:bg-transparent"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className="rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background disabled:opacity-50"
+                >
+                  {status === "sending" ? dict.auth.sending : dict.auth.sendCode}
+                </button>
+              </form>
 
-          {status === "error" && (
-            <p className="text-sm text-red-600">{dict.auth.loginError}</p>
+              {status === "error" && (
+                <p className="text-sm text-red-600">{dict.auth.loginError}</p>
+              )}
+            </>
           )}
         </>
       )}
 
-      {step === "code" && (
+      {EMAIL_LOGIN_ENABLED && step === "code" && (
         <>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             {dict.auth.checkInbox} <span className="font-medium text-foreground">{email}</span>

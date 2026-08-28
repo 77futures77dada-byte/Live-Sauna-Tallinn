@@ -54,7 +54,7 @@ export function LocationList({
       <h2 className="font-display text-lg font-semibold text-fjord">{dict.sidebar.liveNow}</h2>
 
       {noneHaveLiveData && (
-        <div className="rounded-2xl border border-warm-border bg-white p-3.5 shadow-sm">
+        <div className="rounded-2xl border border-warm-border bg-ivory p-3.5 shadow-sm">
           <p className="font-display text-sm font-semibold text-fjord">
             {dict.location.noDataBannerTitle}
           </p>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AssistantSheet } from "@/components/assistant/AssistantSheet";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 // Below `sm` (640px), Admin/profile collapse to icon-only links and the
 // language switcher shows 2-letter codes instead of full names — at
@@ -32,6 +33,7 @@ export function AppHeader({
       </h1>
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <AssistantSheet locale={locale} enabled={assistantEnabled} />
+        <ThemeToggle locale={locale} />
         <LanguageSwitcher locale={locale} />
         {isAdmin && (
           <Link

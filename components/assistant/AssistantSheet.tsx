@@ -167,7 +167,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
             }`}
           />
           <div
-            className={`fixed inset-x-0 bottom-0 z-[1301] flex max-h-[85vh] min-h-[50vh] flex-col rounded-t-2xl bg-white shadow-2xl lg:inset-x-auto lg:top-20 lg:right-4 lg:bottom-auto lg:h-[32rem] lg:w-96 lg:rounded-2xl ${
+            className={`fixed inset-x-0 bottom-0 z-[1301] flex max-h-[85vh] min-h-[50vh] flex-col rounded-t-2xl bg-ivory shadow-2xl lg:inset-x-auto lg:top-20 lg:right-4 lg:bottom-auto lg:h-[32rem] lg:w-96 lg:rounded-2xl ${
               closing ? "animate-[panel-exit_180ms_ease-in_forwards]" : "animate-[panel-enter_220ms_ease-out]"
             }`}
           >

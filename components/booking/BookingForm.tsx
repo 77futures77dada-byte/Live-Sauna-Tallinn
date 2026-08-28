@@ -75,7 +75,7 @@ function TimeSlotSelect({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-lg border border-warm-border bg-white px-2 py-1.5 text-left text-sm text-fjord transition-colors hover:border-fjord/30 focus:border-fjord focus:ring-2 focus:ring-fjord/25 focus:outline-none"
+        className="flex w-full items-center justify-between rounded-lg border border-warm-border bg-ivory px-2 py-1.5 text-left text-sm text-fjord transition-colors hover:border-fjord/30 focus:border-fjord focus:ring-2 focus:ring-fjord/25 focus:outline-none"
       >
         <span>{labels[selectedIndex] ?? ""}</span>
         <ChevronDown
@@ -87,7 +87,7 @@ function TimeSlotSelect({
       {open && (
         <ul
           role="listbox"
-          className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-warm-border bg-white py-1 text-sm shadow-lg"
+          className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-warm-border bg-ivory py-1 text-sm shadow-lg"
         >
           {slots.map((slot, index) => (
             <li

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
+import Script from "next/script";
 import { getLocale } from "@/lib/get-locale";
 import "./globals.css";
 
@@ -32,7 +33,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        {/* Sets data-theme before first paint so a returning dark-theme
+            visitor never flashes light — beforeInteractive is Next's
+            mechanism for exactly this (injected into <head>, runs ahead of
+            hydration; see node_modules/next/dist/docs .../script.md), which
+            rules out doing this from a React effect. ThemeToggle owns the
+            toggle itself and mirrors this same read/write contract with
+            localStorage. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {"try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}"}
+        </Script>
+      </body>
     </html>
   );
 }

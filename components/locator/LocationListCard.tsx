@@ -97,7 +97,7 @@ export function LocationListCard({
       className={`w-full animate-[card-enter_200ms_ease-out] rounded-2xl border p-3 transition sm:p-3.5 ${
         selected
           ? "border-fjord bg-fjord/5 shadow-md ring-1 ring-fjord/30"
-          : "border-warm-border bg-white shadow-sm hover:border-steam/40 hover:shadow-md"
+          : "border-warm-border bg-ivory shadow-sm hover:border-steam/40 hover:shadow-md"
       }`}
     >
       <button type="button" onClick={() => onSelect(location)} className="flex w-full items-center gap-3 text-left">

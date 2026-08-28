@@ -114,7 +114,7 @@ export function LocationCard({
         }`}
       />
       <div
-        className={`fixed inset-x-0 bottom-0 z-[1201] flex max-h-[90vh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl
+        className={`fixed inset-x-0 bottom-0 z-[1201] flex max-h-[90vh] flex-col overflow-hidden rounded-t-2xl bg-ivory shadow-2xl
                    lg:inset-x-auto lg:right-4 lg:top-20 lg:bottom-auto lg:max-h-[75vh] lg:w-96 lg:rounded-2xl ${
                      closing ? "animate-[panel-exit_180ms_ease-in_forwards]" : "animate-[panel-enter_220ms_ease-out]"
                    }`}
