@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { type ReactNode } from "react";
+import { type ComponentType, type ReactNode, type SVGProps } from "react";
 import {
   ArrowRight,
   Camera,
@@ -16,6 +16,9 @@ import {
   Snowflake,
   Waves,
 } from "lucide-react";
+import { FirewoodIcon } from "@/components/landing/icons/FirewoodIcon";
+import { KeyDocumentIcon } from "@/components/landing/icons/KeyDocumentIcon";
+import { WaterBottleIcon } from "@/components/landing/icons/WaterBottleIcon";
 import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { LiveSnapshot } from "@/lib/occupancy-status";
@@ -72,6 +75,18 @@ const RULE_TONES: Tone[] = [
   "frost", // no alcohol
   "frost", // clean up after yourself
 ];
+
+// Custom illustrated icons for the three "what to bring" rules — the
+// rest of the checklist keeps the plain Check glyph below. Keyed by
+// index into `t.rules`, which follows the fixed order above.
+const RULE_ILLUSTRATIONS: Record<
+  number,
+  ComponentType<SVGProps<SVGSVGElement>>
+> = {
+  0: KeyDocumentIcon, // keys from the guard, against an ID document
+  4: FirewoodIcon, // bring hardwood firewood
+  7: WaterBottleIcon, // only clean water on the stones
+};
 
 function SectionHeading({
   tone,
@@ -408,22 +423,36 @@ export function HeroLanding({
             {t.rulesSeason}
           </p>
 
-          <ul className="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-            {t.rules.map((rule, index) => (
-              <li
-                key={rule}
-                className="flex items-start gap-2.5 text-sm leading-relaxed"
-                style={{ color: INK }}
-              >
-                <Check
-                  className="mt-0.5 h-4 w-4 shrink-0"
-                  style={{ color: toneColor(RULE_TONES[index] ?? "frost") }}
-                  strokeWidth={2.5}
-                  aria-hidden
-                />
-                {rule}
-              </li>
-            ))}
+          <ul className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+            {t.rules.map((rule, index) => {
+              const Illustration = RULE_ILLUSTRATIONS[index];
+              return (
+                <li
+                  key={rule}
+                  className="flex items-center gap-3 text-sm leading-relaxed sm:items-start"
+                  style={{ color: INK }}
+                >
+                  {Illustration ? (
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center">
+                      <Illustration
+                        className="h-8 w-auto max-w-full"
+                        aria-hidden
+                      />
+                    </span>
+                  ) : (
+                    <Check
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      style={{
+                        color: toneColor(RULE_TONES[index] ?? "frost"),
+                      }}
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                  )}
+                  {rule}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
