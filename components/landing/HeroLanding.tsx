@@ -6,14 +6,20 @@ import dynamic from "next/dynamic";
 import { type ComponentType, type ReactNode, type SVGProps } from "react";
 import {
   ArrowRight,
+  Ban,
   Camera,
   Check,
   ChevronDown,
+  CigaretteOff,
   Clock,
   Eye,
   Flame,
   Footprints,
+  Shuffle,
   Snowflake,
+  Trash2,
+  UserCheck,
+  Users,
   Waves,
 } from "lucide-react";
 import { FirewoodIcon } from "@/components/landing/icons/FirewoodIcon";
@@ -86,6 +92,19 @@ const RULE_ILLUSTRATIONS: Record<
   0: KeyDocumentIcon, // keys from the guard, against an ID document
   4: FirewoodIcon, // bring hardwood firewood
   7: WaterBottleIcon, // only clean water on the stones
+};
+
+// Lucide glyphs for the remaining rules — same slot the plain Check
+// fills, just a more legible pictogram. Keyed by index, same order.
+const RULE_ICONS: Record<number, typeof Flame> = {
+  1: Shuffle, // first-come, first-served
+  2: Users, // up to 4 people
+  3: Clock, // up to 3 hours
+  5: Flame, // never leave the fire unattended
+  6: CigaretteOff, // no smoking
+  8: UserCheck, // minors with an adult
+  9: Ban, // no alcohol
+  10: Trash2, // clean up after yourself
 };
 
 function SectionHeading({
@@ -426,6 +445,7 @@ export function HeroLanding({
           <ul className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
             {t.rules.map((rule, index) => {
               const Illustration = RULE_ILLUSTRATIONS[index];
+              const RuleIcon = RULE_ICONS[index];
               return (
                 <li
                   key={rule}
@@ -440,14 +460,27 @@ export function HeroLanding({
                       />
                     </span>
                   ) : (
-                    <Check
-                      className="mt-0.5 h-4 w-4 shrink-0"
-                      style={{
-                        color: toneColor(RULE_TONES[index] ?? "frost"),
-                      }}
-                      strokeWidth={2.5}
-                      aria-hidden
-                    />
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center sm:h-auto sm:items-start sm:pt-0.5">
+                      {RuleIcon ? (
+                        <RuleIcon
+                          className="h-4 w-4"
+                          style={{
+                            color: toneColor(RULE_TONES[index] ?? "frost"),
+                          }}
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                      ) : (
+                        <Check
+                          className="h-4 w-4"
+                          style={{
+                            color: toneColor(RULE_TONES[index] ?? "frost"),
+                          }}
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
+                      )}
+                    </span>
                   )}
                   {rule}
                 </li>
