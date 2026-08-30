@@ -121,6 +121,12 @@
     "login": "Logi sisse",
     "liveSnapshotBanner": "{total} sauna · {people} inimest praegu"
   },
+  "banner": {
+    "back": "Kõik saunad",
+    "share": "Jaga",
+    "shareCopied": "Link kopeeritud",
+    "viewSaunas": "Vaata saunasid"
+  },
   "landing": {
     "freeBadge": "Tasuta · linna hallatav",
     "headline": "Tasuta avalikud saunad Harku järvel",

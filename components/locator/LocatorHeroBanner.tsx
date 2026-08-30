@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, Check, Share2, Thermometer, Waves } from "lucide-react";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { SaunaLakeIllustration } from "@/components/locator/icons/SaunaLakeIllustration";
 import type { LiveSnapshot } from "@/lib/occupancy-status";
@@ -10,30 +15,106 @@ const AMBER = "#f2b84b";
 
 // Compact brand banner above the map+cards dashboard — distinct from
 // HeroLanding (the full-screen pre-entry landing page): this is a strip,
-// always visible once someone's past that landing screen, giving the
-// single-site pilot the same visual weight a whole-city map used to carry
-// on its own. Reuses hero.eyebrow rather than inventing a parallel string
-// just for this banner.
+// always visible once someone's past that landing screen. It carries the
+// at-a-glance state (sauna/people count, shared air/water reading), a live
+// dot, a share action, and a jump-to-the-list CTA so the common actions
+// don't need a scroll. Client component: only ever rendered inside the
+// already-client MapScreen, and the share toast needs local state.
 //
-// No photo — the stock sauna.webp shot used here previously was too soft
-// to hold up at banner size, and a second attempt at photography wasn't
-// worth it for one strip. Flat monochrome + the amber live accent instead,
-// matching the rest of the dashboard chrome (app/globals.css).
+// Colours stay on the dashboard theme tokens (ivory/fjord/steam/
+// warm-border, see app/globals.css) plus the one amber accent, so the
+// strip inverts cleanly with the manual dark toggle.
 export function LocatorHeroBanner({
   locale,
   totalSaunas,
   liveSnapshot,
+  airTemperature,
+  waterTemperature,
+  backHref,
 }: {
   locale: Locale;
   totalSaunas: number;
   liveSnapshot: LiveSnapshot;
+  // Shared Ilmateenistus station reading (lib/weather-stations.ts),
+  // fetched once in MapScreen — null when the station has nothing in the
+  // current feed, in which case that half of the weather pill just isn't
+  // rendered (same "nothing invented" rule as the LocationListCard stats).
+  airTemperature: number | null;
+  waterTemperature: number | null;
+  // Set only on the QR deep-link page (app/location/[slug]) — the main
+  // dashboard is the top of the app, nothing to go back to.
+  backHref?: string;
 }) {
   const dict = getDictionary(locale);
+  const t = dict.banner;
+
+  // A live report of at least one person on site — the dot pulses amber to
+  // signal "updating"; with nobody reporting it sits as a muted grey bullet
+  // rather than flashing for attention.
+  const live = liveSnapshot.peopleCount > 0;
+  const hasWeather = airTemperature !== null || waterTemperature !== null;
+
+  const [copied, setCopied] = useState(false);
+
+  async function share() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable (insecure context, or permission denied) —
+      // no toast rather than a broken-looking fallback.
+    }
+  }
 
   return (
     <div className="relative overflow-hidden border-b border-warm-border bg-ivory-shade">
-      <div className="relative mx-auto flex max-w-[1360px] items-center justify-between gap-6 px-4 py-8 sm:py-10 lg:px-8">
-        <div className="flex flex-col justify-center gap-3">
+      {/* Faint amber wash left-to-right so the centre doesn't read as empty. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: `linear-gradient(105deg, ${AMBER}14 0%, transparent 55%)` }}
+      />
+
+      {/* Oversized illustration, full banner height, flush to the true
+          right edge (outside the padded inner container). A left-side fade
+          back to the banner colour keeps it clear of the text column. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 hidden md:block md:w-[320px] lg:w-[460px]"
+      >
+        {/* The illustration carries its own fixed light palette (see its
+            file) — full-bleed in the dark theme it competes with the
+            chrome, so it's dimmed to a faint texture there. */}
+        <SaunaLakeIllustration className="absolute top-0 right-0 h-full w-auto max-w-none [html[data-theme=dark]_&]:opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ivory-shade via-ivory-shade/70 to-transparent" />
+      </div>
+
+      {/* Share — pinned to the top-right corner of the strip. */}
+      <button
+        type="button"
+        onClick={share}
+        aria-label={t.share}
+        className="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-warm-border bg-ivory/80 px-2.5 py-1.5 text-xs font-medium text-steam backdrop-blur transition hover:text-fjord lg:top-4 lg:right-6"
+      >
+        {copied ? <Check className="h-3.5 w-3.5" aria-hidden /> : <Share2 className="h-3.5 w-3.5" aria-hidden />}
+        <span className={copied ? "inline" : "hidden sm:inline"}>
+          {copied ? t.shareCopied : t.share}
+        </span>
+      </button>
+
+      <div className="relative mx-auto max-w-[1360px] px-4 py-7 sm:py-9 lg:px-8">
+        <div className="flex max-w-[520px] flex-col gap-3">
+          {backHref && (
+            <Link
+              href={backHref}
+              className="inline-flex w-fit items-center gap-1 text-xs font-medium text-steam transition-colors hover:text-fjord"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+              {t.back}
+            </Link>
+          )}
+
           <p className="text-xs font-medium tracking-[0.2em] text-steam uppercase">
             {dict.hero.eyebrow}
           </p>
@@ -41,29 +122,53 @@ export function LocatorHeroBanner({
             Harku
           </h1>
 
-          {/* Unconditional format ("3 saunas · N people right now") rather
-              than the old active-locations-gated chip that swapped to a
-              generic "be the first" message whenever nothing was reporting
-              yet — the sauna count itself is worth showing even at 0
-              people, and it's the one number here that never changes. */}
-          <div
-            className="mt-1 inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2"
-            style={{ backgroundColor: `${AMBER}1f`, borderColor: `${AMBER}59` }}
-          >
-            <span
-              className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full"
-              style={{ backgroundColor: AMBER }}
-              aria-hidden
-            />
-            <span className="text-sm font-medium text-fjord">
-              {dict.hero.liveSnapshotBanner
-                .replace("{total}", String(totalSaunas))
-                .replace("{people}", String(liveSnapshot.peopleCount))}
-            </span>
-          </div>
-        </div>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            {/* Unconditional "3 saunas · N people right now" — the sauna
+                count is worth showing even at 0 people, and it's the one
+                number here that never changes. */}
+            <div
+              className="inline-flex items-center gap-2 rounded-full border px-4 py-2"
+              style={{ backgroundColor: `${AMBER}1f`, borderColor: `${AMBER}59` }}
+            >
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full bg-steam ${live ? "animate-pulse" : ""}`}
+                style={live ? { backgroundColor: AMBER } : undefined}
+                aria-hidden
+              />
+              <span className="text-sm font-medium text-fjord">
+                {dict.hero.liveSnapshotBanner
+                  .replace("{total}", String(totalSaunas))
+                  .replace("{people}", String(liveSnapshot.peopleCount))}
+              </span>
+            </div>
 
-        <SaunaLakeIllustration className="hidden h-[110px] w-auto shrink-0 overflow-hidden rounded-2xl border border-warm-border sm:block sm:h-[130px] lg:h-[150px]" />
+            {/* Shared station reading — each half shown only when present. */}
+            {hasWeather && (
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-warm-border bg-ivory/70 px-4 py-2 text-sm font-medium text-steam">
+                {airTemperature !== null && (
+                  <span className="inline-flex items-center gap-1">
+                    <Thermometer className="h-3.5 w-3.5" aria-hidden />
+                    {dict.liveStats.air.replace("{t}", airTemperature.toFixed(1))}
+                  </span>
+                )}
+                {waterTemperature !== null && (
+                  <span className="inline-flex items-center gap-1">
+                    <Waves className="h-3.5 w-3.5" aria-hidden />
+                    {dict.liveStats.water.replace("{t}", waterTemperature.toFixed(1))}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Jump straight to the sauna list (anchor lives in MapScreen). */}
+          <a
+            href="#saunas"
+            className="mt-1 inline-flex w-full items-center justify-center rounded-full border-2 border-fjord px-5 py-2 text-sm font-semibold text-fjord transition hover:bg-fjord hover:text-ivory sm:w-auto sm:self-start"
+          >
+            {t.viewSaunas}
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ export function getOccupancyStatus(
 // Whether a sauna has a fresh crowdsourced signal of its own — a recent
 // headcount or a recent water-temperature report. Deliberately excludes
 // the shared Ilmateenistus station reading (which is ambient weather, not
-// per-sauna, and is surfaced separately in the LiveStatsBar): LocationList
+// per-sauna, and is surfaced separately in the locator banner): LocationList
 // uses this to decide whether to show per-card states or a single shared
 // "no live data yet" banner above the column.
 export function hasCrowdLiveData(

@@ -6,7 +6,6 @@ import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
 import { ForecastStrip } from "@/components/locator/ForecastStrip";
-import { LiveStatsBar } from "@/components/locator/LiveStatsBar";
 import { LocationList } from "@/components/locator/LocationList";
 import { LocatorHeroBanner } from "@/components/locator/LocatorHeroBanner";
 import { createClient } from "@/lib/supabase/client";
@@ -152,7 +151,7 @@ export function MapScreen({
 
   // The three pilot saunas share one Ilmateenistus station
   // (lib/weather-stations.ts), so one fetch — keyed off any location's
-  // slug — covers the whole dashboard: the LiveStatsBar's water/air
+  // slug — covers the whole dashboard: the hero banner's water/air
   // figures and every card's air reading. No station data → those
   // figures just don't render, same "nothing invented" rule as elsewhere.
   const representativeSlug = locations[0]?.slug;
@@ -214,14 +213,9 @@ export function MapScreen({
         locale={locale}
         totalSaunas={locations.length}
         liveSnapshot={liveSnapshot}
-      />
-
-      <LiveStatsBar
-        activeSaunas={liveSnapshot.activeLocations}
-        peopleCount={liveSnapshot.peopleCount}
-        waterTemperature={station?.waterTemperature ?? null}
         airTemperature={station?.airTemperature ?? null}
-        locale={locale}
+        waterTemperature={station?.waterTemperature ?? null}
+        backHref={focusLocationId ? "/" : undefined}
       />
 
       <div className="mx-auto max-w-[1360px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
@@ -241,15 +235,19 @@ export function MapScreen({
             </Suspense>
           )}
 
-          <LocationList
-            locations={locations}
-            occupancy={occupancy}
-            water={water}
-            airTemperature={station?.airTemperature ?? null}
-            selectedId={selected?.id ?? null}
-            locale={locale}
-            onSelect={handleSelect}
-          />
+          {/* Scroll target for the banner's "view saunas" CTA — offset so
+              the list heading clears the sticky-ish chrome above it. */}
+          <div id="saunas" className="scroll-mt-6 lg:scroll-mt-8">
+            <LocationList
+              locations={locations}
+              occupancy={occupancy}
+              water={water}
+              airTemperature={station?.airTemperature ?? null}
+              selectedId={selected?.id ?? null}
+              locale={locale}
+              onSelect={handleSelect}
+            />
+          </div>
         </div>
 
         {site && (

@@ -121,6 +121,12 @@
     "login": "Log in",
     "liveSnapshotBanner": "{total} saunas · {people} people right now"
   },
+  "banner": {
+    "back": "All saunas",
+    "share": "Share",
+    "shareCopied": "Link copied",
+    "viewSaunas": "View saunas"
+  },
   "landing": {
     "freeBadge": "Free · run by the city",
     "headline": "Free public saunas on Lake Harku",

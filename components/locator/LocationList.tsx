@@ -43,7 +43,7 @@ export function LocationList({
   // above the column says so once — instead of every card repeating the
   // same "no live data" line. As soon as any sauna has a report, each card
   // carries its own state again. The shared station's air temperature
-  // (shown on the cards and in the LiveStatsBar) doesn't count here — it's
+  // (shown on the cards and in the locator banner) doesn't count here — it's
   // ambient weather, not a per-sauna signal.
   const noneHaveLiveData = ordered.every(
     (location) => !hasCrowdLiveData(occupancy.get(location.id), water.get(location.id)),
