@@ -102,7 +102,7 @@ export function AssistantSheet({ locale, enabled }: { locale: Locale; enabled: b
     ask(input);
   }
 
-  const examples = [dict.examplesLeastCrowded, dict.examplesColdestWater, dict.examplesNearestSauna];
+  const examples = [dict.examplesLeastCrowded, dict.examplesWaterTemp, dict.examplesAnyFree];
 
   function requestClose() {
     if (closing) return;
