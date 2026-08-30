@@ -23,7 +23,9 @@ const AMBER = "#f2b84b";
 //
 // Colours stay on the dashboard theme tokens (ivory/fjord/steam/
 // warm-border, see app/globals.css) plus the one amber accent, so the
-// strip inverts cleanly with the manual dark toggle.
+// strip inverts cleanly with the manual dark toggle — the one exception
+// is the illustration, which sits in its own fixed-light card so it
+// reads identically in both themes instead of tinting with the banner.
 export function LocatorHeroBanner({
   locale,
   totalSaunas,
@@ -76,20 +78,6 @@ export function LocatorHeroBanner({
         style={{ background: `linear-gradient(105deg, ${AMBER}14 0%, transparent 55%)` }}
       />
 
-      {/* Oversized illustration, full banner height, flush to the true
-          right edge (outside the padded inner container). A left-side fade
-          back to the banner colour keeps it clear of the text column. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 hidden md:block md:w-[320px] lg:w-[460px]"
-      >
-        {/* The illustration carries its own fixed light palette (see its
-            file) — full-bleed in the dark theme it competes with the
-            chrome, so it's dimmed to a faint texture there. */}
-        <SaunaLakeIllustration className="absolute top-0 right-0 h-full w-auto max-w-none [html[data-theme=dark]_&]:opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory-shade via-ivory-shade/70 to-transparent" />
-      </div>
-
       {/* Share — pinned to the top-right corner of the strip. */}
       <button
         type="button"
@@ -103,8 +91,8 @@ export function LocatorHeroBanner({
         </span>
       </button>
 
-      <div className="relative mx-auto max-w-[1360px] px-4 py-7 sm:py-9 lg:px-8">
-        <div className="flex max-w-[520px] flex-col gap-3">
+      <div className="relative mx-auto flex max-w-[1360px] flex-col gap-5 px-4 py-7 sm:flex-row sm:items-center sm:gap-6 sm:py-9 lg:px-8">
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
           {backHref && (
             <Link
               href={backHref}
@@ -168,6 +156,14 @@ export function LocatorHeroBanner({
           >
             {t.viewSaunas}
           </a>
+        </div>
+
+        {/* Illustration in its own fixed-light card — a self-contained
+            graphic that sits above the banner chrome and reads the same
+            in both themes, rather than tinting with it. Smaller on
+            mobile, scaling up with the breakpoints. */}
+        <div className="shrink-0 self-end overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm sm:self-center">
+          <SaunaLakeIllustration className="block h-20 w-auto sm:h-28 lg:h-36" />
         </div>
       </div>
     </div>
