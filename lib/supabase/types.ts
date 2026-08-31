@@ -154,6 +154,9 @@ export interface Database {
           finished_at: string | null;
           rating: number | null;
           crowd_level: CrowdLevel | null;
+          latitude: number | null;
+          longitude: number | null;
+          auto_closed: boolean;
         };
         Insert: {
           id?: string;
@@ -163,6 +166,9 @@ export interface Database {
           finished_at?: string | null;
           rating?: number | null;
           crowd_level?: CrowdLevel | null;
+          latitude?: number | null;
+          longitude?: number | null;
+          auto_closed?: boolean;
         };
         Update: Partial<Database["public"]["Tables"]["visits"]["Insert"]>;
         Relationships: [];

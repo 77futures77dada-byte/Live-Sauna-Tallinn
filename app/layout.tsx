@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
 import Script from "next/script";
+import { DemoBanner } from "@/components/DemoBanner";
 import { getLocale } from "@/lib/get-locale";
+import { isDemoMode } from "@/lib/demo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,14 +28,15 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const locale = await getLocale();
+  const [locale, demo] = await Promise.all([getLocale(), isDemoMode()]);
 
   return (
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className={`min-h-full flex flex-col ${demo ? "pt-8" : ""}`}>
+        {demo && <DemoBanner />}
         {children}
         {/* Sets data-theme before first paint so a returning dark-theme
             visitor never flashes light — beforeInteractive is Next's

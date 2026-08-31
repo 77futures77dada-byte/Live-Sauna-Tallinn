@@ -2,7 +2,8 @@
 
 import { Camera } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
-import { getBrowserLocation } from "@/lib/geolocation";
+import { fetchWithTimeout, TimeoutError } from "@/lib/fetch-timeout";
+import { getBrowserLocationResult } from "@/lib/geolocation";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { OpenVisit } from "@/lib/visits";
 
@@ -37,11 +38,18 @@ export function CheckInButton({
     // On-site presence is the whole point of "I'm here" — a visitor who
     // denies location access (or whose browser can't provide it) can't be
     // verified, so there's no fallback that lets the check-in through
-    // anyway.
-    const position = await getBrowserLocation();
-    if (!position) {
+    // anyway. The message is tailored so "you blocked it" reads
+    // differently from "your browser couldn't get a fix".
+    const position = await getBrowserLocationResult();
+    if (!position.ok) {
       setStatus("error");
-      setMessage(dict.locationRequiredError);
+      setMessage(
+        position.reason === "denied"
+          ? dict.locationDeniedError
+          : position.reason === "unsupported"
+            ? dict.locationUnsupportedError
+            : dict.locationUnavailableError,
+      );
       return;
     }
 
@@ -54,7 +62,7 @@ export function CheckInButton({
       formData.append("longitude", String(position.longitude));
       formData.append("file", file);
 
-      const res = await fetch("/api/visits", { method: "POST", body: formData });
+      const res = await fetchWithTimeout("/api/visits", { method: "POST", body: formData });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -72,9 +80,9 @@ export function CheckInButton({
       setStatus("idle");
       setFile(null);
       onStarted({ id: data.id, locationId: data.location_id, startedAt: data.started_at });
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setMessage(dict.networkError);
+      setMessage(error instanceof TimeoutError ? dict.uploadTimeout : dict.networkError);
     }
   }
 

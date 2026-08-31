@@ -57,8 +57,8 @@ const toneColor = (tone: Tone) => (tone === "ember" ? EMBER : FROST);
 
 // Temporary stand-in imagery until the client hands over real Lake Harku
 // photos — deliberately the stylised atmosphere shots already licensed
-// for the app, shown under an honest "not this exact site" caption
-// (dict.landing.galleryNote), never passed off as the real location.
+// for the app, shown under an honest "illustrative, real photos coming"
+// caption (dict.landing.galleryNote), never passed off as the real location.
 const GALLERY: { src: string; icon: typeof Flame; tone: Tone }[] = [
   { src: "/atmosphere/sauna.webp", icon: Flame, tone: "ember" },
   { src: "/atmosphere/winter-swimming.webp", icon: Snowflake, tone: "frost" },

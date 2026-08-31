@@ -69,6 +69,9 @@
     "checkInPhotoHint": "Foto on kohapeal viibimise kinnitamiseks kohustuslik.",
     "checkInPhotoRequiredError": "Tee kõigepealt foto, seejärel registreeri end sisse.",
     "locationRequiredError": "Sinu asukoht on vajalik, et kinnitada, et oled saunas kohapeal. Luba asukoha kasutamine ja proovi uuesti.",
+    "locationDeniedError": "Asukoha kasutamine on blokeeritud. Luba see selle saidi jaoks brauseri seadetes ja proovi uuesti.",
+    "locationUnsupportedError": "See brauser ei saa sinu asukohta jagada. Sisseregistreerimiseks proovi teist brauserit.",
+    "locationUnavailableError": "Asukohta ei õnnestunud määrata. Liigu lahtisema taeva alla ja proovi uuesti.",
     "tooFarError": "Tundub, et sa ei ole veel selles asukohas. Mine lähemale ja proovi uuesti.",
     "rating": "Hinnang",
     "starLabel": {
@@ -89,7 +92,9 @@
     "takeBeforePhoto": "Tee foto enne",
     "takeAfterPhoto": "Tee foto pärast",
     "photoSaved": "Foto salvestatud ✓",
-    "uploading": "Üleslaadimine…"
+    "uploading": "Üleslaadimine…",
+    "uploadTimeout": "Üleslaadimine võttis liiga kaua. Kontrolli ühendust ja proovi uuesti.",
+    "retry": "Proovi uuesti"
   },
   "profile": {
     "backToMap": "← Kaart",
@@ -102,6 +107,7 @@
     "noVisits": "Külastusi pole veel — registreeri end kaardil sisse.",
     "unknownLocation": "Tundmatu asukoht",
     "inProgress": "Käimasolev",
+    "autoClosed": "Automaatselt lõpetatud",
     "beforePhotoAlt": "foto enne",
     "afterPhotoAlt": "foto pärast"
   },
@@ -164,7 +170,7 @@
       "Pärast kasutamist korista enda järelt — koristustarbed on kollases majakeses, mis asub sauna majakestest vasakul pontooni nurgas."
     ],
     "galleryTitle": "Kuidas see välja näeb",
-    "galleryNote": "Meeleolupildid, mitte selle konkreetse koha fotod — vahetame need Harku järve päris fotode vastu, kui klient need annab.",
+    "galleryNote": "Pildid on illustratiivsed — lisame Harku järve reaalsed fotod peagi.",
     "mapTitle": "Kus see asub",
     "mapNote": "Harku järv, Tallinna lääneosas."
   },

@@ -1,7 +1,8 @@
 "use client";
 
-import { Camera } from "lucide-react";
+import { Camera, RotateCcw } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
+import { fetchWithTimeout, TimeoutError } from "@/lib/fetch-timeout";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 type Status = "idle" | "uploading" | "done" | "error";
@@ -18,23 +19,21 @@ export function BeforeAfterPhoto({
   const dict = getDictionary(locale).visit;
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
+  // Keep the picked file so "Retry" can re-send it without the visitor
+  // having to re-open the camera after a flaky upload.
+  const [file, setFile] = useState<File | null>(null);
 
-  async function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = ""; // allow re-selecting the same file again later
-
-    if (!file) return;
-
+  async function upload(toUpload: File) {
     setStatus("uploading");
     setMessage(null);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", toUpload);
     formData.append("visit_id", visitId);
     formData.append("type", type);
 
     try {
-      const res = await fetch("/api/photos", { method: "POST", body: formData });
+      const res = await fetchWithTimeout("/api/photos", { method: "POST", body: formData });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -44,10 +43,18 @@ export function BeforeAfterPhoto({
       }
 
       setStatus("done");
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setMessage(dict.networkError);
+      setMessage(error instanceof TimeoutError ? dict.uploadTimeout : dict.networkError);
     }
+  }
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const picked = event.target.files?.[0];
+    event.target.value = ""; // allow re-selecting the same file again later
+    if (!picked) return;
+    setFile(picked);
+    void upload(picked);
   }
 
   const label = type === "before" ? dict.takeBeforePhoto : dict.takeAfterPhoto;
@@ -66,7 +73,22 @@ export function BeforeAfterPhoto({
           disabled={status === "uploading"}
         />
       </label>
-      {message && <p className="mt-1 text-xs text-busy">{message}</p>}
+
+      {status === "error" && (
+        <div className="mt-1 space-y-1">
+          {message && <p className="text-xs text-busy">{message}</p>}
+          {file && (
+            <button
+              type="button"
+              onClick={() => void upload(file)}
+              className="inline-flex items-center gap-1 rounded-lg border border-warm-border px-2 py-1 text-xs text-fjord transition-colors hover:bg-ivory"
+            >
+              <RotateCcw className="h-3 w-3" aria-hidden />
+              {dict.retry}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

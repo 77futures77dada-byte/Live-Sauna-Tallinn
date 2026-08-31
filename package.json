@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-qr": "tsx scripts/generate-qr.ts"
+    "generate-qr": "tsx scripts/generate-qr.ts",
+    "seed-demo": "tsx scripts/seed-demo-data.ts"
   },
   "dependencies": {
     "@google/genai": "^2.16.0",

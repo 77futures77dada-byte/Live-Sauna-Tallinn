@@ -69,6 +69,9 @@
     "checkInPhotoHint": "A photo is required to confirm you're on site.",
     "checkInPhotoRequiredError": "Take a photo first, then check in.",
     "locationRequiredError": "We need your location to confirm you're at the sauna. Please allow location access and try again.",
+    "locationDeniedError": "Location access is blocked. Enable it for this site in your browser settings, then try again.",
+    "locationUnsupportedError": "This browser can't share your location. Try a different browser to check in.",
+    "locationUnavailableError": "Couldn't get a location fix. Move somewhere with a clearer view of the sky and try again.",
     "tooFarError": "Looks like you're not at this location yet. Get closer and try again.",
     "rating": "Rating",
     "starLabel": {
@@ -89,7 +92,9 @@
     "takeBeforePhoto": "Take before photo",
     "takeAfterPhoto": "Take after photo",
     "photoSaved": "Photo saved ✓",
-    "uploading": "Uploading…"
+    "uploading": "Uploading…",
+    "uploadTimeout": "Upload took too long. Check your connection and retry.",
+    "retry": "Retry"
   },
   "profile": {
     "backToMap": "← Map",
@@ -102,6 +107,7 @@
     "noVisits": "No visits yet — check in on the map.",
     "unknownLocation": "Unknown location",
     "inProgress": "In progress",
+    "autoClosed": "Auto-closed",
     "beforePhotoAlt": "before photo",
     "afterPhotoAlt": "after photo"
   },
@@ -164,7 +170,7 @@
       "Clean up after yourself — cleaning gear is in the yellow hut in the corner of the pontoon, to the left of the sauna huts."
     ],
     "galleryTitle": "What it looks like",
-    "galleryNote": "Mood images, not photos of this exact site — we'll swap in real Lake Harku photos once the client provides them.",
+    "galleryNote": "Images are illustrative — real Lake Harku photos coming soon.",
     "mapTitle": "Where it is",
     "mapNote": "Lake Harku, western Tallinn."
   },

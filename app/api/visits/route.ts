@@ -100,9 +100,11 @@ export async function POST(request: Request) {
     );
   }
 
+  // Persist the check-in coordinates (already validated against the
+  // geofence above) as an audit trail — see 0010_visit_audit_and_expiry.sql.
   const { data, error } = await supabase
     .from("visits")
-    .insert({ location_id: locationId, user_id: user.id })
+    .insert({ location_id: locationId, user_id: user.id, latitude, longitude })
     .select()
     .single();
 

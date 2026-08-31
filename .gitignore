@@ -43,6 +43,9 @@ yarn-error.log*
 # generated QR codes (scripts/generate-qr.ts) — regenerate, don't commit
 /qr-codes/
 
+# demo-seed bookkeeping (scripts/seed-demo-data.ts) — machine-local
+/scripts/.demo-seed.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
