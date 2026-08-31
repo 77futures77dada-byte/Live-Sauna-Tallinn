@@ -226,10 +226,14 @@ export function MapScreen({
           {site && (
             <Suspense
               fallback={
-                <div className="h-64 w-full animate-pulse rounded-3xl bg-ivory-shade sm:h-80 lg:h-[560px]" />
+                <div className="h-64 w-full animate-pulse rounded-3xl border-4 border-fjord bg-ivory-shade sm:h-80 lg:h-[560px]" />
               }
             >
-              <div className="h-64 w-full overflow-hidden rounded-3xl border border-warm-border shadow-md sm:h-80 lg:h-[560px]">
+              {/* Deliberately heavy border — the map should read as a framed
+                  panel, not just a rounded tile. --color-fjord is the same
+                  token as the dashboard text/illustration, so it inverts
+                  with the dark toggle. */}
+              <div className="h-64 w-full overflow-hidden rounded-3xl border-4 border-fjord shadow-md sm:h-80 lg:h-[560px]">
                 <MapView site={site} />
               </div>
             </Suspense>
