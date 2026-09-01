@@ -89,18 +89,28 @@ export function LocationListCard({
   );
 
   return (
-    // A <div>, not a <button>, because the always-visible booking CTA below
-    // is its own button — two nested <button>s isn't valid HTML, so the
-    // name/status block and the CTA are siblings, each independently
-    // clickable but both opening the same detail sheet (LocationCard).
+    // The whole card is the click target — name, number, capacity and stats
+    // all open the same detail sheet (LocationCard). It's a plain <div> with
+    // role="button" rather than a real <button> so the always-visible booking
+    // CTA (a real <button>) can nest inside without two nested <button>s or
+    // flow content in a <button>. Keyboard: Enter/Space activate it.
     <div
-      className={`w-full animate-[card-enter_200ms_ease-out] rounded-2xl border p-3 transition sm:p-3.5 ${
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(location)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect(location);
+        }
+      }}
+      className={`w-full cursor-pointer animate-[card-enter_200ms_ease-out] rounded-2xl border p-3 text-left transition sm:p-3.5 ${
         selected
           ? "border-fjord bg-fjord/5 shadow-md ring-1 ring-fjord/30"
           : "border-warm-border bg-ivory shadow-sm hover:border-steam/40 hover:shadow-md"
       }`}
     >
-      <button type="button" onClick={() => onSelect(location)} className="flex w-full items-center gap-3 text-left">
+      <div className="flex w-full items-center gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fjord font-display text-base font-semibold text-ivory">
           {number}
         </span>
@@ -136,12 +146,19 @@ export function LocationListCard({
             </div>
           )}
         </div>
-      </button>
+      </div>
 
       {location.booking_enabled && (
         <button
           type="button"
-          onClick={() => onSelect(location)}
+          // Same action as the card itself; -1 keeps it out of the tab order
+          // so the card is the single keyboard stop, but it stays a real
+          // button so the pill renders and reads as an actionable control.
+          tabIndex={-1}
+          onClick={(event) => {
+            event.stopPropagation();
+            onSelect(location);
+          }}
           className="mt-2.5 w-full rounded-full border-2 border-fjord px-3 py-1.5 text-xs font-semibold text-fjord transition hover:bg-fjord hover:text-ivory sm:w-auto"
         >
           {dict.booking.bookSlotButton}
