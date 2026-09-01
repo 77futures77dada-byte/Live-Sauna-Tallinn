@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
+function normalizeText(value: unknown): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
 // POST /api/admin/locations — update one location's editable fields.
 // locations_admin_write (0002_rls.sql) already restricts writes to
 // is_admin() at the RLS layer; this check just gives a clean 403 instead
@@ -27,7 +31,9 @@ export async function POST(request: Request) {
   }
 
   const name = body?.name;
-  const description = body?.description;
+  const descriptionEt = body?.description_et;
+  const descriptionEn = body?.description_en;
+  const descriptionRu = body?.description_ru;
   const capacityRaw = body?.capacity;
   const openingHoursRaw = body?.opening_hours;
   const bookingEnabled = body?.booking_enabled;
@@ -77,7 +83,9 @@ export async function POST(request: Request) {
     .from("locations")
     .update({
       name: name.trim(),
-      description: typeof description === "string" && description.trim() !== "" ? description.trim() : null,
+      description_et: normalizeText(descriptionEt),
+      description_en: normalizeText(descriptionEn),
+      description_ru: normalizeText(descriptionRu),
       capacity,
       opening_hours: openingHours,
       booking_enabled: bookingEnabled,

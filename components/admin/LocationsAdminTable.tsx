@@ -15,7 +15,9 @@ function LocationEditForm({
   onCancel: () => void;
 }) {
   const [name, setName] = useState(location.name);
-  const [description, setDescription] = useState(location.description ?? "");
+  const [descriptionEt, setDescriptionEt] = useState(location.description_et ?? "");
+  const [descriptionEn, setDescriptionEn] = useState(location.description_en ?? "");
+  const [descriptionRu, setDescriptionRu] = useState(location.description_ru ?? "");
   const [capacity, setCapacity] = useState(location.capacity?.toString() ?? "");
   const [openingHours, setOpeningHours] = useState(
     location.opening_hours ? JSON.stringify(location.opening_hours, null, 2) : "",
@@ -37,7 +39,9 @@ function LocationEditForm({
         body: JSON.stringify({
           id: location.id,
           name,
-          description,
+          description_et: descriptionEt,
+          description_en: descriptionEn,
+          description_ru: descriptionRu,
           capacity,
           opening_hours: openingHours,
           booking_enabled: bookingEnabled,
@@ -70,14 +74,40 @@ function LocationEditForm({
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-          className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
-        />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
+            Description (Estonian)
+          </label>
+          <textarea
+            value={descriptionEt}
+            onChange={(e) => setDescriptionEt(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
+            Description (English) — fallback when a translation is missing
+          </label>
+          <textarea
+            value={descriptionEn}
+            onChange={(e) => setDescriptionEn(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
+            Description (Russian)
+          </label>
+          <textarea
+            value={descriptionRu}
+            onChange={(e) => setDescriptionRu(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg border border-zinc-200 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-transparent"
+          />
+        </div>
       </div>
 
       <div className="flex gap-4">

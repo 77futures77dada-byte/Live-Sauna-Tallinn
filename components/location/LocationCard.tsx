@@ -89,6 +89,12 @@ export function LocationCard({
     };
   }, [location.slug]);
 
+  const localizedDescription =
+    (locale === "et"
+      ? location.description_et
+      : locale === "ru"
+        ? location.description_ru
+        : location.description_en) ?? location.description_en;
   const openingHoursDisplay = summarizeOpeningHours(location.opening_hours);
   const freshness = getFreshness(occupancy?.createdAt ?? null);
   const occupancyStatus = getOccupancyStatus(freshness, occupancy?.peopleCount, location.capacity);
@@ -165,8 +171,8 @@ export function LocationCard({
             )}
           </div>
 
-          {location.description && (
-            <p className="mt-5 text-sm text-steam">{location.description}</p>
+          {localizedDescription && (
+            <p className="mt-5 text-sm text-steam">{localizedDescription}</p>
           )}
 
           {openingHoursDisplay && (

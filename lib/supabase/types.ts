@@ -57,6 +57,9 @@ export interface Database {
           slug: string;
           name: string;
           description: string | null;
+          description_et: string | null;
+          description_en: string | null;
+          description_ru: string | null;
           latitude: number;
           longitude: number;
           type: LocationType;
@@ -71,6 +74,9 @@ export interface Database {
           slug: string;
           name: string;
           description?: string | null;
+          description_et?: string | null;
+          description_en?: string | null;
+          description_ru?: string | null;
           latitude: number;
           longitude: number;
           type: LocationType;
