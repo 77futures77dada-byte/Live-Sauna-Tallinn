@@ -30,7 +30,7 @@ export function WaterTempStat({ report, locale }: { report?: LatestWater; locale
         aria-hidden
       />
       <Waves className="h-3.5 w-3.5 text-steam" aria-hidden />
-      {report.temperature.toFixed(1)}°C {dict.location.waterReported} ·{" "}
+      <span className="font-semibold">{report.temperature.toFixed(1)}°C</span> {dict.location.waterReported} ·{" "}
       <span className="text-steam">{formatAge(report.createdAt, dict.time)}</span>
     </p>
   );

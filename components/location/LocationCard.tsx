@@ -11,6 +11,7 @@ import { formatAge, getFreshness } from "@/lib/freshness";
 import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import { locationTypeIconComponent } from "@/lib/location-types";
 import { getOccupancyStatus } from "@/lib/occupancy-status";
+import { summarizeOpeningHours } from "@/lib/opening-hours";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import type { OpenVisit } from "@/lib/visits";
@@ -28,8 +29,6 @@ type WeatherState =
   | { status: "loading" }
   | { status: "ready"; observation: StationObservation }
   | { status: "error" };
-
-const weekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
 const tagClass =
   "inline-flex items-center gap-1 rounded-full border border-warm-border bg-ivory px-2.5 py-1 text-xs text-steam";
@@ -90,7 +89,7 @@ export function LocationCard({
     };
   }, [location.slug]);
 
-  const openingHours = location.opening_hours;
+  const openingHoursDisplay = summarizeOpeningHours(location.opening_hours);
   const freshness = getFreshness(occupancy?.createdAt ?? null);
   const occupancyStatus = getOccupancyStatus(freshness, occupancy?.peopleCount, location.capacity);
   const TypeIcon = locationTypeIconComponent[location.type];
@@ -161,36 +160,40 @@ export function LocationCard({
             {location.capacity !== null && (
               <span className={tagClass}>
                 <Users className="h-3 w-3" aria-hidden />
-                {dict.location.capacity}: {location.capacity}
+                {dict.location.capacity}: <span className="font-semibold text-fjord">{location.capacity}</span>
               </span>
             )}
           </div>
 
           {location.description && (
-            <p className="mt-2.5 text-sm text-steam">{location.description}</p>
+            <p className="mt-5 text-sm text-steam">{location.description}</p>
           )}
 
-          {openingHours && (
-            <div className="mt-3 text-sm">
+          {openingHoursDisplay && (
+            <div className="mt-5 text-sm">
               <h3 className="font-semibold text-fjord">{dict.location.openingHours}</h3>
-              <ul className="mt-1 space-y-0.5 text-steam">
-                {weekdays
-                  .filter((day) => day in openingHours)
-                  .map((day) => (
+              {openingHoursDisplay.type === "everyday" ? (
+                <p className="mt-1 text-steam">
+                  {dict.location.everyDay} {openingHoursDisplay.hours}
+                </p>
+              ) : (
+                <ul className="mt-1 space-y-0.5 text-steam">
+                  {openingHoursDisplay.entries.map(({ day, hours }) => (
                     <li key={day}>
-                      {dict.location.weekdays[day]}: {openingHours[day]}
+                      {dict.location.weekdays[day]}: {hours}
                     </li>
                   ))}
-              </ul>
+                </ul>
+              )}
             </div>
           )}
 
-          <div className="mt-3 space-y-1.5">
+          <div className="mt-5 space-y-1.5">
             <WaterTempStat report={water} locale={locale} />
             <IceStatus report={ice} locale={locale} />
           </div>
 
-          <div className="mt-3 space-y-2 border-t border-warm-border pt-3">
+          <div className="mt-5 space-y-2 border-t border-warm-border pt-4">
             {weather.status === "loading" && (
               <p className="text-sm text-steam">{dict.location.loadingWeather}</p>
             )}
@@ -215,7 +218,7 @@ export function LocationCard({
               )}
 
               {openVisit?.locationId === location.id ? (
-                <div className="mt-4 space-y-1.5 border-t border-warm-border pt-4">
+                <div className="mt-6 space-y-1.5 border-t border-warm-border pt-5">
                   <p className="text-sm font-medium text-fjord">
                     {dict.location.youAreHere} 🔥 — {dict.location.startedAt}{" "}
                     {new Date(openVisit.startedAt).toLocaleTimeString(bcp47Locale[locale], {
@@ -248,7 +251,7 @@ export function LocationCard({
                   )}
                 </div>
               ) : openVisit ? (
-                <p className="mt-4 border-t border-warm-border pt-4 text-sm text-steam">
+                <p className="mt-6 border-t border-warm-border pt-5 text-sm text-steam">
                   {dict.location.activeElsewhere}{" "}
                   <strong className="text-fjord">
                     {openVisitLocationName ?? dict.location.otherLocation}
@@ -262,7 +265,7 @@ export function LocationCard({
               <ReportButtons locationId={location.id} locale={locale} />
             </>
           ) : (
-            <p className="mt-4 border-t border-warm-border pt-4 text-sm text-steam">
+            <p className="mt-6 border-t border-warm-border pt-5 text-sm text-steam">
               <Link href="/login" className="text-fjord underline">
                 {dict.auth.login}
               </Link>{" "}

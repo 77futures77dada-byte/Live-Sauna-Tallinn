@@ -180,6 +180,7 @@
     "capacity": "Mahutavus",
     "capacityShort": "Kuni {n} inimest",
     "openingHours": "Lahtiolekuajad",
+    "everyDay": "Iga päev",
     "noOccupancy": "Sellel asukohal pole veel reaalajas hõivatuse andmeid.",
     "noDataShort": "Andmeid pole veel",
     "noDataBannerTitle": "Reaalajas andmed pole veel saadaval",

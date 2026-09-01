@@ -35,7 +35,7 @@ export function OccupancyBadge({
       {statusLabel}
       {status !== "unknown" && count !== undefined && (
         <span className="font-normal text-steam">
-          · {count} {dict.location.peopleUnit}
+          · <span className="font-semibold text-fjord">{count}</span> {dict.location.peopleUnit}
         </span>
       )}
     </span>

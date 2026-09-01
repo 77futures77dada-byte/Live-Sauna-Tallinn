@@ -29,13 +29,14 @@ export function WeatherStrip({
       {hasAir && (
         <span className="flex items-center gap-1.5">
           <Thermometer className="h-3.5 w-3.5 text-fjord" aria-hidden />
-          {observation.airTemperature!.toFixed(1)}°C {dict.location.weatherAir}
+          <span className="font-semibold">{observation.airTemperature!.toFixed(1)}°C</span>{" "}
+          {dict.location.weatherAir}
         </span>
       )}
       {hasWind && (
         <span className="flex items-center gap-1.5">
           <Wind className="h-3.5 w-3.5 text-steam" aria-hidden />
-          {observation.windSpeed!.toFixed(1)} m/s
+          <span className="font-semibold">{observation.windSpeed!.toFixed(1)} m/s</span>
           {observation.windDirection !== null &&
             ` ${windDirectionCompass(observation.windDirection)}`}
         </span>
@@ -43,7 +44,8 @@ export function WeatherStrip({
       {hasWater && (
         <span className="flex items-center gap-1.5">
           <Waves className="h-3.5 w-3.5 text-steam" aria-hidden />
-          {observation.waterTemperature!.toFixed(1)}°C {dict.location.weatherStationWater}
+          <span className="font-semibold">{observation.waterTemperature!.toFixed(1)}°C</span>{" "}
+          {dict.location.weatherStationWater}
         </span>
       )}
     </div>

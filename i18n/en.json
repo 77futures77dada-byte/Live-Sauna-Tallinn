@@ -180,6 +180,7 @@
     "capacity": "Capacity",
     "capacityShort": "Up to {n} people",
     "openingHours": "Opening hours",
+    "everyDay": "Every day",
     "noOccupancy": "No live occupancy reports yet for this location.",
     "noDataShort": "No data yet",
     "noDataBannerTitle": "Live data isn't available yet",
