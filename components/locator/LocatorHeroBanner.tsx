@@ -104,9 +104,10 @@ export function LocatorHeroBanner({
           <p className="text-xs font-medium tracking-[0.2em] text-steam uppercase">
             {dict.hero.eyebrow}
           </p>
-          <h1 className="font-display text-4xl leading-none font-semibold text-fjord sm:text-5xl">
-            Harku
+          <h1 className="font-display text-3xl leading-tight font-semibold text-fjord sm:text-4xl">
+            {dict.hero.dashboardTitle}
           </h1>
+          <p className="max-w-xl text-sm text-steam">{dict.hero.dashboardSubtitle}</p>
 
           <div className="mt-1 flex flex-wrap items-center gap-2">
             {/* Unconditional "3 saunas · N people right now" — the sauna

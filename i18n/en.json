@@ -45,7 +45,7 @@
     "hoursMinutesAgo": "{h} hr {m} min ago"
   },
   "sidebar": {
-    "liveNow": "Live now"
+    "liveNow": "Now at the lake"
   },
   "liveStats": {
     "saunasActive": "{n} saunas active",
@@ -54,9 +54,9 @@
     "air": "{t}°C air"
   },
   "occupancyStatus": {
-    "quiet": "Quiet",
-    "active": "Active",
-    "busy": "Busy"
+    "quiet": "Free",
+    "active": "Busy",
+    "busy": "Full"
   },
   "visit": {
     "checkIn": "I'm here 🔥",
@@ -120,9 +120,11 @@
     "toggle": "Toggle color theme"
   },
   "hero": {
-    "eyebrow": "Lake Harku, live",
+    "eyebrow": "Free · city saunas",
     "tagline": "Harku · 3 saunas, live",
     "subtitle": "Free igloo saunas on Lake Harku, tracked live.",
+    "dashboardTitle": "Three wood-fired saunas by the lake",
+    "dashboardSubtitle": "Lake Harku, Haabersti · season 15 May – 1 Sep · the queue forms on site",
     "viewMap": "Open the app",
     "login": "Log in",
     "liveSnapshotBanner": "{total} saunas · {people} people right now"
@@ -173,6 +175,13 @@
     "galleryNote": "Real photos of the Lake Harku saunas, taken on site.",
     "mapTitle": "Where it is",
     "mapNote": "Lake Harku, western Tallinn."
+  },
+  "howToGetIn": {
+    "title": "How to get a spot",
+    "step1": "Come by and join the queue on site.",
+    "step2": "Confirm you're there with a photo.",
+    "step3": "Collect the key from the on-site guard with an ID document.",
+    "disclaimer": "A booking holds a time, but doesn't guarantee a spot without on-site confirmation."
   },
   "location": {
     "free": "Free",

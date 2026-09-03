@@ -6,6 +6,7 @@ import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
 import { ForecastStrip } from "@/components/locator/ForecastStrip";
+import { HowToGetIn } from "@/components/locator/HowToGetIn";
 import { LocationList } from "@/components/locator/LocationList";
 import { LocatorHeroBanner } from "@/components/locator/LocatorHeroBanner";
 import { createClient } from "@/lib/supabase/client";
@@ -302,6 +303,8 @@ export function MapScreen({
             />
           </div>
         </div>
+
+        <HowToGetIn locale={locale} />
 
         {site && (
           <ForecastStrip latitude={site.latitude} longitude={site.longitude} locale={locale} />
