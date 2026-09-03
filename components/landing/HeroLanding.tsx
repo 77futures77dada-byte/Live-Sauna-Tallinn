@@ -40,17 +40,21 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
   ssr: false,
 });
 
-// Landing-only colour system — "cold outside, warm inside". Frost Blue is
-// the path / preparation / return; Ember is the fire, the löyly, the
-// sauna itself, and the single call-to-action colour. These are scoped to
-// this file on purpose: the in-app dashboard stays strictly monochrome
-// (see app/globals.css), so nothing here goes through the Tailwind theme.
-const FROST = "#3FA9D6";
-const EMBER = "#E8632C";
-const INK = "#0E2233";
-const INK_MUTED = "#5B7385";
-const ICE_BG = "#F0F9FC";
-const LINE = "#DCE9EF";
+// Landing-only colour system — "cold lake outside, warm wood inside".
+// FROST is the lake: the path / preparation / return. EMBER is the fire,
+// the löyly, and the single call-to-action colour. These stay scoped to
+// this file as literal hex (the splash predates the Tailwind theme and
+// needs values in gradients/shadows anyway), but the values are tuned to
+// match the dashboard tokens in app/globals.css — lake ≈ --color-lake,
+// ember ≈ --color-ember, ink ≈ --color-fjord, ice_bg ≈ --color-ivory-shade
+// — so stepping from this splash into the dashboard doesn't read as two
+// different products.
+const FROST = "#2f6f6b";
+const EMBER = "#cc7a2e";
+const INK = "#2a2018";
+const INK_MUTED = "#7a6d5c";
+const ICE_BG = "#f1e9d9";
+const LINE = "#e5dac4";
 
 type Tone = "frost" | "ember";
 const toneColor = (tone: Tone) => (tone === "ember" ? EMBER : FROST);
@@ -214,7 +218,7 @@ export function HeroLanding({
       <section
         className="relative flex min-h-full flex-col items-center justify-center overflow-hidden px-6 py-20 text-center"
         style={{
-          background: "linear-gradient(155deg, #0e4a5c 0%, #3fa9d6 100%)",
+          background: "linear-gradient(155deg, #1c3f3d 0%, #2f6f6b 100%)",
         }}
       >
         <Snowflake
@@ -229,7 +233,7 @@ export function HeroLanding({
           className="pointer-events-none absolute top-1/4 -right-24 h-80 w-80 sm:h-96 sm:w-96"
           style={{
             background:
-              "radial-gradient(circle, rgba(232,99,44,0.38) 0%, rgba(232,99,44,0) 70%)",
+              "radial-gradient(circle, rgba(204,122,46,0.40) 0%, rgba(204,122,46,0) 70%)",
             filter: "blur(24px)",
           }}
         />
@@ -290,7 +294,7 @@ export function HeroLanding({
               onClick={onEnter}
               style={{
                 backgroundColor: EMBER,
-                boxShadow: "0 12px 28px -8px rgba(232,99,44,0.55)",
+                boxShadow: "0 12px 28px -8px rgba(204,122,46,0.55)",
               }}
               className="mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-white transition hover:brightness-95"
             >

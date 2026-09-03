@@ -7,11 +7,10 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import { SaunaLakeIllustration } from "@/components/locator/icons/SaunaLakeIllustration";
 import type { LiveSnapshot } from "@/lib/occupancy-status";
 
-// The one deliberate warm touch against the monochrome dashboard chrome —
-// same accent as ForecastStrip's today column and the "active" occupancy
-// status (see lib/occupancy-status.ts), duplicated locally rather than
-// centralized since each usage independently earned it.
-const AMBER = "#f2b84b";
+// Amber accent for the live-people snapshot pill and its pulsing dot —
+// one of the two places amber is allowed under the new palette (CTAs and
+// the live signal; see app/globals.css). Matches --color-ember.
+const AMBER = "#cc7a2e";
 
 // Compact brand banner above the map+cards dashboard — distinct from
 // HeroLanding (the full-screen pre-entry landing page): this is a strip,

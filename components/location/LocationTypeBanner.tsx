@@ -18,17 +18,17 @@ const photoByType: Record<LocationType, string> = {
   beach: "/atmosphere/beach.webp",
 };
 
-// The old fire-and-ice color wash (warm orange for sauna, cold blue for
-// winter swimming) was brand decoration, not information — gone under the
-// monochrome rebrand along with Ember/Frost. Grayscale-only now, still one
-// mix-blend-mode: multiply wash per type over the real photo, just varying
-// in depth/contrast rather than hue.
+// One mix-blend-mode: multiply wash per type over the real photo. The
+// client's design notes put the lake blue-green "as a tint under
+// photography", so each wash runs deep-lake -> warm woodsmoke charcoal
+// (matching --color-lake / --color-fjord) rather than the flat grayscale
+// it used before — varying in depth per type, not hue.
 const tintByType: Record<LocationType, string> = {
-  sauna: "linear-gradient(135deg, #111111 0%, #3f3f3f 55%, #6b6b6b 130%)",
-  sauna_swimming: "linear-gradient(135deg, #111111 0%, #3a3a3a 45%, #6b6b6b 130%)",
-  winter_swimming: "linear-gradient(135deg, #111111 0%, #3a3a3a 60%, #808080 140%)",
-  beach: "linear-gradient(135deg, #111111 0%, #3a3a3a 45%, #a3a3a3 140%)",
-  ice_swimming: "linear-gradient(135deg, #0a0a0a 0%, #2e2e2e 55%, #808080 140%)",
+  sauna: "linear-gradient(135deg, #1c3f3d 0%, #2a2018 55%, #5a4f42 130%)",
+  sauna_swimming: "linear-gradient(135deg, #1c3f3d 0%, #26201b 45%, #5a4f42 130%)",
+  winter_swimming: "linear-gradient(135deg, #163a3a 0%, #26201b 60%, #6d6152 140%)",
+  beach: "linear-gradient(135deg, #1c3f3d 0%, #26201b 45%, #8a7c68 140%)",
+  ice_swimming: "linear-gradient(135deg, #12302f 0%, #201b16 55%, #6d6152 140%)",
 };
 
 // Just a bottom scrim now — the repeating icon watermark pattern (see git
@@ -36,7 +36,7 @@ const tintByType: Record<LocationType, string> = {
 // texture; over a real photo it just adds clutter. This only exists to
 // keep the close button and any future overlaid text/status icons legible
 // against busy photo detail.
-const bottomScrim = "linear-gradient(180deg, rgba(17,17,17,0) 55%, rgba(17,17,17,0.45) 100%)";
+const bottomScrim = "linear-gradient(180deg, rgba(42,32,24,0) 55%, rgba(42,32,24,0.45) 100%)";
 
 export function LocationTypeBanner({
   type,

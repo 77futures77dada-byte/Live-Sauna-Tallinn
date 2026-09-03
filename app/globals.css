@@ -1,59 +1,76 @@
 @import "tailwindcss";
 
-/* Live Sauna Tallinn brand palette — a strict monochrome theme (white /
-   near-black / grays), deliberately not OS-dark-mode-adaptive. The old
-   Ivory/Fjord Ink/Ember/Frost Blue warm palette is gone (client called it
-   too casual for an official/municipal audience); "fjord"/"ivory"/"steam"
-   keep their names below purely to avoid renaming every className across
-   the app — only their hex values changed, to plain grayscale. quiet/busy
-   (occupancy red/green) and the new caution (amber) are the one
-   exception: those are functional data colors, not brand decoration, and
-   stay saturated on purpose — see lib/occupancy-status.ts. */
+/* Live Sauna Tallinn brand palette — "cold lake outside, warm wood
+   inside", carried across the whole dashboard (not just the landing
+   splash). Four roles, per the client's Figma design notes:
+     - warm neutral base (cream / sand) is ~60% of every surface — the
+       "ivory" tokens, no longer literal white.
+     - wood & charcoal: dark blocks and headings in a warm woodsmoke tone
+       — the "fjord" tokens, no longer near-black. Headings also switch to
+       a serif (--font-display, see below).
+     - lake water: blue-green, used ONLY in information blocks and as a
+       tint under photography — the new "lake" tokens.
+     - amber glow: used ONLY on CTA buttons and the live-queue signal —
+       the new "ember" tokens. Not spread across the rest of the UI.
+   "fjord"/"ivory"/"steam" keep their names purely to avoid renaming every
+   className across the app — only their values changed. quiet/busy/caution
+   (occupancy + booking status) are functional data colors, not brand
+   decoration, and stay saturated on purpose — see lib/occupancy-status.ts. */
 @theme {
-  --color-ivory: #ffffff;
-  --color-ivory-shade: #f3f4f6;
-  --color-fjord: #111111;
-  --color-steam: #6b7280;
+  --color-ivory: #faf6ee;
+  --color-ivory-shade: #f1e9d9;
+  --color-fjord: #2a2018;
+  --color-steam: #7a6d5c;
+  --color-lake: #2f6f6b;
+  --color-lake-soft: #e0ede9;
+  --color-ember: #cc7a2e;
+  --color-ember-soft: #f6e6d2;
   --color-quiet: #22c55e;
   --color-caution: #f59e0b;
   --color-busy: #ef4444;
-  --color-warm-border: #e5e7eb;
+  --color-warm-border: #e5dac4;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
+  --background: #faf6ee;
+  --foreground: #2a2018;
 }
 
 /* Dashboard dark theme — a manual toggle (see ThemeToggle), not
    OS-driven: the app previously opted out of prefers-color-scheme on
    purpose (see the file header), so dark only applies when someone
    actually asks for it, via the [data-theme="dark"] attribute set on
-   <html>. Logically inverted monochrome only — quiet/caution/busy stay
-   saturated functional colors in both themes, unchanged here. This
-   scopes to the dashboard (map, cards, header): HeroLanding never reads
-   these tokens, it carries its own fixed teal/warm palette as literal
-   hex (see components/landing/HeroLanding.tsx), so it renders identically
-   regardless of this attribute. */
+   <html>. The warm palette carries over — woodsmoke-dark surfaces rather
+   than a cool charcoal — and quiet/caution/busy stay saturated functional
+   colors in both themes. This scopes to the dashboard (map, cards,
+   header): HeroLanding never reads these tokens, it carries its own fixed
+   palette as literal hex (see components/landing/HeroLanding.tsx), so it
+   renders identically regardless of this attribute. */
 :root[data-theme="dark"] {
-  --color-ivory: #16191d;
-  --color-ivory-shade: #1f2328;
-  --color-fjord: #f2f3f4;
-  --color-steam: #9aa3ad;
-  --color-warm-border: #2b3036;
-  --background: #16191d;
-  --foreground: #f2f3f4;
+  --color-ivory: #1c1712;
+  --color-ivory-shade: #262019;
+  --color-fjord: #f2ece1;
+  --color-steam: #a99b86;
+  --color-lake: #5fb3ad;
+  --color-lake-soft: #1e2e2c;
+  --color-ember: #e0954a;
+  --color-ember-soft: #33261a;
+  --color-warm-border: #362d22;
+  --background: #1c1712;
+  --foreground: #f2ece1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* IBM Plex Sans everywhere, `font-display` included — the Fraunces
-     serif pairing (and the font-weight/size split it justified) is gone;
-     `font-display` is now just an alias so headings that still carry the
-     class don't need touching one by one. */
+  /* IBM Plex Sans for body copy; Lora (a serif) for headings via
+     `font-display`. The client's design notes call for "wood and charcoal
+     — headings in a serif"; every heading already carries `font-display`,
+     so switching this one alias restyles all of them at once. Lora rather
+     than the app's original Fraunces because it has a Cyrillic subset the
+     Russian locale needs (see app/layout.tsx). */
   --font-sans: var(--font-ibm-plex-sans);
-  --font-display: var(--font-ibm-plex-sans);
+  --font-display: var(--font-serif-display);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -82,9 +99,10 @@ body {
   border-radius: 9999px;
   background: #ffffff;
   /* A dark ring keeps the badge legible against the light OSM basemap
-     regardless of what's inside it (count or type glyph). */
-  border: 2.5px solid #111111;
-  box-shadow: 0 2px 6px rgba(17, 17, 17, 0.35);
+     regardless of what's inside it (count or type glyph) — the warm
+     woodsmoke charcoal, matching --color-fjord. */
+  border: 2.5px solid #2a2018;
+  box-shadow: 0 2px 6px rgba(42, 32, 24, 0.35);
   position: relative;
 }
 

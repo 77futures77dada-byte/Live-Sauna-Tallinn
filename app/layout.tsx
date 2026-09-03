@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Geist, Geist_Mono, IBM_Plex_Sans, Lora } from "next/font/google";
 import Script from "next/script";
 import { DemoBanner } from "@/components/DemoBanner";
 import { getLocale } from "@/lib/get-locale";
@@ -22,6 +22,16 @@ const ibmPlexSans = IBM_Plex_Sans({
   weight: "variable",
 });
 
+// Serif for headings (font-display) — "wood and charcoal" in the client's
+// design notes. Lora rather than the app's original Fraunces: it carries a
+// Cyrillic subset, which the Russian locale's headings need and Fraunces
+// lacks. Variable font, so no explicit weight list.
+const lora = Lora({
+  variable: "--font-serif-display",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Live Sauna Tallinn",
   description: "Live occupancy, water temperature, and booking for Tallinn's saunas and winter swimming spots.",
@@ -33,7 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSans.variable} ${lora.variable} h-full antialiased`}
     >
       <body className={`min-h-full flex flex-col ${demo ? "pt-8" : ""}`}>
         {demo && <DemoBanner />}

@@ -11,10 +11,12 @@ type ForecastState =
   | { status: "ready"; days: DailyForecast[] }
   | { status: "error" };
 
-// The one deliberate warm touch in this otherwise monochrome strip (see
-// lib/occupancy-status.ts / HeroLanding.tsx for the same idea elsewhere) —
-// picks today's column out of the row, not applied anywhere else here.
-const TODAY_ACCENT = "#f2b84b";
+// Picks today's column out of the row — not applied anywhere else here.
+// Lake blue-green rather than amber: amber is now reserved for CTAs and
+// the live-queue signal (see app/globals.css), and this strip is an
+// information block, which the design notes assign to the lake tone.
+// Matches --color-lake.
+const TODAY_ACCENT = "#2f6f6b";
 
 const DAYS_SHOWN = 6;
 
