@@ -94,8 +94,11 @@ export async function getLatestWaterByLocation(
 // (plenty of visitors won't check in through the app), so this only ever
 // raises the shown number, never lowers or replaces a manual report:
 // peopleCount is the max of the two, and the timestamp is bumped to "now"
-// only when a verified count actually contributed, so freshness reflects
-// that live signal. Callers must pass a fresh, unmerged `reported` map
+// only when the verified count is the new maximum (>= the prior count) —
+// not merely when it's above zero — so a manual report that stays larger
+// keeps its own, older timestamp and freshness reflects that live signal
+// only when it genuinely moved the number. Callers must pass a fresh,
+// unmerged `reported` map
 // each time (see MapScreen) — merging the previous merge's *output* back
 // in would let a stale verified count ratchet the displayed number up
 // forever, since max() can never come back down once inflated.
@@ -109,10 +112,11 @@ export function mergeVerifiedPresence(
   for (const [locationId, verifiedCount] of verifiedCounts) {
     if (verifiedCount <= 0) continue;
     const existing = merged.get(locationId);
+    const priorCount = existing?.peopleCount ?? 0;
     merged.set(locationId, {
       locationId,
-      peopleCount: Math.max(existing?.peopleCount ?? 0, verifiedCount),
-      createdAt: now,
+      peopleCount: Math.max(priorCount, verifiedCount),
+      createdAt: verifiedCount >= priorCount ? now : (existing?.createdAt ?? now),
     });
   }
 
