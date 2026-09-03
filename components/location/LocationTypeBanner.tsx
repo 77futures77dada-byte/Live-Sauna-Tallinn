@@ -2,12 +2,14 @@ import Image from "next/image";
 import { locationTypeIconComponent } from "@/lib/location-types";
 import type { LocationType } from "@/lib/supabase/types";
 
-// Licensed stock photography (see public/atmosphere/) — one photo per
-// activity, not per location (the `photos` table only holds per-visit
-// before/after and booking-verification shots, not curated location
-// photography, so there's nothing location-specific to show here).
-// sauna_swimming reuses the sauna photo and ice_swimming reuses the winter
-// swimming photo — both pairs read as the same scene.
+// Real on-site photos of the Lake Harku sauna complex (see
+// public/atmosphere/, originals in public/harku-real/) — keyed by activity,
+// not per location (the `photos` table only holds per-visit before/after
+// and booking-verification shots, not curated location photography). All
+// three pilot locations are the same floating complex, so a type-keyed
+// photo of it still reads true. sauna_swimming reuses the sauna photo and
+// ice_swimming reuses the winter swimming photo — both pairs read as the
+// same scene.
 const photoByType: Record<LocationType, string> = {
   sauna: "/atmosphere/sauna.webp",
   sauna_swimming: "/atmosphere/sauna.webp",

@@ -125,11 +125,12 @@ export function LocationCard({
                    }`}
       >
         {/*
-          No location photo gallery exists in this app — the `photos` table
-          only holds per-visit before/after and booking-verification shots,
-          not curated location photography — so this is always the generic
-          per-type stock photo (see LocationTypeBanner), never a photo of
-          this specific location.
+          No per-location photo gallery exists in this app — the `photos`
+          table only holds per-visit before/after and booking-verification
+          shots, not curated location photography — so this is a real
+          on-site photo of the Lake Harku complex chosen by activity type
+          (see LocationTypeBanner), not one picked out for this specific
+          location.
         */}
         <div className="relative h-32 shrink-0">
           <LocationTypeBanner type={location.type} className="h-full w-full" />

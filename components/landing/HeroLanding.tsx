@@ -55,11 +55,13 @@ const LINE = "#DCE9EF";
 type Tone = "frost" | "ember";
 const toneColor = (tone: Tone) => (tone === "ember" ? EMBER : FROST);
 
-// Temporary stand-in imagery until the client hands over real Lake Harku
-// photos — deliberately the stylised atmosphere shots already licensed
-// for the app, shown under an honest "illustrative, real photos coming"
-// caption (dict.landing.galleryNote), never passed off as the real location.
+// Real dusk photos of the Lake Harku floating sauna complex, shot on site
+// (originals in public/harku-real/, re-encoded into public/atmosphere/).
+// This is the actual pilot location now, so the caption below
+// (dict.landing.galleryNote) says so plainly rather than flagging these as
+// illustrative stand-ins.
 const GALLERY: { src: string; icon: typeof Flame; tone: Tone }[] = [
+  { src: "/atmosphere/hero.webp", icon: Flame, tone: "ember" },
   { src: "/atmosphere/sauna.webp", icon: Flame, tone: "ember" },
   { src: "/atmosphere/winter-swimming.webp", icon: Snowflake, tone: "frost" },
   { src: "/atmosphere/beach.webp", icon: Waves, tone: "frost" },
@@ -173,9 +175,9 @@ export function HeroLanding({
   // Quick-glance version of the same three steps, shown directly in the
   // hero so the gist is visible without scrolling. Deliberately shorter
   // than `steps` above — that's the detailed "Kuidas see käib" section.
-  // Each step gets a photo circle (recycled atmosphere shots — same ones
-  // used in the gallery section, no new imagery) with the icon as a small
-  // badge on top, rather than the icon being the only visual.
+  // Each step gets a photo circle (the same on-site Lake Harku shots as
+  // the gallery section, cropped round) with the icon as a small badge on
+  // top, rather than the icon being the only visual.
   const quickSteps: {
     icon: typeof Eye;
     image: string;
@@ -499,7 +501,7 @@ export function HeroLanding({
         >
           {t.galleryNote}
         </p>
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {GALLERY.map(({ src, icon: Icon, tone }) => (
             <div
               key={src}
