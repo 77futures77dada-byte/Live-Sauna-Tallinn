@@ -87,6 +87,38 @@ export async function getLatestWaterByLocation(
   }));
 }
 
+// Folds a location's real, geofence-and-photo-verified "checked in right
+// now" headcount (lib/visits.ts's getOpenVisitCountsByLocation) into the
+// crowdsourced occupancy_reports numbers above. A verified count is ground
+// truth, not a self-report — but its absence isn't proof nobody's there
+// (plenty of visitors won't check in through the app), so this only ever
+// raises the shown number, never lowers or replaces a manual report:
+// peopleCount is the max of the two, and the timestamp is bumped to "now"
+// only when a verified count actually contributed, so freshness reflects
+// that live signal. Callers must pass a fresh, unmerged `reported` map
+// each time (see MapScreen) — merging the previous merge's *output* back
+// in would let a stale verified count ratchet the displayed number up
+// forever, since max() can never come back down once inflated.
+export function mergeVerifiedPresence(
+  reported: Map<string, LatestOccupancy>,
+  verifiedCounts: Map<string, number>,
+): Map<string, LatestOccupancy> {
+  const merged = new Map(reported);
+  const now = new Date().toISOString();
+
+  for (const [locationId, verifiedCount] of verifiedCounts) {
+    if (verifiedCount <= 0) continue;
+    const existing = merged.get(locationId);
+    merged.set(locationId, {
+      locationId,
+      peopleCount: Math.max(existing?.peopleCount ?? 0, verifiedCount),
+      createdAt: now,
+    });
+  }
+
+  return merged;
+}
+
 export async function getLatestIceByLocation(
   supabase: SupabaseClient<Database>,
 ): Promise<Map<string, LatestIce>> {

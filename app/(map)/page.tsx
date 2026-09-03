@@ -12,11 +12,12 @@ export default async function MapPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ locations, occupancy, water, ice, openVisit }, admin, locale] = await Promise.all([
-    getMapPageData(supabase, user),
-    user ? isAdmin(supabase, user.id) : Promise.resolve(false),
-    getLocale(),
-  ]);
+  const [{ locations, occupancy, water, ice, openVisit, verifiedPresence }, admin, locale] =
+    await Promise.all([
+      getMapPageData(supabase, user),
+      user ? isAdmin(supabase, user.id) : Promise.resolve(false),
+      getLocale(),
+    ]);
 
   return (
     <div className="flex h-screen flex-col">
@@ -31,6 +32,7 @@ export default async function MapPage() {
         initialOccupancy={[...occupancy.entries()]}
         initialWater={[...water.entries()]}
         initialIce={[...ice.entries()]}
+        initialVerifiedPresence={[...verifiedPresence.entries()]}
         userId={user?.id ?? null}
         initialOpenVisit={openVisit}
         locale={locale}

@@ -230,7 +230,9 @@
     "statusFulfilled": "Зарегистрирован ✓",
     "statusNoShow": "Пропущено (без регистрации)",
     "statusCancelled": "Отменено",
-    "statusCompleted": "Завершено"
+    "statusCompleted": "Завершено",
+    "spotsLeft": "осталось {n}",
+    "slotFull": "занято"
   },
   "report": {
     "title": "Сообщить о статусе",

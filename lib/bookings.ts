@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./supabase/types";
+import { createServiceClient } from "./supabase/service";
 
 export type Booking = Database["public"]["Tables"]["bookings"]["Row"];
 
@@ -147,4 +148,39 @@ export async function fulfillBooking(
     .eq("id", bookingId);
 
   if (error) throw error;
+}
+
+// How many people are already booked into each upcoming hour-aligned slot
+// at a location, summed across *every* user — not just the caller. bookings
+// is locked to "select own or admin" by RLS (0002_rls.sql) for good reason
+// (a booking's people_count next to a start_time plus who's browsing could
+// out someone's schedule), so this uses the service client to aggregate
+// server-side and returns only start_time -> booked_people_count, never
+// which user holds a given slot. Used both by the availability endpoint
+// (so the booking form can show/gray out full slots) and by POST
+// /api/bookings (so the server itself enforces capacity, not just the UI).
+export async function getBookedCountsForSlots(
+  locationId: string,
+  from: Date = new Date(),
+): Promise<Map<string, number>> {
+  const service = createServiceClient();
+
+  const { data, error } = await service
+    .from("bookings")
+    .select("start_time, people_count")
+    .eq("location_id", locationId)
+    .in("status", ["confirmed", "fulfilled"])
+    .gte("end_time", from.toISOString());
+
+  if (error) {
+    console.error("getBookedCountsForSlots failed", error);
+    return new Map();
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    const key = new Date(row.start_time).toISOString();
+    counts.set(key, (counts.get(key) ?? 0) + row.people_count);
+  }
+  return counts;
 }

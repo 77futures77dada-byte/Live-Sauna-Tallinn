@@ -230,7 +230,9 @@
     "statusFulfilled": "Sisseregistreeritud ✓",
     "statusNoShow": "Vahele jäetud (sisse ei registreerunud)",
     "statusCancelled": "Tühistatud",
-    "statusCompleted": "Lõpetatud"
+    "statusCompleted": "Lõpetatud",
+    "spotsLeft": "jäänud {n}",
+    "slotFull": "täis"
   },
   "report": {
     "title": "Teata olekust",

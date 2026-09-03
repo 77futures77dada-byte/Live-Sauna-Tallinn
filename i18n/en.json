@@ -230,7 +230,9 @@
     "statusFulfilled": "Checked in ✓",
     "statusNoShow": "Missed (no check-in)",
     "statusCancelled": "Cancelled",
-    "statusCompleted": "Completed"
+    "statusCompleted": "Completed",
+    "spotsLeft": "{n} left",
+    "slotFull": "Full"
   },
   "report": {
     "title": "Report status",

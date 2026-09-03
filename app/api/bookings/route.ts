@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isUserBanned } from "@/lib/moderation";
-import { isHourAligned, getUserBookingsForLocation } from "@/lib/bookings";
+import { isHourAligned, getBookedCountsForSlots, getUserBookingsForLocation } from "@/lib/bookings";
 import { createClient } from "@/lib/supabase/server";
 
 // GET /api/bookings?location_id=<uuid> — the caller's own bookings for one
@@ -97,6 +97,28 @@ export async function POST(request: Request) {
       { error: `people_count exceeds this location's capacity (${location.capacity})` },
       { status: 400 },
     );
+  }
+
+  // Enforced here, not just in the form: two people booking the same hour
+  // from two different devices must not both succeed past capacity. Sums
+  // every user's confirmed/fulfilled bookings for this exact slot — see
+  // getBookedCountsForSlots for why this needs the service client instead
+  // of the RLS-scoped one above.
+  if (location.capacity !== null) {
+    const booked = await getBookedCountsForSlots(locationId, startTime);
+    const alreadyBooked = booked.get(startTime.toISOString()) ?? 0;
+    if (alreadyBooked + peopleCount > location.capacity) {
+      const remaining = Math.max(0, location.capacity - alreadyBooked);
+      return NextResponse.json(
+        {
+          error:
+            remaining > 0
+              ? `Only ${remaining} of ${location.capacity} spots left in that hour`
+              : "That time slot is fully booked",
+        },
+        { status: 409 },
+      );
+    }
   }
 
   const { data: booking, error: bookingError } = await supabase

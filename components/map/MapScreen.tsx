@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { RealtimePostgresInsertPayload } from "@supabase/supabase-js";
 import { HeroLanding } from "@/components/landing/HeroLanding";
 import { LocationCard } from "@/components/location/LocationCard";
@@ -14,6 +14,7 @@ import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
 import type { Locale } from "@/lib/i18n";
 import { getLiveSnapshot } from "@/lib/occupancy-status";
+import { mergeVerifiedPresence } from "@/lib/reports";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -30,11 +31,19 @@ const MapView = dynamic(() => import("./MapView"), { ssr: false });
 // lib/freshness.ts.
 const FRESHNESS_TICK_MS = 60_000;
 
+// How often to poll /api/occupancy/live for other visitors' check-ins.
+// Realtime can't carry this: visits is RLS-locked to its own owner
+// (0002_rls.sql) and Supabase enforces that same RLS on postgres_changes,
+// so a subscription here would never see another user's check-in event —
+// polling the aggregate endpoint is the only way it reaches this screen.
+const LIVE_PRESENCE_POLL_MS = 20_000;
+
 export function MapScreen({
   locations,
   initialOccupancy,
   initialWater,
   initialIce,
+  initialVerifiedPresence,
   userId,
   initialOpenVisit,
   focusLocationId,
@@ -44,6 +53,7 @@ export function MapScreen({
   initialOccupancy: [string, LatestOccupancy][];
   initialWater: [string, LatestWater][];
   initialIce: [string, LatestIce][];
+  initialVerifiedPresence: [string, number][];
   userId: string | null;
   initialOpenVisit: OpenVisit | null;
   focusLocationId?: string;
@@ -59,6 +69,7 @@ export function MapScreen({
   // screen.
   const [showHero, setShowHero] = useState(!focusLocationId);
   const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
+  const [verifiedPresence, setVerifiedPresence] = useState(() => new Map(initialVerifiedPresence));
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
   const [openVisit, setOpenVisit] = useState(initialOpenVisit);
@@ -149,6 +160,36 @@ export function MapScreen({
     return () => clearInterval(id);
   }, []);
 
+  // Polls verified check-ins (see LIVE_PRESENCE_POLL_MS above) and fully
+  // replaces `verifiedPresence` each time, rather than merging onto its own
+  // previous value — mergeVerifiedPresence only ever raises a count, so
+  // folding a poll result into an already-merged map would let a stale
+  // headcount ratchet upward forever and never reflect someone checking
+  // out. displayOccupancy below does the (fresh, one-shot) merge instead.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function pollLivePresence() {
+      try {
+        const res = await fetch("/api/occupancy/live");
+        if (!res.ok || cancelled) return;
+        const rows: { location_id: string; people_count: number }[] = await res.json();
+        if (cancelled) return;
+        setVerifiedPresence(new Map(rows.map((row) => [row.location_id, row.people_count])));
+      } catch {
+        // Best-effort — the next poll retries; the map just falls back to
+        // crowdsourced-only numbers until then.
+      }
+    }
+
+    pollLivePresence();
+    const id = setInterval(pollLivePresence, LIVE_PRESENCE_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, []);
+
   // The three pilot saunas share one Ilmateenistus station
   // (lib/weather-stations.ts), so one fetch — keyed off any location's
   // slug — covers the whole dashboard: the hero banner's water/air
@@ -182,7 +223,15 @@ export function MapScreen({
   // locator map just needs one representative location for its shared
   // coordinates, not one marker per sauna (see MapView).
   const site = locations[0] ?? null;
-  const liveSnapshot = getLiveSnapshot(occupancy);
+  // The number every occupancy display actually renders: crowdsourced
+  // reports folded together with real, verified check-ins (see
+  // mergeVerifiedPresence). Always derived fresh from the two raw sources
+  // above, never from its own previous output.
+  const displayOccupancy = useMemo(
+    () => mergeVerifiedPresence(occupancy, verifiedPresence),
+    [occupancy, verifiedPresence],
+  );
+  const liveSnapshot = getLiveSnapshot(displayOccupancy);
 
   if (showHero) {
     // fixed inset-0 rather than this component's usual flex-1 slot below
@@ -244,7 +293,7 @@ export function MapScreen({
           <div id="saunas" className="scroll-mt-6 lg:scroll-mt-8">
             <LocationList
               locations={locations}
-              occupancy={occupancy}
+              occupancy={displayOccupancy}
               water={water}
               airTemperature={station?.airTemperature ?? null}
               selectedId={selected?.id ?? null}
@@ -265,7 +314,7 @@ export function MapScreen({
           location={selected}
           userId={userId}
           locale={locale}
-          occupancy={occupancy.get(selected.id)}
+          occupancy={displayOccupancy.get(selected.id)}
           water={water.get(selected.id)}
           ice={ice.get(selected.id)}
           openVisit={openVisit}

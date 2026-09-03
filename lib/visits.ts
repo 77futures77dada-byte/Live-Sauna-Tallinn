@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./supabase/types";
+import { createServiceClient } from "./supabase/service";
 
 export interface OpenVisit {
   id: string;
@@ -65,4 +66,40 @@ export async function getOpenVisit(
     locationId: data.location_id,
     startedAt: data.started_at,
   };
+}
+
+// The real, verified "here right now" headcount per location — one open
+// (finished_at is null) visit row is one person confirmed on site by
+// geolocation + photo, not a self-report. visits is locked to "select own
+// or admin" by RLS (0002_rls.sql), so a location's live headcount would
+// otherwise be invisible to everyone except the person currently checked
+// in there — this uses the service client to aggregate across all users,
+// but only ever returns a per-location count, never who's there. Filters
+// out anything past VISIT_MAX_AGE_MS itself rather than relying on
+// expireStaleVisits, which only runs lazily against the *reading* user's
+// own rows and would otherwise let a forgotten open visit inflate this
+// count indefinitely for everyone else.
+export async function getOpenVisitCountsByLocation(): Promise<Map<string, number>> {
+  const cutoff = new Date(Date.now() - VISIT_MAX_AGE_MS).toISOString();
+  const service = createServiceClient();
+
+  const { data, error } = await service
+    .from("visits")
+    .select("location_id")
+    .is("finished_at", null)
+    .gte("started_at", cutoff);
+
+  if (error) {
+    // Best-effort, same convention as expireStaleVisits above — a failure
+    // here must not take down the map page, just means this poll/render
+    // falls back to crowdsourced-only numbers.
+    console.error("getOpenVisitCountsByLocation failed", error);
+    return new Map();
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    counts.set(row.location_id, (counts.get(row.location_id) ?? 0) + 1);
+  }
+  return counts;
 }

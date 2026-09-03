@@ -24,6 +24,29 @@ function formatSlots(slots: Date[], locale: Locale): string[] {
   );
 }
 
+// Appends "· N left" / "· Full" to a slot's own time label, from the
+// per-slot booked counts fetched from /api/bookings/availability — this is
+// what actually makes other people's bookings visible: without it, two
+// visitors booking the same hour from two different phones have no way to
+// know about each other until the server rejects the second one.
+function annotateSlotLabels(
+  labels: string[],
+  slots: Date[],
+  bookedCounts: Map<string, number>,
+  capacity: number | null,
+  dict: { spotsLeft: string; slotFull: string },
+): string[] {
+  if (capacity === null) return labels;
+
+  return labels.map((label, index) => {
+    const booked = bookedCounts.get(slots[index].toISOString()) ?? 0;
+    const remaining = capacity - booked;
+    if (remaining <= 0) return `${label} · ${dict.slotFull}`;
+    if (booked > 0) return `${label} · ${dict.spotsLeft.replace("{n}", String(remaining))}`;
+    return label;
+  });
+}
+
 // A native <select>'s own popup can't be restyled with CSS — its option
 // list stays browser/OS chrome no matter what the closed control looks
 // like — so the time-slot picker is a small hand-rolled listbox instead,
@@ -34,11 +57,13 @@ function TimeSlotSelect({
   labels,
   value,
   onChange,
+  fullSlots,
 }: {
   slots: Date[];
   labels: string[];
   value: string;
   onChange: (value: string) => void;
+  fullSlots: Set<string>;
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -89,22 +114,31 @@ function TimeSlotSelect({
           role="listbox"
           className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-warm-border bg-ivory py-1 text-sm shadow-lg"
         >
-          {slots.map((slot, index) => (
-            <li
-              key={slot.toISOString()}
-              role="option"
-              aria-selected={index === selectedIndex}
-              onClick={() => {
-                onChange(slot.toISOString());
-                setOpen(false);
-              }}
-              className={`cursor-pointer px-2 py-1.5 ${
-                index === selectedIndex ? "bg-fjord/10 font-semibold text-fjord" : "text-fjord hover:bg-ivory"
-              }`}
-            >
-              {labels[index]}
-            </li>
-          ))}
+          {slots.map((slot, index) => {
+            const full = fullSlots.has(slot.toISOString());
+            return (
+              <li
+                key={slot.toISOString()}
+                role="option"
+                aria-selected={index === selectedIndex}
+                aria-disabled={full}
+                onClick={() => {
+                  if (full) return;
+                  onChange(slot.toISOString());
+                  setOpen(false);
+                }}
+                className={`px-2 py-1.5 ${full ? "cursor-not-allowed text-steam/50" : "cursor-pointer"} ${
+                  index === selectedIndex && !full
+                    ? "bg-fjord/10 font-semibold text-fjord"
+                    : !full
+                      ? "text-fjord hover:bg-ivory"
+                      : ""
+                }`}
+              >
+                {labels[index]}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
@@ -135,14 +169,63 @@ export function BookingForm({
 }) {
   const dict = getDictionary(locale).booking;
   const [slots] = useState(() => nextOpenHourSlots(SLOT_COUNT, openingHours));
-  const slotLabels = useMemo(() => formatSlots(slots, locale), [slots, locale]);
+  const rawSlotLabels = useMemo(() => formatSlots(slots, locale), [slots, locale]);
   const [startTime, setStartTime] = useState(slots[0].toISOString());
   const [peopleCount, setPeopleCount] = useState("1");
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
+  const [bookedCounts, setBookedCounts] = useState<Map<string, number>>(new Map());
+
+  // Other visitors' bookings, aggregated per hour (no names, no counts
+  // attributable to anyone) — see app/api/bookings/availability. Refetched
+  // whenever the form opens so a slot someone else just took shows up.
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(`/api/bookings/availability?location_id=${locationId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((rows: { start_time: string; booked_people_count: number }[]) => {
+        if (cancelled) return;
+        setBookedCounts(new Map(rows.map((row) => [new Date(row.start_time).toISOString(), row.booked_people_count])));
+      })
+      .catch(() => {
+        if (!cancelled) setBookedCounts(new Map());
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locationId]);
+
+  const fullSlots = useMemo(() => {
+    if (capacity === null) return new Set<string>();
+    return new Set(
+      slots
+        .filter((slot) => (bookedCounts.get(slot.toISOString()) ?? 0) >= capacity)
+        .map((slot) => slot.toISOString()),
+    );
+  }, [slots, bookedCounts, capacity]);
+
+  const slotLabels = useMemo(
+    () => annotateSlotLabels(rawSlotLabels, slots, bookedCounts, capacity, dict),
+    [rawSlotLabels, slots, bookedCounts, capacity, dict],
+  );
+
+  // The chosen slot (startTime, set on explicit user selection) may have
+  // filled up while availability was still loading or just after — derived
+  // at render time rather than synced back with an effect + setState, so
+  // it falls back to the first still-open slot without an extra render.
+  const effectiveStartTime = fullSlots.has(startTime)
+    ? (slots.find((slot) => !fullSlots.has(slot.toISOString()))?.toISOString() ?? startTime)
+    : startTime;
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (fullSlots.has(effectiveStartTime)) {
+      setStatus("error");
+      setMessage(dict.createFailed);
+      return;
+    }
     setStatus("submitting");
     setMessage(null);
 
@@ -150,7 +233,7 @@ export function BookingForm({
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ location_id: locationId, start_time: startTime, people_count: peopleCount }),
+        body: JSON.stringify({ location_id: locationId, start_time: effectiveStartTime, people_count: peopleCount }),
       });
       const data = await res.json().catch(() => ({}));
 
@@ -171,7 +254,13 @@ export function BookingForm({
     <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg bg-ivory p-3">
       <div>
         <label className="mb-1 block text-xs font-medium text-steam">{dict.timeSlot}</label>
-        <TimeSlotSelect slots={slots} labels={slotLabels} value={startTime} onChange={setStartTime} />
+        <TimeSlotSelect
+          slots={slots}
+          labels={slotLabels}
+          value={effectiveStartTime}
+          onChange={setStartTime}
+          fullSlots={fullSlots}
+        />
       </div>
 
       <div>
@@ -193,7 +282,7 @@ export function BookingForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={status === "submitting"}
+          disabled={status === "submitting" || fullSlots.has(effectiveStartTime)}
           className="flex-1 rounded-lg bg-fjord px-3 py-1.5 text-sm font-medium text-white transition hover:brightness-110 disabled:opacity-50"
         >
           {status === "submitting" ? dict.confirming : dict.confirmBooking}
