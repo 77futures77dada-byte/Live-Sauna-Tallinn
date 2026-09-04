@@ -43,6 +43,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
+      // The theme-init script below sets data-theme on <html> before React
+      // hydrates (so a returning dark-theme visitor never flashes light).
+      // That's a deliberate, controlled-outside-React mutation — this tells
+      // React to expect this one element's attributes to differ from the
+      // server HTML instead of logging a hydration mismatch. Scoped to
+      // <html>'s own attributes only; <head>/<body> and everything inside
+      // are still fully hydration-checked.
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${ibmPlexSans.variable} ${lora.variable} h-full antialiased`}
     >
       <body className={`min-h-full flex flex-col ${demo ? "pt-8" : ""}`}>
