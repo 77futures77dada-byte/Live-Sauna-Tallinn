@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { findFulfillableBooking, fulfillBooking } from "@/lib/bookings";
 import { CHECKIN_RADIUS_METERS, haversineMeters } from "@/lib/geo";
 import { isUserBanned } from "@/lib/moderation";
+import { closeQueueEntryOnCheckIn } from "@/lib/queue";
 import { getOpenVisit } from "@/lib/visits";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -152,6 +153,12 @@ export async function POST(request: Request) {
   } catch (bookingError) {
     console.error("POST /api/visits: booking fulfillment failed", bookingError);
   }
+
+  // If this visitor was waiting in this sauna's live queue, checking in
+  // resolves that entry — same idea as fulfilling a booking above. Best-
+  // effort: the visit already exists, a failure here just leaves a stale
+  // queue row for expireStaleQueueEntries to clean up later.
+  await closeQueueEntryOnCheckIn(supabase, user.id, locationId);
 
   return NextResponse.json({ ...data, fulfilled_booking_id: fulfilledBookingId }, { status: 201 });
 }

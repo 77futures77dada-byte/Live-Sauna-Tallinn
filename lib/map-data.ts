@@ -6,6 +6,7 @@ import {
   getLatestWaterByLocation,
 } from "./reports";
 import { getOpenVisit, getOpenVisitCountsByLocation } from "./visits";
+import { getOpenQueueEntry, getQueueLiveByLocation } from "./queue";
 
 // Shared by app/(map)/page.tsx and app/location/[slug]/page.tsx — both
 // render the same MapScreen, just with a different initial focus.
@@ -19,15 +20,21 @@ import { getOpenVisit, getOpenVisitCountsByLocation } from "./visits";
 // already-merged number. See mergeVerifiedPresence's comment for why that
 // matters.
 export async function getMapPageData(supabase: SupabaseClient<Database>, user: User | null) {
-  const [{ data: locations }, occupancy, water, ice, verifiedPresence] = await Promise.all([
+  const [{ data: locations }, occupancy, water, ice, verifiedPresence, queue] = await Promise.all([
     supabase.from("locations").select("*").order("name"),
     getLatestOccupancyByLocation(supabase),
     getLatestWaterByLocation(supabase),
     getLatestIceByLocation(supabase),
     getOpenVisitCountsByLocation(),
+    getQueueLiveByLocation(),
   ]);
 
-  const openVisit = user ? await getOpenVisit(supabase, user.id) : null;
+  // The viewer's own queue place / open visit — both need the RLS client
+  // and a user, both null for guests (who can still see the aggregate
+  // `queue` numbers above).
+  const [openVisit, openQueueEntry] = user
+    ? await Promise.all([getOpenVisit(supabase, user.id), getOpenQueueEntry(supabase, user.id)])
+    : [null, null];
 
   return {
     locations: locations ?? [],
@@ -36,5 +43,7 @@ export async function getMapPageData(supabase: SupabaseClient<Database>, user: U
     ice,
     openVisit,
     verifiedPresence,
+    queue,
+    openQueueEntry,
   };
 }

@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { OpenVisit } from "@/lib/visits";
+import type { OpenQueueEntry, QueueLive } from "@/lib/queue";
 import type { Locale } from "@/lib/i18n";
 import { getLiveSnapshot } from "@/lib/occupancy-status";
 import { mergeVerifiedPresence } from "@/lib/reports";
@@ -45,8 +46,10 @@ export function MapScreen({
   initialWater,
   initialIce,
   initialVerifiedPresence,
+  initialQueue,
   userId,
   initialOpenVisit,
+  initialOpenQueueEntry,
   focusLocationId,
   locale,
 }: {
@@ -55,8 +58,10 @@ export function MapScreen({
   initialWater: [string, LatestWater][];
   initialIce: [string, LatestIce][];
   initialVerifiedPresence: [string, number][];
+  initialQueue: [string, QueueLive][];
   userId: string | null;
   initialOpenVisit: OpenVisit | null;
+  initialOpenQueueEntry: OpenQueueEntry | null;
   focusLocationId?: string;
   locale: Locale;
 }) {
@@ -71,9 +76,11 @@ export function MapScreen({
   const [showHero, setShowHero] = useState(!focusLocationId);
   const [occupancy, setOccupancy] = useState(() => new Map(initialOccupancy));
   const [verifiedPresence, setVerifiedPresence] = useState(() => new Map(initialVerifiedPresence));
+  const [queue, setQueue] = useState(() => new Map(initialQueue));
   const [water, setWater] = useState(() => new Map(initialWater));
   const [ice, setIce] = useState(() => new Map(initialIce));
   const [openVisit, setOpenVisit] = useState(initialOpenVisit);
+  const [openQueueEntry, setOpenQueueEntry] = useState(initialOpenQueueEntry);
   const [station, setStation] = useState<{
     airTemperature: number | null;
     waterTemperature: number | null;
@@ -170,21 +177,53 @@ export function MapScreen({
   useEffect(() => {
     let cancelled = false;
 
-    async function pollLivePresence() {
+    async function pollLive() {
+      // Verified check-ins and the live queue numbers are refreshed on the
+      // same tick (LIVE_PRESENCE_POLL_MS) — both are RLS-locked aggregates
+      // that realtime can't carry, both cheap. Each fully replaces its own
+      // state map rather than merging onto the previous value.
       try {
         const res = await fetch("/api/occupancy/live");
-        if (!res.ok || cancelled) return;
-        const rows: { location_id: string; people_count: number }[] = await res.json();
-        if (cancelled) return;
-        setVerifiedPresence(new Map(rows.map((row) => [row.location_id, row.people_count])));
+        if (res.ok && !cancelled) {
+          const rows: { location_id: string; people_count: number }[] = await res.json();
+          if (!cancelled) {
+            setVerifiedPresence(new Map(rows.map((row) => [row.location_id, row.people_count])));
+          }
+        }
       } catch {
-        // Best-effort — the next poll retries; the map just falls back to
+        // Best-effort — next poll retries; the map falls back to
         // crowdsourced-only numbers until then.
+      }
+
+      try {
+        const res = await fetch("/api/queue/live");
+        if (res.ok && !cancelled) {
+          const rows: {
+            location_id: string;
+            groups_ahead: number;
+            estimated_wait_minutes: number | null;
+          }[] = await res.json();
+          if (!cancelled) {
+            setQueue(
+              new Map(
+                rows.map((row) => [
+                  row.location_id,
+                  {
+                    groupsAhead: row.groups_ahead,
+                    estimatedWaitMinutes: row.estimated_wait_minutes,
+                  },
+                ]),
+              ),
+            );
+          }
+        }
+      } catch {
+        // Best-effort — the queue block just keeps the last numbers.
       }
     }
 
-    pollLivePresence();
-    const id = setInterval(pollLivePresence, LIVE_PRESENCE_POLL_MS);
+    pollLive();
+    const id = setInterval(pollLive, LIVE_PRESENCE_POLL_MS);
     return () => {
       cancelled = true;
       clearInterval(id);
@@ -296,6 +335,7 @@ export function MapScreen({
               locations={locations}
               occupancy={displayOccupancy}
               water={water}
+              queue={queue}
               airTemperature={station?.airTemperature ?? null}
               selectedId={selected?.id ?? null}
               locale={locale}
@@ -320,10 +360,13 @@ export function MapScreen({
           occupancy={displayOccupancy.get(selected.id)}
           water={water.get(selected.id)}
           ice={ice.get(selected.id)}
+          queue={queue.get(selected.id)}
           openVisit={openVisit}
           openVisitLocationName={openVisitLocationName}
+          openQueueEntry={openQueueEntry}
           onVisitStarted={setOpenVisit}
           onVisitFinished={() => setOpenVisit(null)}
+          onQueueChanged={setOpenQueueEntry}
           onClose={() => setSelected(null)}
         />
       )}

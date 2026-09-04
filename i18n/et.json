@@ -183,6 +183,24 @@
     "step3": "Võta võti kohapealselt valvurilt isikut tõendava dokumendi alusel.",
     "disclaimer": "Broneering hoiab aega, kuid ei garanteeri kohta ilma kohapealse kinnitamiseta."
   },
+  "queue": {
+    "sectionTitle": "Elav järjekord",
+    "empty": "Praegu keegi ei oota",
+    "groupsAhead": "gruppi ees",
+    "estimatedWait": "hinnanguline ooteaeg",
+    "estimateNote": "Numbrid tulevad teistelt saunalistelt, kes on oma kohaloleku kinnitanud — seega on need hinnangulised, mitte ametlikud.",
+    "youInQueue": "Sa oled järjekorras",
+    "yourPosition": "{n} sinu ees",
+    "join": "Liitu järjekorraga",
+    "leave": "Lahku järjekorrast",
+    "joining": "Liitun…",
+    "leaving": "Lahkun…",
+    "inQueueElsewhere": "Sa oled järjekorras teises saunas",
+    "loginToJoin": "Logi sisse, et järjekorraga liituda",
+    "joinFailed": "Järjekorraga liitumine ebaõnnestus",
+    "listGroups": "Järjekorras {n}",
+    "listWait": "~{n} min"
+  },
   "location": {
     "free": "Tasuta",
     "paid": "Tasuline",

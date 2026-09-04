@@ -2,6 +2,7 @@
 
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { hasCrowdLiveData } from "@/lib/occupancy-status";
+import type { QueueLive } from "@/lib/queue";
 import type { LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import { LocationListCard } from "./LocationListCard";
@@ -12,6 +13,7 @@ export function LocationList({
   locations,
   occupancy,
   water,
+  queue,
   airTemperature,
   selectedId,
   locale,
@@ -20,6 +22,7 @@ export function LocationList({
   locations: Location[];
   occupancy: Map<string, LatestOccupancy>;
   water: Map<string, LatestWater>;
+  queue: Map<string, QueueLive>;
   // Shared Ilmateenistus station reading, fetched once in MapScreen — the
   // three pilot saunas sit at the same point on Lake Harku and share one
   // station (lib/weather-stations.ts), so it's the same number on every
@@ -71,6 +74,7 @@ export function LocationList({
             location={location}
             occupancy={occupancy.get(location.id)}
             water={water.get(location.id)}
+            queue={queue.get(location.id)}
             airTemperature={airTemperature}
             number={index + 1}
             selected={selectedId === location.id}

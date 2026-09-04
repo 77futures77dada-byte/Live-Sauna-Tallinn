@@ -1,7 +1,8 @@
-import { MapPin, Thermometer, Waves } from "lucide-react";
+import { MapPin, Thermometer, Users, Waves } from "lucide-react";
 import { getFreshness } from "@/lib/freshness";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getOccupancyStatus, occupancyStatusColor } from "@/lib/occupancy-status";
+import type { QueueLive } from "@/lib/queue";
 import type { LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 
@@ -11,6 +12,7 @@ export function LocationListCard({
   location,
   occupancy,
   water,
+  queue,
   airTemperature,
   number,
   selected,
@@ -21,6 +23,7 @@ export function LocationListCard({
   location: Location;
   occupancy?: LatestOccupancy;
   water?: LatestWater;
+  queue?: QueueLive;
   airTemperature: number | null;
   number: number;
   selected: boolean;
@@ -54,6 +57,17 @@ export function LocationListCard({
   const showWater = water && getFreshness(water.createdAt) !== "unknown";
   const showAir = airTemperature !== null;
   const hasAnything = Boolean(showPeopleCount || showWater || showAir);
+
+  // Compact live-queue line — "Järjekorras 2 · ~40 min" — shown only when
+  // someone is actually waiting. Wait suffix is dropped when there's no
+  // honest estimate (see lib/queue.ts).
+  const queueLine =
+    queue && queue.groupsAhead > 0
+      ? dict.queue.listGroups.replace("{n}", String(queue.groupsAhead)) +
+        (queue.estimatedWaitMinutes !== null
+          ? ` · ${dict.queue.listWait.replace("{n}", String(queue.estimatedWaitMinutes))}`
+          : "")
+      : null;
 
   const capacityLabel =
     location.capacity !== null
@@ -144,6 +158,13 @@ export function LocationListCard({
                 </span>
               )}
             </div>
+          )}
+
+          {queueLine && !dashWhenEmpty && (
+            <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ember">
+              <Users className="h-3 w-3" aria-hidden />
+              {queueLine}
+            </p>
           )}
         </div>
       </div>

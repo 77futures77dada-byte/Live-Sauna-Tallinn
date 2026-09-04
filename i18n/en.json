@@ -183,6 +183,24 @@
     "step3": "Collect the key from the on-site guard with an ID document.",
     "disclaimer": "A booking holds a time, but doesn't guarantee a spot without on-site confirmation."
   },
+  "queue": {
+    "sectionTitle": "Live queue",
+    "empty": "No one waiting right now",
+    "groupsAhead": "groups ahead",
+    "estimatedWait": "estimated wait",
+    "estimateNote": "The numbers come from other saunagoers who've confirmed they're on site — so they're estimates, not an official register.",
+    "youInQueue": "You're in the queue",
+    "yourPosition": "{n} ahead of you",
+    "join": "Join the queue",
+    "leave": "Leave the queue",
+    "joining": "Joining…",
+    "leaving": "Leaving…",
+    "inQueueElsewhere": "You're in the queue at another sauna",
+    "loginToJoin": "Log in to join the queue",
+    "joinFailed": "Couldn't join the queue",
+    "listGroups": "Queue: {n}",
+    "listWait": "~{n} min"
+  },
   "location": {
     "free": "Free",
     "paid": "Paid",

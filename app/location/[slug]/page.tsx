@@ -23,12 +23,15 @@ export default async function LocationPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ locations, occupancy, water, ice, openVisit, verifiedPresence }, admin, locale] =
-    await Promise.all([
-      getMapPageData(supabase, user),
-      user ? isAdmin(supabase, user.id) : Promise.resolve(false),
-      getLocale(),
-    ]);
+  const [
+    { locations, occupancy, water, ice, openVisit, verifiedPresence, queue, openQueueEntry },
+    admin,
+    locale,
+  ] = await Promise.all([
+    getMapPageData(supabase, user),
+    user ? isAdmin(supabase, user.id) : Promise.resolve(false),
+    getLocale(),
+  ]);
 
   const location = locations.find((l) => l.slug === slug);
   if (!location) {
@@ -49,8 +52,10 @@ export default async function LocationPage({
         initialWater={[...water.entries()]}
         initialIce={[...ice.entries()]}
         initialVerifiedPresence={[...verifiedPresence.entries()]}
+        initialQueue={[...queue.entries()]}
         userId={user?.id ?? null}
         initialOpenVisit={openVisit}
+        initialOpenQueueEntry={openQueueEntry}
         focusLocationId={location.id}
         locale={locale}
       />

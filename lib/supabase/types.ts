@@ -249,6 +249,24 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["ratings"]["Insert"]>;
         Relationships: [];
       };
+      queue_entries: {
+        Row: {
+          id: string;
+          location_id: string;
+          user_id: string | null;
+          joined_at: string;
+          left_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          location_id: string;
+          user_id: string;
+          joined_at?: string;
+          left_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["queue_entries"]["Insert"]>;
+        Relationships: [];
+      };
     };
     // Empty but present: @supabase/postgrest-js's generic client constrains
     // Database[schema] to GenericSchema, which requires these keys to

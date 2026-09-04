@@ -12,6 +12,7 @@ import { bcp47Locale, getDictionary, type Locale } from "@/lib/i18n";
 import { locationTypeIconComponent } from "@/lib/location-types";
 import { getOccupancyStatus } from "@/lib/occupancy-status";
 import { summarizeOpeningHours } from "@/lib/opening-hours";
+import type { OpenQueueEntry, QueueLive } from "@/lib/queue";
 import type { LatestIce, LatestOccupancy, LatestWater } from "@/lib/reports";
 import type { Database } from "@/lib/supabase/types";
 import type { OpenVisit } from "@/lib/visits";
@@ -19,6 +20,7 @@ import type { StationObservation } from "@/lib/weather";
 import { IceStatus } from "./IceStatus";
 import { LocationTypeBanner } from "./LocationTypeBanner";
 import { OccupancyBadge } from "./OccupancyBadge";
+import { QueueStatus } from "./QueueStatus";
 import { ReportButtons } from "./ReportButtons";
 import { WaterTempStat } from "./WaterTempStat";
 import { WeatherStrip } from "./WeatherStrip";
@@ -40,10 +42,13 @@ export function LocationCard({
   occupancy,
   water,
   ice,
+  queue,
   openVisit,
   openVisitLocationName,
+  openQueueEntry,
   onVisitStarted,
   onVisitFinished,
+  onQueueChanged,
   onClose,
 }: {
   location: Location;
@@ -52,10 +57,13 @@ export function LocationCard({
   occupancy?: LatestOccupancy;
   water?: LatestWater;
   ice?: LatestIce;
+  queue?: QueueLive;
   openVisit: OpenVisit | null;
   openVisitLocationName: string | null;
+  openQueueEntry: OpenQueueEntry | null;
   onVisitStarted: (visit: OpenVisit) => void;
   onVisitFinished: () => void;
+  onQueueChanged: (entry: OpenQueueEntry | null) => void;
   onClose: () => void;
 }) {
   const dict = getDictionary(locale);
@@ -211,6 +219,15 @@ export function LocationCard({
               <WeatherStrip observation={weather.observation} locale={locale} />
             )}
           </div>
+
+          <QueueStatus
+            locationId={location.id}
+            locale={locale}
+            userId={userId}
+            queue={queue}
+            openQueueEntry={openQueueEntry}
+            onQueueChanged={onQueueChanged}
+          />
 
           {userId ? (
             <>
